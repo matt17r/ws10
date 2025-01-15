@@ -1,24 +1,8 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Deployed using Kamal, accessed via Cloudflare Tunnel:
 
-Things you may want to cover:
-
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+- Ensure ssh works via public key to hostname specified in `config/deploy.yml` (under `servers` -> `web`)
+- Set `KAMAL_REGISTRY_PASSWORD` env variable (`set -Ux FOO bar` in fish shell)
+- Ensure tunnel is setup pointing to same hostname specified in `config/deploy.yml` (under `proxy` -> `host`)
+- Run `kamal setup`
