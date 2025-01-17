@@ -15,7 +15,8 @@
               <h2 class="font-mono font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400"><%= event.nickname %></h2>
               <p class="mt-2 text-gray-950/75"><%= event.location %></p>
               <div class="mt-8 text-5xl font-medium text-gray-950"><%= event.date %></div>
-              <%= link_to "Course Info", event.course_url, class: "mt-8 inline-flex items-center justify-center px-4 py-[calc(theme(spacing.2)-1px)] rounded-full border border-transparent bg-[#DB2955] shadow-md whitespace-nowrap text-base font-medium text-white" %>
+              <%= link_to "Course Info", courses_path, class: "mt-8 inline-flex items-center justify-center px-4 py-[calc(theme(spacing.2)-1px)] rounded-full border border-transparent bg-[#DB2955] shadow-md whitespace-nowrap text-base font-medium text-white" if event.course_url.present? %>
+              <%= content_tag :div, "Coming Soon", class: "mt-8 inline-flex items-center justify-center px-4 py-[calc(theme(spacing.2)-1px)] rounded-full border border-transparent bg-gray-500 shadow-md whitespace-nowrap text-base font-medium text-white" unless event.course_url.present? %>
             </div>
         </div>
       <% end %>
