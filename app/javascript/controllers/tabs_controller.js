@@ -3,7 +3,7 @@ import { Controller } from "@hotwired/stimulus"
 // Connects to data-controller="tabs"
 export default class extends Controller {
   static classes = [ "active", "inactive" ]
-  static targets = [ "btn", "tab" ]
+  static targets = [ "btn", "select", "tab" ]
   static values = {defaultTab: String}
 
   connect() {
@@ -20,11 +20,20 @@ export default class extends Controller {
     let selectedBtn = this.btnTargets.find(element => element.id === this.defaultTabValue)
     selectedBtn.classList.remove(...this.inactiveClasses)
     selectedBtn.classList.add(...this.activeClasses)
+
+    // ...and select the right select box option
+    this.selectTarget.value = this.defaultTabValue
   }
 
   select(event) {
-    // First, find tab with same id as the clicked button
-    let selectedTab = this.tabTargets.find(element => element.id === event.currentTarget.id)
+    // First, find the id of the correct tab
+    var id = ""
+    if (event.currentTarget.type === "submit") {
+      id = event.currentTarget.id
+    } else {
+      id = event.currentTarget.value
+    }
+    let selectedTab = this.tabTargets.find(element => element.id === id)
 
     if (selectedTab.hidden) {
       // Hide everything if selection is changing...
@@ -35,9 +44,13 @@ export default class extends Controller {
       // ...then show selected tab...
       selectedTab.hidden = false
 
-      // ...and activate the clicked button
-      event.currentTarget.classList.remove(...this.inactiveClasses)
-      event.currentTarget.classList.add(...this.activeClasses)
+      // ...and activate the relevant button
+      let selectedBtn = this.btnTargets.find(element => element.id === id)
+      selectedBtn.classList.remove(...this.inactiveClasses)
+      selectedBtn.classList.add(...this.activeClasses)
+
+      // ...and select the right select box option
+      this.selectTarget.value = id
     }
   }
 }
