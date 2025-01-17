@@ -1,6 +1,12 @@
 class StaticPagesController < ApplicationController
   Event = Struct.new(:nickname, :location, :date, :course_url)
 
+  def about
+  end
+
+  def courses
+  end
+
   def home
     @upcoming_events = [
       Event.new(nickname: "Bungarribee", location: "Bungarribee Park", date: "19th Jan", course_url: "#"),
@@ -9,6 +15,6 @@ class StaticPagesController < ApplicationController
     ]
   end
 
-  def courses
+  def results
   end
 end

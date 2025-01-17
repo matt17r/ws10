@@ -50,10 +50,10 @@
                   <%= link_to "Courses and Dates", courses_path, class: "flex items-center px-4 py-3 text-base font-medium text-gray-950 bg-blend-multiply hover:bg-black/[2.5%]" %>
                 </div>
                 <div class="relative flex group/item relative">
-                  <a class="flex items-center px-4 py-3 text-base font-medium text-gray-950 bg-blend-multiply hover:bg-black/[2.5%]" href="#">About</a>
+                  <%= link_to "About", about_path, class: "flex items-center px-4 py-3 text-base font-medium text-gray-950 bg-blend-multiply hover:bg-black/[2.5%]" %>
                 </div>
                 <div class="relative flex group/item relative">
-                  <a class="flex items-center px-4 py-3 text-base font-medium text-gray-950 bg-blend-multiply hover:bg-black/[2.5%]" href="#">Results</a>
+                  <%= link_to "Results", results_path, class: "flex items-center px-4 py-3 text-base font-medium text-gray-950 bg-blend-multiply hover:bg-black/[2.5%]" %>
                 </div>
                 <div class="hidden relative flex group/item relative">
                   <a class="flex items-center px-4 py-3 text-base font-medium text-gray-950 bg-blend-multiply hover:bg-black/[2.5%]" href="#">Login</a>
@@ -96,19 +96,19 @@
                 </div>
                 <div class="flex">
                   <div class="flex items-center gap-8 py-3 group/item relative">
-                    <a target="_blank" aria-label="Visit us on Facebook" class="text-gray-950 hover:text-gray-950/75" href="https://facebook.com">
-                      <svg viewBox="0 0 16 16" fill="currentColor" class="size-4"><path fill-rule="evenodd" clip-rule="evenodd" d="M16 8.05C16 3.603 12.418 0 8 0S0 3.604 0 8.05c0 4.016 2.926 7.346 6.75 7.95v-5.624H4.718V8.05H6.75V6.276c0-2.017 1.194-3.131 3.022-3.131.875 0 1.79.157 1.79.157v1.98h-1.008c-.994 0-1.304.62-1.304 1.257v1.51h2.219l-.355 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.95z"></path></svg>
-                    </a>
-                    <a target="_blank" aria-label="Visit us on X" class="text-gray-950 hover:text-gray-950/75" href="https://x.com">
-                      <svg viewBox="0 0 16 16" fill="currentColor" class="size-4"><path d="M12.6 0h2.454l-5.36 6.778L16 16h-4.937l-3.867-5.594L2.771 16H.316l5.733-7.25L0 0h5.063l3.495 5.114L12.6 0zm-.86 14.376h1.36L4.323 1.539H2.865l8.875 12.837z"></path></svg>
-                    </a>
-                    <a target="_blank" aria-label="Visit us on Strava" class="text-gray-950 hover:text-gray-950/75" href="https://strava.com">
+                    <button class="text-gray-950 hover:text-gray-950/75" onclick="socialHelp('on Strava')">
                       <svg viewBox="0 0 24 24" fill="currentColor" class="size-4"><path d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"/></svg>
-                    </a>
-
-                    <a target="_blank" aria-label="Visit us on LinkedIn" class="text-gray-950 hover:text-gray-950/75" href="https://linkedin.com">
-                      <svg viewBox="0 0 16 16" fill="currentColor" class="size-4"><path d="M14.82 0H1.18A1.169 1.169 0 000 1.154v13.694A1.168 1.168 0 001.18 16h13.64A1.17 1.17 0 0016 14.845V1.15A1.171 1.171 0 0014.82 0zM4.744 13.64H2.369V5.996h2.375v7.644zm-1.18-8.684a1.377 1.377 0 11.52-.106 1.377 1.377 0 01-.527.103l.007.003zm10.075 8.683h-2.375V9.921c0-.885-.015-2.025-1.234-2.025-1.218 0-1.425.966-1.425 1.968v3.775H6.233V5.997H8.51v1.05h.032c.317-.601 1.09-1.235 2.246-1.235 2.405-.005 2.851 1.578 2.851 3.63v4.197z"></path></svg>
-                    </a>
+                    </button>
+                    <button class="text-gray-950 hover:text-gray-950/75" onclick="socialHelp('in the Fediverse')">
+                      <svg viewBox="0 0 1034 1034" fill="currentColor" class="size-4"><path fill="#000000"
+                        d="M539 176q-32 0 -55 22t-25 55t20.5 58t56 27t58.5 -20.5t27 -56t-20.5 -59t-56.5 -26.5h-5zM452 271l-232 118q20 20 25 48l231 -118q-19 -20 -24 -48zM619 298q-13 25 -38 38l183 184q13 -25 39 -38zM477 320l-135 265l40 40l143 -280q-28 -5 -48 -25zM581 336 q-22 11 -46 10l-8 -1l21 132l56 9zM155 370q-32 0 -55 22.5t-25 55t20.5 58t56.5 27t59 -21t26.5 -56t-21 -58.5t-55.5 -27h-6zM245 438q1 9 1 18q-1 19 -10 35l132 21l26 -50zM470 474l-26 51l311 49q-1 -8 -1 -17q1 -19 10 -36zM842 480q-32 1 -55 23t-24.5 55t21 58 t56 27t58.5 -20.5t27 -56.5t-20.5 -59t-56.5 -27h-6zM236 493q-13 25 -39 38l210 210l51 -25zM196 531q-21 11 -44 10l-9 -1l40 256q21 -10 45 -9l8 1zM560 553l48 311q21 -10 44 -9l10 1l-46 -294zM755 576l-118 60l8 56l135 -68q-20 -20 -25 -48zM781 625l-119 231 q28 5 48 25l119 -231q-28 -5 -48 -25zM306 654l-68 134q28 5 48 25l60 -119zM568 671l-281 143q19 20 24 48l265 -135zM513 771l-51 25l106 107q13 -25 39 -38zM222 795q-32 0 -55.5 22.5t-25 55t21 57.5t56 27t58.5 -20.5t27 -56t-20.5 -58.5t-56.5 -27h-5zM311 863 q2 9 1 18q-1 19 -9 35l256 41q-1 -9 -1 -18q1 -18 10 -35zM646 863q-32 0 -55 22.5t-24.5 55t20.5 58t56 27t59 -21t27 -56t-20.5 -58.5t-56.5 -27h-6z" /></svg>
+                    </button>
+                    <button class="text-gray-950 hover:text-gray-950/75" onclick="socialHelp('on Facebook')">
+                      <svg viewBox="0 0 16 16" fill="currentColor" class="size-4"><path fill-rule="evenodd" clip-rule="evenodd" d="M16 8.05C16 3.603 12.418 0 8 0S0 3.604 0 8.05c0 4.016 2.926 7.346 6.75 7.95v-5.624H4.718V8.05H6.75V6.276c0-2.017 1.194-3.131 3.022-3.131.875 0 1.79.157 1.79.157v1.98h-1.008c-.994 0-1.304.62-1.304 1.257v1.51h2.219l-.355 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.95z"></path></svg>
+                    </button>
+                    <button class="text-gray-950 hover:text-gray-950/75" onclick="socialHelp('on X/Twitter')">
+                      <svg viewBox="0 0 16 16" fill="currentColor" class="size-4"><path d="M12.6 0h2.454l-5.36 6.778L16 16h-4.937l-3.867-5.594L2.771 16H.316l5.733-7.25L0 0h5.063l3.495 5.114L12.6 0zm-.86 14.376h1.36L4.323 1.539H2.865l8.875 12.837z"></path></svg>
+                    </button>
                   </div>
                 </div>
               </div>
@@ -117,5 +117,10 @@
         </div>
       </footer>
     </main>
+    <script>
+    function socialHelp(service) {
+      alert("Get in touch if you're interested in helping manage WS10's presence " + service);
+    }
+    </script>
   </body>
 </html>
