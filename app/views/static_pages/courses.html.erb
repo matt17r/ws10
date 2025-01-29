@@ -1,8 +1,8 @@
-<div class="mx-auto max-w-2xl lg:max-w-7xl my-16 px-6 lg:px-8" data-controller="tabs" data-tabs-active-class="border-[#DB2955] text-[#DB2955]" data-tabs-inactive-class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700" data-tabs-default-tab-value="tab-bungarribee">
+<div class="mx-auto max-w-2xl lg:max-w-7xl my-16 px-6 lg:px-8" data-controller="tabs" data-tabs-active-class="border-[#DB2955] text-[#DB2955]" data-tabs-inactive-class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700" data-tabs-default-tab-value="tab-nepean">
   <div class="grid grid-cols-1 sm:hidden">
     <select data-tabs-target="select" data-action="change->tabs#select" aria-label="Select a tab" class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-2 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-[#DB2955]">
       <option value="tab-bungarribee">Bungarribee</option>
-      <option value="tab-nepean-river" selected>Nepean River</option>
+      <option value="tab-nepean" selected>Nepean River</option>
       <option value="tab-parramatta">Parramatta</option>
     </select>
     <svg class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end fill-gray-500" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" data-slot="icon">
@@ -13,7 +13,7 @@
     <div class="border-b border-gray-200">
       <nav class="-mb-px flex" aria-label="Tabs">
         <button class="w-1/3 border-b-2 border-[#DB2955] px-1 py-4 text-center text-sm font-medium text-[#DB2955]" aria-current="page" id="tab-bungarribee" data-tabs-target="btn" data-action="click->tabs#select">Bungarribee</a>
-        <button class="w-1/3 border-b-2 border-transparent px-1 py-4 text-center text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700" id="tab-nepean-river" data-tabs-target="btn" data-action="click->tabs#select">Nepean River</a>
+        <button class="w-1/3 border-b-2 border-transparent px-1 py-4 text-center text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700" id="tab-nepean" data-tabs-target="btn" data-action="click->tabs#select">Nepean River</a>
         <button class="w-1/3 border-b-2 border-transparent px-1 py-4 text-center text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700" id="tab-parramatta" data-tabs-target="btn" data-action="click->tabs#select">Parramatta</a>
       </nav>
     </div>
@@ -53,7 +53,7 @@
           <h2 class="text-2xl font-medium tracking-tight">Facilities</h2>
           <p class="mt-6 text/6 text-gray-600">There is plenty of car parking and places to secure a bike (bring your own lock).</p>
           <p class="mt-8 text/6 text-gray-600">There are two public toilet facilities near the starting line that may be open depending on nearby events. There is also a 24x7 fast food restaurant about 500m walk from the start line.</p>
-          <p class="mt-8 text/6 text-gray-600">On the course, there are toilet blocks and water bubblers after the 4km mark and near the 5km mark. There is also a bubbler in OTC park around the 2.4km mark.</p>
+          <p class="mt-8 text/6 text-gray-600">On the course, there are toilet blocks and drinking fountains after the 4km mark and near the 5km mark. There is also a drinking fountain in OTC park around the 2.4km mark.</p>
         </div>
       </section>
       <section class="mt-16 grid grid-cols-1 lg:grid-cols-2 lg:gap-12">
@@ -68,7 +68,7 @@
         </div>
       </section>
     </div>
-    <div data-tabs-target="tab" id="tab-nepean-river" hidden>
+    <div data-tabs-target="tab" id="tab-nepean" hidden>
       <h1 class="text-pretty text-4xl font-medium tracking-tighter text-gray-950 data-[dark]:text-white sm:text-6xl">Nepean River</h1>
       <p class="mt-6 max-w-3xl text-2xl font-medium text-gray-500">Tench Reserve, Jamisontown</p>
       <div>
@@ -87,7 +87,30 @@
           </div>
         </div>
       </div>
-      <h3 class="mt-16 text-center text-pretty text-4xl font-medium tracking-tighter text-gray-950 dark:text-white sm:text-6xl">More info coming soon</h3>
+      <section class="mt-16 grid grid-cols-1 lg:grid-cols-2 lg:gap-12">
+        <div class="max-w-lg">
+          <h2 class="text-2xl font-medium tracking-tight">Course Start Point</h2>
+          <p class="mt-6 text/6 text-gray-600">The course starts and finishes in Tench Reserve, in the same area as Nepean River parkrun. If driving, there is parking on Tench Avenue and in carparks off Tench avenue.</p>
+          <p class="mt-8 text-lg/6 text-gray-600"><a class="text-[#54494B] underline underline-offset-[3px] hover:no-underline hover:text-[#9DA39A]" href="https://www.google.com/maps/place/Nepean+River+Parkrun/@-33.7623863,150.6611338,17z/data=!4m6!3m5!1s0x6b1289ec090c8baf:0xa9d1ffa8acefca12!8m2!3d-33.7623908!4d150.6637087!16s%2Fg%2F11t9c9zkpm!5m1!1e1?entry=ttu&g_ep=EgoyMDI1MDEyNi4wIKXMDSoASAFQAw%3D%3D">Google Maps Link</a> | <a class="text-[#54494B] underline underline-offset-[3px] hover:no-underline hover:text-[#9DA39A]" href="https://maps.apple.com/?address=163%E2%80%93165%20Tench%20Ave%0APenrith%20NSW%202750%0AAustralia&auid=1916632410848447481&ll=-33.762531,150.663880&lsp=9902&q=Nepean%20River%20Parkrun&t=m">Apple Maps Link</a></p>
+        </div>
+        <div class="lg:row-span-2 mt-8 lg:my-auto">
+          <%= image_tag "nepean-start.png", class: "rounded-lg" %>
+        </div>
+        <div class="max-lg:mt-8 lg:col-span-1">
+          <h2 class="text-2xl font-medium tracking-tight">Facilities</h2>
+          <p class="mt-6 text/6 text-gray-600">There is plenty of car parking and places to secure a bike (bring your own lock).</p>
+          <p class="mt-8 text/6 text-gray-600">There are multiple public toilet facilities, both at the start/finish line and on the course but they may not open until the event has commenced. Multiple drinking fountains are available too.</p>
+        </div>
+      </section>
+      <section class="mt-16 grid grid-cols-1 lg:grid-cols-2 lg:gap-12">
+        <div class="max-w-lg order-1 lg:order-2">
+          <h2 class="text-2xl font-medium tracking-tight">Course Description</h2>
+          <p class="mt-6 text/6 text-gray-600">The event is run entirely on sealed cycle/pedestrian paths that are well suited to pushing a pram and resistant to adverse weather. The course is an out and back course around the river. There are no road crossings but expect to encounter lots of runners and walkers along with some cyclists.</p>
+        </div>
+        <div class="mt-8 lg:mt-0 ml-0 lg:mx-auto order-2 lg:order-1">
+          <%= image_tag "nepean-route.png", class: "rounded-lg" %>
+        </div>
+      </section>
     </div>
     <div data-tabs-target="tab" id="tab-parramatta" hidden>
       <h1 class="text-pretty text-4xl font-medium tracking-tighter text-gray-950 data-[dark]:text-white sm:text-6xl">Parramatta Park</h1>
@@ -108,7 +131,31 @@
           </div>
         </div>
       </div>
-      <h3 class="mt-16 text-center text-pretty text-4xl font-medium tracking-tighter text-gray-950 dark:text-white sm:text-6xl">More info coming soon</h3>
+      <section class="mt-16 grid grid-cols-1 lg:grid-cols-2 lg:gap-12">
+        <div class="max-w-lg">
+          <h2 class="text-2xl font-medium tracking-tight">Course Start Point</h2>
+          <p class="mt-6 text/6 text-gray-600">Meet at the course finish point, near the Lady Fitzroy Memorial, just inside the old Tudorhouse Gates at George Street. After the pre-event briefing we'll move as a group to the start point near the Noller Footbridge.</p>
+          <p class="mt-8 text-lg/6 text-gray-600"><a class="text-[#54494B] underline underline-offset-[3px] hover:no-underline hover:text-[#9DA39A]" href="https://www.google.com/maps/place/Lady+Fitzroy+Memorial/@-33.8125395,150.9986062,19z/data=!4m6!3m5!1s0x6b12a33ae9a94bd1:0x4911e09a6c662c92!8m2!3d-33.8125742!4d150.9996972!16s%2Fg%2F11gwg61mh_!5m1!1e1?entry=ttu&g_ep=EgoyMDI1MDEyNi4wIKXMDSoASAFQAw%3D%3D">Google Maps Link</a> | <a class="text-[#54494B] underline underline-offset-[3px] hover:no-underline hover:text-[#9DA39A]" href="https://maps.apple.com/?address=O'Connell%20St,%20Parramatta%20NSW%202150,%20Australia&auid=755998292114138734&ll=-33.812575,150.999681&lsp=9902&q=Lady%20Mary%20Fitzroy&t=m">Apple Maps Link</a></p>
+        </div>
+        <div class="lg:row-span-2 mt-8 lg:my-auto">
+          <%= image_tag "parramatta-start.png", class: "rounded-lg" %>
+        </div>
+        <div class="max-lg:mt-8 lg:col-span-1">
+          <h2 class="text-2xl font-medium tracking-tight">Facilities</h2>
+          <p class="mt-6 text/6 text-gray-600">There is usually plenty of parking within Parramatta Park and along the park
+            road. Parking is also available in the council car park in O’Connell Street next to CommBank (Parramatta) Stadium. It is a short walk from the O’Connell Street car park to the meeting point via the Noller footbridge.</p>
+          <p class="mt-8 text/6 text-gray-600">There are public toilet facilities, both at the start/finish line and on the course. Multiple drinking fountains are available around the course too.</p>
+        </div>
+      </section>
+      <section class="mt-16 grid grid-cols-1 lg:grid-cols-2 lg:gap-12">
+        <div class="max-w-lg order-1 lg:order-2">
+          <h2 class="text-2xl font-medium tracking-tight">Course Description</h2>
+          <p class="mt-6 text/6 text-gray-600">The event is run entirely on sealed cycle/pedestrian paths that are well suited to pushing a pram and resistant to adverse weather. The course consists of three laps of the park loop, starting near the Noller Footbridge and finishing in front of the George Street gatehouse.</p>
+        </div>
+        <div class="mt-8 lg:mt-0 ml-0 lg:mx-auto order-2 lg:order-1">
+          <%= image_tag "parramatta-route.png", class: "rounded-lg" %>
+        </div>
+      </section>
     </div>
   </div>
 </div>

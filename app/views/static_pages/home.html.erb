@@ -9,15 +9,21 @@
   <div class="relative px-6 lg:px-8">
     <div class="mx-auto max-w-2xl lg:max-w-7xl">
       <div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
-      <% @upcoming_events.each do |event| %>
-        <div class="-m-2 grid grid-cols-1 rounded-4xl max-lg:mx-auto max-lg:w-full max-lg:max-w-md">
-            <div class="rounded-3xl bg-white p-10 pb-9 shadow-2xl ring-1 ring-black/5">
-              <h2 class="font-mono font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400"><%= event.nickname %></h2>
-              <p class="mt-2 text-gray-950/75"><%= event.location %></p>
-              <div class="mt-8 text-5xl font-medium text-gray-950"><%= event.date %></div>
-              <%= link_to "Course Info", courses_path, class: "mt-8 inline-flex items-center justify-center px-4 py-[calc(theme(spacing.2)-1px)] rounded-full border border-transparent bg-[#DB2955] shadow-md whitespace-nowrap text-base font-medium text-white" if event.course_url.present? %>
-              <%= content_tag :div, "Coming Soon", class: "mt-8 inline-flex items-center justify-center px-4 py-[calc(theme(spacing.2)-1px)] rounded-full border border-transparent bg-gray-500 shadow-md whitespace-nowrap text-base font-medium text-white" unless event.course_url.present? %>
+      <% @upcoming_events.each_with_index do |event, index| %>
+        <div class="relative -m-2 grid grid-cols-1 rounded-4xl max-lg:mx-auto max-lg:w-full max-lg:max-w-md overflow-hidden">
+        <% if index == 0 %>
+          <div class="absolute top-0 right-0 w-16 h-16">
+            <div class="bg-[#DB2955] absolute transform rotate-45 text-center text-white font-semibold py-1 right-[-40px] top-[32px] w-[170px]">
+              Next Event
             </div>
+          </div>
+        <% end %>
+          <div class="rounded-3xl bg-white p-10 pb-9 shadow-2xl ring-1 ring-black/5 ring-inset">
+            <h2 class="font-mono font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400"><%= event.nickname %></h2>
+            <p class="mt-2 text-gray-950/75"><%= event.location %></p>
+            <div class="mt-8 text-5xl font-medium <%= index == 0 ? "text-[#DB2955]" : "text-gray-950" %>"><%= event.date %></div>
+            <%= link_to "Course Info", courses_path, class: "mt-8 inline-flex items-center justify-center px-4 py-[calc(theme(spacing.2)-1px)] rounded-full border border-transparent bg-[#DB2955] shadow-md whitespace-nowrap text-base font-medium text-white" if index == 0 %>
+          </div>
         </div>
       <% end %>
       </div>
