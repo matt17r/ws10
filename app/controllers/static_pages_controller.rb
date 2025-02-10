@@ -1,5 +1,5 @@
 class StaticPagesController < ApplicationController
-  allow_unauthenticated_access(only: [ :about, :courses, :home ])
+  allow_unauthenticated_access(only: [ :about, :courses, :home, :results ])
 
   Event = Struct.new(:nickname, :location, :date)
 
