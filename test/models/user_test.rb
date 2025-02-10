@@ -8,11 +8,11 @@ class UserTest < ActiveSupport::TestCase
 
   test "username can't be blank" do
     user = User.new(password: "test-password-123")
-    refute user.valid?
+    assert_not user.valid?
   end
 
   test "password can't be blank" do
     user = User.new(email_address: "you@example.com")
-    refute user.valid?
+    assert_not user.valid?
   end
 end
