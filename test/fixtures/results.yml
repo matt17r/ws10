@@ -1,0 +1,9 @@
+first:
+  event: one
+  time: 2_400
+  user: one
+
+second:
+  event: one
+  time: 2_500
+  user: two

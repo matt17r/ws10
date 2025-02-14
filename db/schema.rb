@@ -10,7 +10,28 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_02_10_121141) do
+ActiveRecord::Schema[8.0].define(version: 2025_02_14_101801) do
+  create_table "events", force: :cascade do |t|
+    t.integer "number", null: false
+    t.date "date", null: false
+    t.string "location", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["location"], name: "index_events_on_location"
+    t.index ["number"], name: "index_events_on_number", unique: true
+  end
+
+  create_table "results", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "event_id", null: false
+    t.integer "time"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["event_id"], name: "index_results_on_event_id"
+    t.index ["user_id"], name: "index_results_on_user_id"
+    t.check_constraint "user_id IS NOT NULL OR time IS NOT NULL", name: "check_user_or_time_not_null"
+  end
+
   create_table "sessions", force: :cascade do |t|
     t.integer "user_id", null: false
     t.string "ip_address"
@@ -25,8 +46,24 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_10_121141) do
     t.string "password_digest", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "results_count", default: 0, null: false
+    t.integer "volunteers_count", default: 0, null: false
     t.index ["email_address"], name: "index_users_on_email_address", unique: true
   end
 
+  create_table "volunteers", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "event_id", null: false
+    t.string "role", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["event_id"], name: "index_volunteers_on_event_id"
+    t.index ["user_id"], name: "index_volunteers_on_user_id"
+  end
+
+  add_foreign_key "results", "events"
+  add_foreign_key "results", "users"
   add_foreign_key "sessions", "users"
+  add_foreign_key "volunteers", "events"
+  add_foreign_key "volunteers", "users"
 end
