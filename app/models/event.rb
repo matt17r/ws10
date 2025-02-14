@@ -4,7 +4,7 @@ class Event < ApplicationRecord
 
   validates :date, presence: true
   validates :location, presence: true
-  validates :number, numericality: {only_integer: true, greater_than: 0}
+  validates :number, numericality: { only_integer: true, greater_than: 0 }
 
   def to_s
     "##{number} - #{date.to_fs(:short)}"
