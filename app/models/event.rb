@@ -1,6 +1,6 @@
 class Event < ApplicationRecord
   has_many :results
-  # has_many :volunteers
+  has_many :volunteers
 
   validates :date, presence: true
   validates :location, presence: true
