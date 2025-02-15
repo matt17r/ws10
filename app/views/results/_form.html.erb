@@ -1,0 +1,32 @@
+<%= form_with(model: result, class: "contents") do |form| %>
+  <% if result.errors.any? %>
+    <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-md mt-3">
+      <h2><%= pluralize(result.errors.count, "error") %> prohibited this result from being saved:</h2>
+
+      <ul class="list-disc ml-6">
+        <% result.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="my-5">
+    <%= form.label :user_id %>
+    <%= collection_select :result, :user_id, User.all, :id, :email_address, {include_blank: "Unknown"}, class: ["block shadow rounded-md border outline-none px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": result.errors[:user_id].none?, "border-red-400 focus:outline-red-600": result.errors[:user_id].any?}] %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :event_id %>
+    <%= form.text_field :event_id, class: ["block shadow rounded-md border outline-none px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": result.errors[:event_id].none?, "border-red-400 focus:outline-red-600": result.errors[:event_id].any?}] %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :time %>
+    <%= form.number_field :time, class: ["block shadow rounded-md border outline-none px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": result.errors[:time].none?, "border-red-400 focus:outline-red-600": result.errors[:time].any?}] %>
+  </div>
+
+  <div class="inline">
+    <%= form.submit class: "rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white inline-block font-medium cursor-pointer" %>
+  </div>
+<% end %>
