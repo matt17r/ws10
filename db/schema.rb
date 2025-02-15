@@ -10,7 +10,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_02_14_101801) do
+ActiveRecord::Schema[8.0].define(version: 2025_02_15_032127) do
+  create_table "assignments", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "role_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["role_id"], name: "index_assignments_on_role_id"
+    t.index ["user_id"], name: "index_assignments_on_user_id"
+  end
+
   create_table "events", force: :cascade do |t|
     t.integer "number", null: false
     t.date "date", null: false
@@ -30,6 +39,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_14_101801) do
     t.index ["event_id"], name: "index_results_on_event_id"
     t.index ["user_id"], name: "index_results_on_user_id"
     t.check_constraint "user_id IS NOT NULL OR time IS NOT NULL", name: "check_user_or_time_not_null"
+  end
+
+  create_table "roles", force: :cascade do |t|
+    t.string "name", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_roles_on_name", unique: true
   end
 
   create_table "sessions", force: :cascade do |t|
@@ -61,6 +77,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_14_101801) do
     t.index ["user_id"], name: "index_volunteers_on_user_id"
   end
 
+  add_foreign_key "assignments", "roles"
+  add_foreign_key "assignments", "users"
   add_foreign_key "results", "events"
   add_foreign_key "results", "users"
   add_foreign_key "sessions", "users"

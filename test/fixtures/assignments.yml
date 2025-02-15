@@ -1,0 +1,7 @@
+one:
+  user: one
+  role: admin
+
+two:
+  user: two
+  role: organiser

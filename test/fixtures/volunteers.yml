@@ -1,4 +1,4 @@
 one:
   event: one
   user: three
-  role: "Timer"
+  role: Timer
