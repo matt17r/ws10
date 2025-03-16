@@ -11,6 +11,8 @@ Rails.application.routes.draw do
   get "results", to: "events#show_latest"
 
   resource :session, only: [ :new, :create, :destroy ]
+  resources :passwords, param: :token, only: [ :new, :create, :edit, :update ]
+  resource :registration, only: [ :new, :create ]
 
   resources :events, param: :number, only: [ :index, :show ]
 end
