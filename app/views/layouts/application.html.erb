@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= content_for(:title) || "WS10" %></title>
+    <title><%= content_for?(:page_heading) ? (content_for(:page_heading) + " || WS10") : "WS10" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
@@ -23,9 +23,111 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body>
-    <main class="container mx-auto mt-28 px-5 flex">
-      <%= yield %>
-    </main>
+  <body class="text-gray-950 antialiased">
+    <div class="flex flex-col h-screen">
+      <header>
+        <div class="relative mx-auto max-w-7xl">
+          <div class="absolute -right-60 -top-44 h-60 w-[36rem] transform-gpu md:right-0 bg-[linear-gradient(115deg,var(--tw-gradient-stops))] from-[#9DA39A] from-[28%] via-[#B98389] via-[40%] to-[#DB2955] rotate-[-10deg] rounded-full blur-3xl"></div>
+        </div>
+        <div class="px-6 lg:px-8">
+          <div class="mx-auto max-w-2xl lg:max-w-7xl">
+            <div class="pt-8 sm:pt-12">
+              <div class="relative flex justify-between group/row relative isolate pt-[calc(theme(spacing.2)+1px)] last:pb-[calc(theme(spacing.2)+1px)]">
+                <div aria-hidden="true" class="absolute inset-y-0 left-1/2 -z-10 w-screen -translate-x-1/2">
+                  <div class="absolute inset-x-0 top-0 border-t border-black/5"></div>
+                  <div class="absolute inset-x-0 top-2 border-t border-black/5"></div>
+                  <div class="absolute inset-x-0 bottom-0 hidden border-b border-black/5 lg:block"></div>
+                  <div class="absolute inset-x-0 bottom-2 hidden border-b border-black/5 lg:block"></div>
+                </div>
+                <div class="relative flex gap-6">
+                  <div class="py-3 group/item relative">
+                    <a title="Home" href="/">
+                      <div class="font-extrabold text-xl text-[#54494B]">Western Sydney 10</div>
+                    </a>
+                  </div>
+                </div>
+                <nav class="relative hidden lg:flex">
+                  <div class="relative flex group/item relative">
+                    <%= link_to "Home", root_path, class: "flex items-center px-4 py-3 text-base font-medium text-gray-950 bg-blend-multiply hover:bg-black/[2.5%]" %>
+                  </div>
+                  <div class="relative flex group/item relative">
+                    <%= link_to "Courses and Dates", courses_path, class: "flex items-center px-4 py-3 text-base font-medium text-gray-950 bg-blend-multiply hover:bg-black/[2.5%]" %>
+                  </div>
+                  <div class="relative flex group/item relative">
+                    <%= link_to "About", about_path, class: "flex items-center px-4 py-3 text-base font-medium text-gray-950 bg-blend-multiply hover:bg-black/[2.5%]" %>
+                  </div>
+                  <div class="relative flex group/item relative">
+                    <%= link_to "Results", results_path, class: "flex items-center px-4 py-3 text-base font-medium text-gray-950 bg-blend-multiply hover:bg-black/[2.5%]" %>
+                  </div>
+                  <div class="hidden relative flex group/item relative">
+                    <a class="flex items-center px-4 py-3 text-base font-medium text-gray-950 bg-blend-multiply hover:bg-black/[2.5%]" href="#">Login</a>
+                  </div>
+                </nav>
+                <button class="hidden flex size-12 items-center justify-center self-center rounded-lg hover:bg-black/5 lg:hidden" aria-label="Open main menu" type="button">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6"><path fill-rule="evenodd" d="M3 9a.75.75 0 0 1 .75-.75h16.5a.75.75 0 0 1 0 1.5H3.75A.75.75 0 0 1 3 9Zm0 6.75a.75.75 0 0 1 .75-.75h16.5a.75.75 0 0 1 0 1.5H3.75a.75.75 0 0 1-.75-.75Z" clip-rule="evenodd"></path></svg>
+                </button>
+              </div>
+              <div class="lg:hidden">
+                <div class="flex flex-col gap-6 py-4">
+                  <%=link_to "Courses and Dates", courses_path, class: "text-base font-medium text-gray-950" %>
+                  <%=link_to "About", about_path, class: "text-base font-medium text-gray-950" %>
+                  <%=link_to "Results", results_path, class: "text-base font-medium text-gray-950" %>
+                  <%=link_to "Login", nil, class: "hidden text-base font-medium text-gray-950" %>
+                </div>
+                <div class="absolute left-1/2 w-screen -translate-x-1/2">
+                  <div class="absolute inset-x-0 top-0 border-t border-black/5"></div>
+                  <div class="absolute inset-x-0 top-2 border-t border-black/5"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+      <main class="mb-auto">
+        <%= yield %>
+      </main>
+      <footer>
+        <div class="relative bg-[linear-gradient(115deg,var(--tw-gradient-stops))] from-[#9DA39A] from-[28%] via-[#B98389] via-[40%] to-[#DB2955] sm:bg-[linear-gradient(145deg,var(--tw-gradient-stops))]">
+          <div class="absolute inset-2 rounded-4xl bg-white/80"></div>
+          <div class="px-6 lg:px-8">
+            <div class="mx-auto max-w-2xl lg:max-w-7xl">
+              <div class="flex justify-between group/row relative isolate pt-[calc(theme(spacing.2)+1px)] last:pb-[calc(theme(spacing.2)+1px)]">
+                <div aria-hidden="true" class="absolute inset-y-0 left-1/2 -z-10 w-screen -translate-x-1/2">
+                  <div class="absolute inset-x-0 top-0 border-t border-black/5"></div>
+                  <div class="absolute inset-x-0 top-2 border-t border-black/5"></div>
+                  <div class="absolute inset-x-0 bottom-0 hidden border-b border-black/5 group-last/row:block"></div>
+                  <div class="absolute inset-x-0 bottom-2 hidden border-b border-black/5 group-last/row:block"></div>
+                </div>
+                <div>
+                  <div class="py-3 text-sm/6 text-gray-950">© 2025 - Western Sydney 10</div>
+                </div>
+                <div class="flex">
+                  <div class="flex items-center gap-8 py-3 group/item relative">
+                    <%= link_to "https://www.strava.com/clubs/ws10", class: "text-gray-950 hover:text-gray-950/75" do %>
+                      <svg viewBox="0 0 24 24" fill="currentColor" class="size-4"><path d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"/></svg>
+                    <% end %>
+                    <button class="text-gray-950 hover:text-gray-950/75" onclick="socialHelp('in the Fediverse')">
+                      <svg viewBox="0 0 1034 1034" fill="currentColor" class="size-4"><path fill="#000000"
+                        d="M539 176q-32 0 -55 22t-25 55t20.5 58t56 27t58.5 -20.5t27 -56t-20.5 -59t-56.5 -26.5h-5zM452 271l-232 118q20 20 25 48l231 -118q-19 -20 -24 -48zM619 298q-13 25 -38 38l183 184q13 -25 39 -38zM477 320l-135 265l40 40l143 -280q-28 -5 -48 -25zM581 336 q-22 11 -46 10l-8 -1l21 132l56 9zM155 370q-32 0 -55 22.5t-25 55t20.5 58t56.5 27t59 -21t26.5 -56t-21 -58.5t-55.5 -27h-6zM245 438q1 9 1 18q-1 19 -10 35l132 21l26 -50zM470 474l-26 51l311 49q-1 -8 -1 -17q1 -19 10 -36zM842 480q-32 1 -55 23t-24.5 55t21 58 t56 27t58.5 -20.5t27 -56.5t-20.5 -59t-56.5 -27h-6zM236 493q-13 25 -39 38l210 210l51 -25zM196 531q-21 11 -44 10l-9 -1l40 256q21 -10 45 -9l8 1zM560 553l48 311q21 -10 44 -9l10 1l-46 -294zM755 576l-118 60l8 56l135 -68q-20 -20 -25 -48zM781 625l-119 231 q28 5 48 25l119 -231q-28 -5 -48 -25zM306 654l-68 134q28 5 48 25l60 -119zM568 671l-281 143q19 20 24 48l265 -135zM513 771l-51 25l106 107q13 -25 39 -38zM222 795q-32 0 -55.5 22.5t-25 55t21 57.5t56 27t58.5 -20.5t27 -56t-20.5 -58.5t-56.5 -27h-5zM311 863 q2 9 1 18q-1 19 -9 35l256 41q-1 -9 -1 -18q1 -18 10 -35zM646 863q-32 0 -55 22.5t-24.5 55t20.5 58t56 27t59 -21t27 -56t-20.5 -58.5t-56.5 -27h-6z" /></svg>
+                    </button>
+                    <button class="text-gray-950 hover:text-gray-950/75" onclick="socialHelp('on Facebook')">
+                      <svg viewBox="0 0 16 16" fill="currentColor" class="size-4"><path fill-rule="evenodd" clip-rule="evenodd" d="M16 8.05C16 3.603 12.418 0 8 0S0 3.604 0 8.05c0 4.016 2.926 7.346 6.75 7.95v-5.624H4.718V8.05H6.75V6.276c0-2.017 1.194-3.131 3.022-3.131.875 0 1.79.157 1.79.157v1.98h-1.008c-.994 0-1.304.62-1.304 1.257v1.51h2.219l-.355 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.95z"></path></svg>
+                    </button>
+                    <button class="text-gray-950 hover:text-gray-950/75" onclick="socialHelp('on X/Twitter')">
+                      <svg viewBox="0 0 16 16" fill="currentColor" class="size-4"><path d="M12.6 0h2.454l-5.36 6.778L16 16h-4.937l-3.867-5.594L2.771 16H.316l5.733-7.25L0 0h5.063l3.495 5.114L12.6 0zm-.86 14.376h1.36L4.323 1.539H2.865l8.875 12.837z"></path></svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+    <script>
+    function socialHelp(service) {
+      alert("Get in touch if you're interested in helping manage WS10's presence " + service);
+    }
+    </script>
   </body>
 </html>

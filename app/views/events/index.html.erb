@@ -1,0 +1,20 @@
+<div class="justify-center items-center bg-white mx-auto rounded-lg my-4 p-4 lg:p-16">
+  <h1 class="text-3xl font-medium py-2">Events</h1>
+
+  <table class="table-auto w-full my-4">
+    <thead>
+      <tr class="text-gray-100 text-xl font-medium text-center">
+      </tr>
+    </thead>
+    <tbody>
+      <% @events.each do |event| %>
+        <tr class="text-center text-xl odd:bg-white even:bg-grey-100">
+          <td><%= link_to event.number, event, class: "no-underline text-gray-800" %></td>
+          <td><%= link_to l(event.date), event, class: "no-underline text-gray-800 " %></td>
+          <td><%= link_to event.results.count, event, class: "no-underline text-gray-800" %></td>
+          <td><%= link_to event.results.order(:time).first&.time_string || "N/A", event, class: "no-underline text-gray-800" %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

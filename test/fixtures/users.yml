@@ -3,14 +3,21 @@
 one:
   email_address: one@example.com
   password_digest: <%= password_digest %>
+  name: One
+  display_name: Number one
+  emoji: 1️⃣
   results_count: 1
 
 two:
   email_address: two@example.com
+  name: Two
   password_digest: <%= password_digest %>
   results_count: 1
 
 three:
   email_address: three@example.com
+  name: Three
+  display_name: Number three
+  emoji: 🥉
   password_digest: <%= password_digest %>
   volunteers_count: 1

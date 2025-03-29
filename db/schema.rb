@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_02_15_032127) do
+ActiveRecord::Schema[8.0].define(version: 2025_03_29_210658) do
   create_table "assignments", force: :cascade do |t|
     t.integer "user_id", null: false
     t.integer "role_id", null: false
@@ -64,7 +64,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_15_032127) do
     t.datetime "updated_at", null: false
     t.integer "results_count", default: 0, null: false
     t.integer "volunteers_count", default: 0, null: false
+    t.string "name", null: false
+    t.string "display_name", default: "Anonymous", null: false
+    t.string "emoji", default: "👤", null: false
+    t.index ["display_name"], name: "index_users_on_display_name"
     t.index ["email_address"], name: "index_users_on_email_address", unique: true
+    t.index ["emoji"], name: "index_users_on_emoji"
+    t.index ["name"], name: "index_users_on_name"
   end
 
   create_table "volunteers", force: :cascade do |t|

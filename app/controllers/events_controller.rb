@@ -1,5 +1,5 @@
 class EventsController < ApplicationController
-  skip_before_action :authenticate_admin!, only: [:index, :show, :show_latest]
+  # skip_before_action :authenticate_admin!, only: [:index, :show, :show_latest]
   before_action :set_event, only: [:show, :edit, :update, :destroy]
 
   def index
@@ -8,8 +8,8 @@ class EventsController < ApplicationController
 
   def show
     return redirect_to results_path unless @event.present?
-    @results = @event.results.order(:time).includes(:person)
-    @volunteers = @event.volunteers.order(:role).includes(:person)
+    @results = @event.results.order(:time).includes(:user)
+    @volunteers = @event.volunteers.order(:role).includes(:user)
   end
 
   def show_latest

@@ -1,0 +1,39 @@
+<div class="mx-auto md:my-4 items-center justify-center md:rounded-lg bg-white p-0 md:p-4 lg:p-16">
+  <p class="text-xl font-medium p-2 md:p-0 md:py-2"><%= link_to t("nw5k.other_events"), events_path %></p>
+  <h1 class="p-2 md:p-0 md:py-2"><%= "#{Event.model_name.human} ##{@event.number} - #{l(@event.date)}" %></h1>
+  <% if @results.present? %>
+    <table class="table-auto w-full my-4">
+      <thead>
+        <tr class="bg-nw5k-eggplant-800 text-xl font-medium text-center text-gray-100">
+          <th class="py-2 px-4 w-1/4"><%= t("nw5k.place") %></th>
+          <th class="text-left py-2 px-4 w-1/2"><%= t("nw5k.participant") %></th>
+          <th colspan="2" class="py-2 px-4 w-1/4"><%= t("nw5k.time") %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @results.each do |result| %>
+          <tr class="text-center text-xl odd:bg-white even:bg-nw5k-eggplant-50 hover:bg-nw5k-eggplant-100 hover:text-nw5k-eggplant-700">
+            <td><%= result.place %></td>
+            <td class="text-left"><%= result.user.email_address || t("nw5k.unknown")%></td>
+            <td class="text-right"><%= result.time_string %></td>
+            <td class="text-left w-4 lg:w-8">
+              <% if result.first_timer? %>
+                <div class="has-tooltip">
+                  <div class="absolute right-0 lg:right-auto tooltip p-1 text-sm font-medium text-white bg-nw5k-eggplant-900 rounded-md shadow-sm transition-opacity duration-300"><%= t("nw5k.first_timer") %></div>
+                  <span class="no-underline text-gray-800 hover:text-nw5k-eggplant-700">👋</span>
+                </div>
+              <% elsif result.pb? %>
+                <div class="has-tooltip">
+                  <div class="absolute right-0 lg:right-auto tooltip p-1 text-sm font-medium text-white bg-nw5k-eggplant-900 rounded-md shadow-sm transition-opacity duration-300"><%= t("nw5k.pb.5km") %></div>
+                  <span class="no-underline text-gray-800 hover:text-nw5k-eggplant-700">🔔</span>
+                </div>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p class="text-2xl font-medium p-2 md:p-0 md:py-2"><%= t("nw5k.no_results") %></p>
+  <% end %>
+</div>

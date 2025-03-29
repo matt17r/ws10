@@ -9,7 +9,8 @@ class User < ApplicationRecord
 
   normalizes :email_address, with: ->(e) { e.strip.downcase }
 
-  validates :email_address, :password, presence: true
+  validates :name, :display_name, :emoji, presence: true
+  validates :email_address, format: {with: URI::MailTo::EMAIL_REGEXP}, presence: true
 
   def admin?
     roles.any? { |r| r.name == "Administrator" }
