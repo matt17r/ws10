@@ -18,7 +18,6 @@
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
     <%# Includes all stylesheet files in app/assets/stylesheets %>
-    <%= stylesheet_link_tag "tailwind", "inter-font", "data-turbo-track": "reload" %>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
@@ -26,7 +25,7 @@
   <body class="text-gray-950 antialiased">
     <main class="overflow-hidden">
       <div class="relative mx-auto max-w-7xl">
-        <div class="absolute -right-60 -top-44 h-60 w-[36rem] transform-gpu md:right-0 bg-[linear-gradient(115deg,var(--tw-gradient-stops))] from-[#9DA39A] from-[28%] via-[#B98389] via-[40%] to-[#DB2955] rotate-[-10deg] rounded-full blur-3xl"></div>
+        <div class="absolute -right-60 -top-44 h-60 w-[36rem] transform-gpu md:right-0 bg-linear-115 from-[#9DA39A] from-28% via-[#B98389] via-40% to-[#DB2955] rotate-[-10deg] rounded-full blur-3xl"></div>
       </div>
       <div class="px-6 lg:px-8">
         <div class="mx-auto max-w-2xl lg:max-w-7xl">
@@ -83,7 +82,7 @@
       </div>
       <%= yield %>
       <footer>
-        <div class="relative bg-[linear-gradient(115deg,var(--tw-gradient-stops))] from-[#9DA39A] from-[28%] via-[#B98389] via-[40%] to-[#DB2955] sm:bg-[linear-gradient(145deg,var(--tw-gradient-stops))]">
+        <div class="relative bg-linear-115 from-[#9DA39A] from-28% via-[#B98389] via-40% to-[#DB2955] sm:bg-linear-145">
           <div class="absolute inset-2 rounded-4xl bg-white/80"></div>
           <div class="px-6 lg:px-8">
             <div class="mx-auto max-w-2xl lg:max-w-7xl">
