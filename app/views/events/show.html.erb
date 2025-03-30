@@ -23,9 +23,9 @@
                 <tbody class="divide-y divide-gray-200 bg-white">
                   <% @results.each do |result| %>
                     <tr>
-                      <td class="whitespace-nowrap py-5 pl-4 pr-3 text-2xl text-gray-700"><%= result.place %></td>
+                      <td class="whitespace-nowrap pl-4 pr-3 py-5 text-2xl text-gray-700"><%= result.place %></td>
                       <td class="whitespace-nowrap px-3 py-5 text-2xl text-gray-700"><%# result.user.emoji %> <%= result.user.display_name %></td>
-                      <td class="whitespace-nowrap px-3 py-5 text-2xl text-gray-700"><%= result.time_string %></td>
+                      <td class="whitespace-nowrap pl-3 pr-4 py-5 text-2xl text-gray-700"><%= result.time_string %></td>
                     </tr>
                   <% end %>
                   <% @volunteers.each do |volunteer| %>
