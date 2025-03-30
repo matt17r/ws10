@@ -3,7 +3,6 @@ module Authentication
 
   included do
     before_action :require_authentication
-    # before_action :require_admin
 
     helper_method :authenticated?
   end

@@ -1,39 +1,48 @@
-<div class="mx-auto md:my-4 items-center justify-center md:rounded-lg bg-white p-0 md:p-4 lg:p-16">
-  <p class="text-xl font-medium p-2 md:p-0 md:py-2"><%= link_to t("nw5k.other_events"), events_path %></p>
-  <h1 class="p-2 md:p-0 md:py-2"><%= "#{Event.model_name.human} ##{@event.number} - #{l(@event.date)}" %></h1>
-  <% if @results.present? %>
-    <table class="table-auto w-full my-4">
-      <thead>
-        <tr class="bg-nw5k-eggplant-800 text-xl font-medium text-center text-gray-100">
-          <th class="py-2 px-4 w-1/4"><%= t("nw5k.place") %></th>
-          <th class="text-left py-2 px-4 w-1/2"><%= t("nw5k.participant") %></th>
-          <th colspan="2" class="py-2 px-4 w-1/4"><%= t("nw5k.time") %></th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @results.each do |result| %>
-          <tr class="text-center text-xl odd:bg-white even:bg-nw5k-eggplant-50 hover:bg-nw5k-eggplant-100 hover:text-nw5k-eggplant-700">
-            <td><%= result.place %></td>
-            <td class="text-left"><%= result.user.email_address || t("nw5k.unknown")%></td>
-            <td class="text-right"><%= result.time_string %></td>
-            <td class="text-left w-4 lg:w-8">
-              <% if result.first_timer? %>
-                <div class="has-tooltip">
-                  <div class="absolute right-0 lg:right-auto tooltip p-1 text-sm font-medium text-white bg-nw5k-eggplant-900 rounded-md shadow-sm transition-opacity duration-300"><%= t("nw5k.first_timer") %></div>
-                  <span class="no-underline text-gray-800 hover:text-nw5k-eggplant-700">👋</span>
-                </div>
-              <% elsif result.pb? %>
-                <div class="has-tooltip">
-                  <div class="absolute right-0 lg:right-auto tooltip p-1 text-sm font-medium text-white bg-nw5k-eggplant-900 rounded-md shadow-sm transition-opacity duration-300"><%= t("nw5k.pb.5km") %></div>
-                  <span class="no-underline text-gray-800 hover:text-nw5k-eggplant-700">🔔</span>
-                </div>
-              <% end %>
-            </td>
-          </tr>
+<div class="my-16 px-6 lg:px-8">
+  <div class="mx-auto max-w-2xl lg:max-w-7xl">
+    <div class="px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-wrap">
+        <%= link_to "Other Events", events_path, class: "mb-4 text-right text-2xl underline underline underline-offset-[3px] basis-full lg:basis-auto lg:order-last" %>
+        <h1 class="text-2xl font-semibold text-gray-900 basis-full lg:basis-auto lg:grow lg:order-first"><%= "Event ##{@event.number} – #{l @event.date} – #{@event.location}" %></h1>
+      </div>
+      <% if @event.description.present? %>
+        <p class="mt-2 text-gray-700"><%= @event.description.html_safe %></p>
+      <% end %>
+      <div class="mt-4 flow-root">
+        <% if @event.results_ready? %>
+          <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+            <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+              <table class="table-fixed min-w-full divide-y divide-gray-300">
+                <thead>
+                  <tr>
+                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left font-semibold text-gray-900 w-32">Position</th>
+                    <th scope="col" class="px-3 py-3.5 text-left font-semibold text-gray-900">Name</th>
+                    <th scope="col" class="px-3 py-3.5 text-left font-semibold text-gray-900 w-32">Time/Role</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200 bg-white">
+                  <% @results.each do |result| %>
+                    <tr>
+                      <td class="whitespace-nowrap py-5 pl-4 pr-3 text-2xl text-gray-700"><%= result.place %></td>
+                      <td class="whitespace-nowrap px-3 py-5 text-2xl text-gray-700"><%# result.user.emoji %> <%= result.user.display_name %></td>
+                      <td class="whitespace-nowrap px-3 py-5 text-2xl text-gray-700"><%= result.time_string %></td>
+                    </tr>
+                  <% end %>
+                  <% @volunteers.each do |volunteer| %>
+                    <tr>
+                      <td class="whitespace-nowrap py-5 pl-4 pr-3 text-2xl text-gray-700">V</td>
+                      <td class="whitespace-nowrap px-3 py-5 text-2xl text-gray-700"><%# volunteer.user.emoji %> <%= volunteer.user.display_name %></td>
+                      <td class="whitespace-nowrap px-3 py-5 text-2xl text-gray-700"><%= volunteer.role %></td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        <% else %>
+          <p class="text-2xl font-medium p-2 md:p-0 md:py-2">Results are still being processed, please check back soon!</p>
         <% end %>
-      </tbody>
-    </table>
-  <% else %>
-    <p class="text-2xl font-medium p-2 md:p-0 md:py-2"><%= t("nw5k.no_results") %></p>
-  <% end %>
+      </div>
+    </div>
+  </div>
 </div>

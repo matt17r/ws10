@@ -8,7 +8,7 @@ Rails.application.routes.draw do
 
   get "about" => "static_pages#about"
   get "courses" => "static_pages#courses"
-  get "results" => "static_pages#results"
+  get "old_results" => "static_pages#results"
 
   resource :session
   resources :passwords, param: :token
@@ -17,4 +17,6 @@ Rails.application.routes.draw do
     resources :results
     resources :volunteers
   end
+
+  get "results", to: "events#show_latest"
 end
