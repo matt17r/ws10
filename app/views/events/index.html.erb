@@ -10,18 +10,18 @@
                 <thead>
                   <tr>
                     <th scope="col" class="py-3.5 pl-4 pr-3 text-left font-semibold text-gray-900">Event</th>
-                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left font-semibold text-gray-900">Date</th>
-                    <th scope="col" class="px-3 py-3.5 text-left font-semibold text-gray-900">Participants</th>
-                    <th scope="col" class="px-3 py-3.5 text-left font-semibold text-gray-900">Fastest Time</th>
+                    <th scope="col" class="py-3.5 px-3 text-left font-semibold text-gray-900">Date</th>
+                    <th scope="col" class="py-3.5 px-3 text-left font-semibold text-gray-900">Participants</th>
+                    <th scope="col" class="py-3.5 pl-3 pr-4 text-left font-semibold text-gray-900">Fastest Time</th>
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200 bg-white">
                   <% @events.each do |event| %>
-                    <tr class="text-xl odd:bg-white even:bg-grey-100">
-                      <td><%= link_to "##{event.number} – #{event.location}", event, class: "no-underline text-gray-800" %></td>
-                      <td><%= link_to l(event.date), event, class: "no-underline text-gray-800 " %></td>
-                      <td><%= link_to (event.results.count + event.volunteers.count), event, class: "no-underline text-gray-800" %></td>
-                      <td><%= link_to event.results.order(:time).first&.time_string || "N/A", event, class: "no-underline text-gray-800" %></td>
+                    <tr class="hover:bg-[#9DA39A]/50">
+                      <td class="whitespace-nowrap pl-4 pr-3 py-5 text-2xl text-gray-700"><%= link_to "##{event.number} – #{event.location}", event %></td>
+                      <td class="whitespace-nowrap px-3 py-5 text-2xl text-gray-700"><%= link_to l(event.date), event %></td>
+                      <td class="whitespace-nowrap px-3 py-5 text-2xl text-gray-700"><%= link_to (event.results.count + event.volunteers.count), event %></td>
+                      <td class="whitespace-nowrap pl-3 pr-4 py-5 text-2xl text-gray-700"><%= link_to event.results.order(:time).first&.time_string || "N/A", event %></td>
                     </tr>
                   <% end %>
                 </tbody>
