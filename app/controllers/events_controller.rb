@@ -1,4 +1,6 @@
 class EventsController < ApplicationController
+  allow_unauthenticated_access(only: [ :index, :show, :show_latest ])
+
   def index
     @events = Event.all.order(number: :desc).includes(:results)
   end

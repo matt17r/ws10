@@ -11,7 +11,6 @@ Rails.application.routes.draw do
   get "legacy_results" => "static_pages#results"
 
   resource :session
-  resources :passwords, param: :token
 
   resources :events, param: :number
 
