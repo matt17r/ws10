@@ -40,7 +40,7 @@
           </div>
         </div>
       </div>
-      <section class="mt-16 grid grid-cols-1 lg:grid-cols-2 lg:gap-12">
+      <section class="mt-8 lg:mt-16 grid grid-cols-1 lg:grid-cols-2 lg:gap-x-12">
         <div class="max-w-lg">
           <h2 class="text-2xl font-medium tracking-tight">Course Start Point</h2>
           <p class="mt-6 text/6 text-gray-600">The course starts adjacent to the Bung Shelter, near the main carpark for Bungarribee Park and the Warrigal dog run. This is the same starting point as Rooty Hill parkrun. Vehicle access to Bungarribee Park is at the intersection of Doonside Road and Holbeche Road.</p>
@@ -49,24 +49,25 @@
         <div class="lg:row-span-2 mt-8 lg:my-auto">
           <%= image_tag "bungarribee-start.png", class: "rounded-lg" %>
         </div>
-        <div class="max-lg:mt-8 lg:col-span-1">
+        <div class="max-w-lg mt-8 lg:col-span-1">
           <h2 class="text-2xl font-medium tracking-tight">Facilities</h2>
           <p class="mt-6 text/6 text-gray-600">There is plenty of car parking and places to secure a bike (bring your own lock).</p>
           <p class="mt-8 text/6 text-gray-600">There are public toilet facilities 200m from the course start and a drinking fountain (with dog bowl below) at the course start.</p>
-          <p class="mt-8 text/6 text-gray-600"></p>
         </div>
       </section>
-      <section class="mt-16 grid grid-cols-1 lg:grid-cols-2 lg:gap-12">
-        <div class="max-w-lg order-1 lg:order-2">
+      <section class="mt-8 lg:mt-16 grid grid-cols-1 lg:grid-cols-2 lg:gap-x-12">
+        <div class="max-w-lg">
           <h2 class="text-2xl font-medium tracking-tight">Course Description</h2>
           <p class="mt-6 text/6 text-gray-600">The course is mostly on sealed (concrete/bitumen) tracks but there are two gravel sections and a dirt section that can be muddy after rain. The course is a large, looping out and back course and you're never more than about 1.5km from the start point.</p>
-          <p class="mt-8 text-lg/6 text-gray-600"><a class="text-[#54494B] underline underline-offset-[3px] hover:no-underline hover:text-[#9DA39A]" href="https://www.strava.com/routes/3336193874389944524">Strava Route</a></p>
-          <h2 class="mt-9 text-2xl font-medium tracking-tight">Event Registration</h2>
+          <p class="mt-6 text-lg/6 text-gray-600"><a class="text-[#54494B] underline underline-offset-[3px] hover:no-underline hover:text-[#9DA39A]" href="https://www.strava.com/routes/3336193874389944524">Strava Route</a></p>
+        </div>
+        <div class="lg:row-span-2 mt-8 lg:my-auto">
+          <div class="strava-embed-placeholder" data-embed-type="route" data-embed-id="3336193874389944524" data-units="metric" data-full-width="true" data-style="standard" data-surface-type="true" data-map-hash="12.89/-33.78104/150.86593" data-club-id="1343589" data-from-embed="true"></div><script src="https://strava-embeds.com/embed.js"></script>
+        </div>
+        <div class="max-w-lg">
+          <h2 class="mt-9 lg:mt-0 text-2xl font-medium tracking-tight">Event Registration</h2>
           <p class="mt-6 text/6 text-gray-600">Pre-registration is helpful but not required, you can simply show up on the morning and run. To register to attend, please send an email to <%= mail_to "matt@ws10.run", subject: "WS10 Bungarribee - 20 April", body: "I will be attending the WS10 at Bungarribbe Park on 20/04/2025. This is the email address for my results email after the event.", class: "text-[#54494B] underline underline-offset-[3px] hover:no-underline hover:text-[#9DA39A]" %></p>
           <p class="mt-6 text/6 text-gray-600">You can also help us gauge interest (and spread the word!) by indicating you will come to the <a class="text-[#54494B] underline underline-offset-[3px] hover:no-underline hover:text-[#9DA39A]" href="https://www.strava.com/clubs/1343589/group_events/1978026">Strava Event</a> or the <a class="text-[#54494B] underline underline-offset-[3px] hover:no-underline hover:text-[#9DA39A]" href="https://facebook.com/events/1155100105816677">Facebook Event</a>.</p>
-        </div>
-        <div class="mt-8 lg:mt-0 ml-0 lg:mx-auto order-2 lg:order-1">
-          <div class="strava-embed-placeholder" data-embed-type="route" data-embed-id="3336193874389944524" data-units="metric" data-full-width="true" data-style="standard" data-surface-type="true" data-map-hash="12.89/-33.78104/150.86593" data-club-id="1343589" data-from-embed="true"></div><script src="https://strava-embeds.com/embed.js"></script>
         </div>
       </section>
     </div>
