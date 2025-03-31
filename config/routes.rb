@@ -8,8 +8,7 @@ Rails.application.routes.draw do
 
   get "about", to: "static_pages#about"
   get "courses", to: "static_pages#courses"
-  get "results", to: "static_pages#results"
-  get "new_results", to: "events#show_latest"
+  get "results", to: "events#show_latest"
 
   resource :session, only: [ :new, :create, :destroy ]
 
