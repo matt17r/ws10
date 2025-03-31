@@ -11,7 +11,7 @@ Rails.application.routes.draw do
   get "results", to: "static_pages#results"
   get "new_results", to: "events#show_latest"
 
-  resource :session, only: [:new, :create, :destroy]
+  resource :session, only: [ :new, :create, :destroy ]
 
-  resources :events, param: :number, only: [:index, :show]
+  resources :events, param: :number, only: [ :index, :show ]
 end
