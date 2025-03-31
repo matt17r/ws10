@@ -18,13 +18,14 @@ class Result < ApplicationRecord
   }
 
   def place
-    event.results.where("time < ?", time).count + 1
+    return "P" if time.nil?
+    event.results.where("time IS NOT NULL AND time < ?", time).count + 1
   end
 
   def pb?
     return false unless user
     return false if first_timer?
-    previous_best = user.results.joins(:event).where("events.number < ?", event.number).order(:time).first&.time
+    previous_best = user.results.joins(:event).where("time IS NOT NULL AND events.number < ?", event.number).order(:time).first&.time
     time && (previous_best && time < previous_best) || time && !previous_best
   end
 
@@ -35,13 +36,13 @@ class Result < ApplicationRecord
   end
 
   def time_string
-    return "Unknown" unless time
+    return "Participant" unless time
     format_string = (time < 3600 ? "%M:%S" : "%k:%M:%S")
     Time.at(time).utc.strftime(format_string).strip
   end
 
   def time_string=(input)
-    if input.blank? || input == "Unknown"
+    if input.blank? || input == "Participant"
       self.time = nil
       return
     end
