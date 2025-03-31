@@ -28,4 +28,8 @@
 #       enabled: "ON"
 
 en:
-  hello: "Hello world"
+  date:
+    formats:
+      default: "%d %b %Y"
+      long: "%d %B, %Y"
+      short: "%d/%b/%y"

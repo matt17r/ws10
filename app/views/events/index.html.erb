@@ -1,0 +1,37 @@
+<div class="my-16 px-6 lg:px-8">
+  <div class="mx-auto max-w-2xl lg:max-w-7xl">
+    <div class="px-4 sm:px-6 lg:px-8">
+      <h1 class="text-pretty text-4xl font-medium tracking-tighter text-gray-950 dark:text-white sm:text-6xl">All Events</h1>
+      <div class="mt-4 flow-root">
+        <% if @events.present? %>
+          <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+            <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+              <table class="table-fixed min-w-full divide-y divide-gray-300">
+                <thead>
+                  <tr>
+                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left font-semibold text-gray-900">Event</th>
+                    <th scope="col" class="py-3.5 px-3 text-left font-semibold text-gray-900">Date</th>
+                    <th scope="col" class="py-3.5 px-3 text-left font-semibold text-gray-900">Participants</th>
+                    <th scope="col" class="py-3.5 pl-3 pr-4 text-left font-semibold text-gray-900">Fastest Time</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200 bg-white">
+                  <% @events.each do |event| %>
+                    <tr class="hover:bg-[#9DA39A]/50">
+                      <td class="whitespace-nowrap pl-4 pr-3 py-5 text-2xl text-gray-700"><%= link_to "##{event.number} – #{event.location}", event %></td>
+                      <td class="whitespace-nowrap px-3 py-5 text-2xl text-gray-700"><%= link_to l(event.date), event %></td>
+                      <td class="whitespace-nowrap px-3 py-5 text-2xl text-gray-700"><%= link_to (event.results.count + event.volunteers.count), event %></td>
+                      <td class="whitespace-nowrap pl-3 pr-4 py-5 text-2xl text-gray-700"><%= link_to event.results.order(:time).first&.time_string || "N/A", event %></td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        <% else %>
+          <p class="text-2xl font-medium p-2 md:p-0 md:py-2">No events yet, please check back later.</p>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
