@@ -19,4 +19,8 @@ class User < ApplicationRecord
   def organiser?
     roles.any? { |r| r.name == "Organiser" }
   end
+
+  def personal_best
+    results.order(:time).first
+  end
 end

@@ -1,0 +1,15 @@
+<div class="my-16 px-6 lg:px-8">
+  <div class="mx-auto max-w-2xl lg:max-w-7xl">
+    <div class="px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-wrap">
+        <h1 class="text-2xl font-semibold text-gray-900 basis-full lg:basis-auto lg:grow lg:order-first">Welcome <%= @user.name %>!</h1>
+        <% if @user.results.size > 0 %>
+          <p>You've completed <%= pluralize(@user.results.size, 'event') %> and your best time is <%= @user.personal_best.time_string %></p>
+        <% end %>
+        <% if @user.volunteers.size > 0 %>
+          <p>Thank you for volunteering at <%= pluralize(@user.results.size, 'event') %>, I'm grateful to everyone who volunteers and helps make these events happen!</p>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

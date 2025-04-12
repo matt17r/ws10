@@ -18,4 +18,5 @@ Rails.application.routes.draw do
   resource :registration, only: [ :new, :create ]
 
   resources :events, param: :number, only: [ :index, :show ]
+  resource :user, only: [:show, :edit, :update], path: 'profile'
 end
