@@ -1,0 +1,7 @@
+<% if Current.user %>
+  <div class="border-t border-black/5"></div>
+  <%= link_to "Profile", user_path, class: "text-base font-semibold text-grey-950" %>
+  <%= button_to "Sign out", logout_path, class: "text-base font-semibold text-[#DB2955] cursor-pointer" %>
+<% else %>
+  <%= link_to "Sign in/up", login_path, class: "text-base font-semibold text-[#DB2955]" %>
+<% end %>
