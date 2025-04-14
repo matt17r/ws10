@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
-  before_action :set_current_user, only: [:show, :edit, :update]
+  before_action :set_current_user, only: [ :show, :edit, :update ]
 
   def show
   end
@@ -9,7 +9,7 @@ class UsersController < ApplicationController
 
   def update
     if @user.update(user_params)
-      redirect_to profile_path, notice: 'Profile updated'
+      redirect_to profile_path, notice: "Profile updated"
     else
       render :edit
     end
