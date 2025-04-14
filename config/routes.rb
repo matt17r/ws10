@@ -11,12 +11,12 @@ Rails.application.routes.draw do
   get "results", to: "events#show_latest"
 
   resource :session, only: [ :new, :create, :destroy ]
-  get "login", to: "sessions#new"
-  post "login", to: "sessions#create"
-  post "logout", to: "sessions#destroy"
+  get "sign_in", to: "sessions#new"
+  post "sign_in", to: "sessions#create"
+  post "sign_out", to: "sessions#destroy"
   resources :passwords, param: :token, only: [ :new, :create, :edit, :update ]
   resource :registration, only: [ :new, :create ]
 
   resources :events, param: :number, only: [ :index, :show ]
-  resource :user, only: [:show, :edit, :update], path: 'profile'
+  resource :user, only: [ :show, :edit, :update ], path: "profile"
 end
