@@ -1,0 +1,7 @@
+# Welcome to WS10, <%= @user.name %>
+
+Please, confirm your account by clicking the link below within the next hour:
+<%= confirmation_url(token: @user.expiring_token) %>
+
+If this token is expired, you can request a new one here:
+<%= forgot_password_url %>
