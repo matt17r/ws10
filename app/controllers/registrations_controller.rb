@@ -7,10 +7,11 @@ class RegistrationsController < ApplicationController
 
   def create
     @user = User.new(user_params)
-    if @user.save
-      start_new_session_for @user
-      redirect_to root_path, notice: "Successfully signed up!"
+    if @user.valid? && @user.save
+      @user.send_confirmation_email
+      redirect_to root_path, notice: "Almost there! Please check your email to confirm your account"
     else
+      flash.now[:alert] = "Could not create account. Please check the errors indicated below"
       render :new
     end
   end
@@ -18,6 +19,6 @@ class RegistrationsController < ApplicationController
   private
 
   def user_params
-    params.require(:user).permit(:email_address, :password, :password_confirmation)
+    params.require(:user).permit(:name, :display_name, :email_address, :password, :password_confirmation)
   end
 end
