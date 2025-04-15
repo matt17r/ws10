@@ -10,12 +10,21 @@ Rails.application.routes.draw do
   get "courses", to: "static_pages#courses"
   get "results", to: "events#show_latest"
 
-  resource :session, only: [ :new, :create, :destroy ]
   get "sign_in", to: "sessions#new"
   post "sign_in", to: "sessions#create"
-  post "sign_out", to: "sessions#destroy"
-  resources :passwords, param: :token, only: [ :new, :create, :edit, :update ]
-  resource :registration, only: [ :new, :create ]
+  delete "sign_out", to: "sessions#destroy"
+
+  get "forgot_password", to: "passwords#new"
+  post "forgot_password", to: "passwords#create"
+  get "reset_password/:token", to: "passwords#edit", as: :edit_password
+  patch "reset_password/:token", to: "passwords#update"
+  put "reset_password/:token", to: "passwords#update"
+
+  get "sign_up", to: "registrations#new"
+  post "sign_up", to: "registrations#create"
+
+  get "confirm_email/:token", to: "confirmations#show", as: :confirm_email
+  post "confirm_email/resend", to: "confirmations#create", as: :resend_confirmation
 
   resources :events, param: :number, only: [ :index, :show ]
   resource :user, only: [ :show, :edit, :update ], path: "profile"
