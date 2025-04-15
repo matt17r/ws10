@@ -399,6 +399,7 @@ DEPENDENCIES
   thruster
   turbo-rails
   tzinfo-data
+  unicode-emoji
   web-console
 
 BUNDLED WITH

@@ -8,10 +8,22 @@ class UsersController < ApplicationController
   end
 
   def update
-    if @user.update(user_params)
-      redirect_to profile_path, notice: "Profile updated"
+    @user.assign_attributes(user_params)
+    @show_password_fields = params[:change_password].present?
+
+    if params[:user][:password].present?
+      unless @user.authenticate(params[:user][:current_password])
+        @user.errors.add(:current_password, "is incorrect")
+        flash.now[:alert] = "Your current password is incorrect."
+        return render :edit, status: :unprocessable_entity
+      end
+    end
+
+    if @user.save
+      redirect_to user_path, notice: "Profile updated"
     else
-      render :edit
+      flash.now[:alert] = "An error prevented your profile from being saved"
+      render :edit, status: :unprocessable_entity
     end
   end
 
@@ -22,6 +34,6 @@ class UsersController < ApplicationController
   end
 
   def user_params
-    params.require(:user).permit(:name, :email, :avatar) # etc.
+    params.require(:user).permit(:name, :email_address, :display_name, :emoji, :current_password, :password, :password_confirmation)
   end
 end
