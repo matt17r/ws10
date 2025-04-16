@@ -16,7 +16,7 @@
       </div>
       <div class="my-5">
         <%= form.label :email_address, class: "block text-sm/6 font-medium #{@user.errors[:email_address].present? ? "text-red-600" : "text-gray-900"}" %>
-        <%= form.email_field :email_address, required: true, autocomplete: "email", placeholder: "Enter your email address", class: "block shadow rounded-md border #{@user.errors[:email_address].present? ? "border-red-500" : "border-gray-400"} px-3 py-2 mt-2 w-full" %>
+        <%= form.email_field :email_address, required: true, autocomplete: "username", placeholder: "Enter your email address", class: "block shadow rounded-md border #{@user.errors[:email_address].present? ? "border-red-500" : "border-gray-400"} px-3 py-2 mt-2 w-full" %>
         <% if @user.errors[:email_address].present? %>
           <p class="mt-1 text-sm text-red-600">
             <%= @user.errors.full_messages_for(:email_address).join(", ") %>
