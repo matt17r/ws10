@@ -12,6 +12,7 @@ class User < ApplicationRecord
   generates_token_for :user_confirmation, expires_in: 1.hour
 
   normalizes :email_address, with: ->(e) { e.strip.downcase }
+  normalizes :name, :display_name, :emoji, with: ->(value) { value.strip }
 
   validates :name, :display_name, :emoji, presence: true
   validates :email_address, format: { with: URI::MailTo::EMAIL_REGEXP }, presence: true, uniqueness: true
