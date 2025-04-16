@@ -2,7 +2,7 @@
 
 <p>
   Please, confirm your account by clicking the link below within the next hour:
-  <%= link_to "Confirm my account", confirmation_url(token: @user.expiring_token) %>
+  <%= link_to "Confirm my account", confirm_email_url(token: @user.expiring_token) %>
 </p>
 
 <p>
