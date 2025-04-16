@@ -11,8 +11,8 @@ class UsersController < ApplicationController
     @user.assign_attributes(user_params)
     @show_password_fields = params[:change_password].present?
 
-    if params[:user][:password].present?
-      unless @user.authenticate(params[:user][:current_password])
+    if @show_password_fields
+      unless User.authenticate_by(email_address: user_params[:email_address], password: user_params[:current_password])
         @user.errors.add(:current_password, "is incorrect")
         flash.now[:alert] = "Your current password is incorrect."
         return render :edit, status: :unprocessable_entity
