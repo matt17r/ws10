@@ -37,7 +37,7 @@
       </div>
       <div class="my-5">
         <%= form.label :emoji, class: "block text-sm/6 font-medium #{@user.errors[:emoji].present? ? "text-red-600" : "text-gray-900"}" %>
-        <%= form.text_field :emoji, required: true, placeholder: "👤", class: "block shadow rounded-md border #{@user.errors[:emoji].present? ? "border-red-500" : "border-gray-400"} px-3 py-2 mt-2 w-full" %>
+        <%= form.text_field :emoji, required: true, placeholder: "🏃", class: "block shadow rounded-md border #{@user.errors[:emoji].present? ? "border-red-500" : "border-gray-400"} px-3 py-2 mt-2 w-full" %>
         <% if @user.errors[:emoji].present? %>
           <p class="mt-1 text-sm text-red-600">
             <%= @user.errors.full_messages_for(:emoji).join(", ") %>

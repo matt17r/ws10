@@ -13,7 +13,7 @@ class SessionsController < ApplicationController
         redirect_to after_authentication_url, notice: "Signed in"
       else
         user.send_confirmation_email
-        redirect_to root_path, alert: "Please verify your email address before signing in"
+        redirect_to root_path, notice: "Please click the link in the verification email we just sent you to confirm your account"
       end
     else
       flash.now[:alert] = "Email address or password is invalid. Please try again"
