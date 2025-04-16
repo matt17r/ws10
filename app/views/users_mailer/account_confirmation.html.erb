@@ -1,0 +1,10 @@
+<h1>Welcome to WS10, <%= @user.name %></h1>
+
+<p>
+  Please, confirm your account by clicking the link below within the next hour:
+  <%= link_to "Confirm my account", confirmation_url(token: @user.expiring_token) %>
+</p>
+
+<p>
+  If this token is expired, you can <%= link_to "request a new one", forgot_password_url %>
+</p>

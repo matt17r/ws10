@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_03_30_053217) do
+ActiveRecord::Schema[8.0].define(version: 2025_04_15_004157) do
   create_table "assignments", force: :cascade do |t|
     t.integer "user_id", null: false
     t.integer "role_id", null: false
@@ -69,6 +69,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_30_053217) do
     t.string "name", null: false
     t.string "display_name", default: "Anonymous", null: false
     t.string "emoji", default: "👤", null: false
+    t.datetime "confirmed_at"
     t.index ["display_name"], name: "index_users_on_display_name"
     t.index ["email_address"], name: "index_users_on_email_address", unique: true
     t.index ["emoji"], name: "index_users_on_emoji"

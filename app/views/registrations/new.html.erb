@@ -1,0 +1,66 @@
+<div class="my-16 px-6 lg:px-8">
+<div class="mx-auto w-full sm:w-2/3 lg:w-1/2 xl:w-1/3">
+  <h1 class="font-bold text-4xl text-gray-950">Sign up</h1>
+
+  <%= form_with model: @user, data: { turbo: false }, url: sign_up_url, class: "contents" do |form| %>
+    <div class="my-5">
+      <%= form.label :name, class: "block text-sm/6 font-medium #{@user.errors[:name].present? ? "text-red-600" : "text-gray-900"}" %>
+      <%= form.text_field :name, required: true, autofocus: true, autocomplete: "name", placeholder: "Enter your full name", class: "block shadow rounded-md border #{@user.errors[:name].present? ? "border-red-500" : "border-gray-400"} px-3 py-2 mt-2 w-full" %>
+      <% if @user.errors[:name].present? %>
+        <p class="mt-1 text-sm text-red-600">
+          <%= @user.errors.full_messages_for(:name).join(", ") %>
+        </p>
+      <% end %>
+    </div>
+
+    <div class="my-5">
+      <%= form.label :display_name, class: "block text-sm/6 font-medium #{@user.errors[:display_name].present? ? "text-red-600" : "text-gray-900"}" %>
+      <%= form.text_field :display_name, required: true, autocomplete: "given-name", placeholder: "Public name or nickname", class: "block shadow rounded-md border #{@user.errors[:display_name].present? ? "border-red-500" : "border-gray-400"} px-3 py-2 mt-2 w-full" %>
+      <% if @user.errors[:display_name].present? %>
+        <p class="mt-1 text-sm text-red-600">
+          <%= @user.errors.full_messages_for(:display_name).join(", ") %>
+        </p>
+      <% end %>
+    </div>
+
+    <div class="my-5">
+      <%= form.label :email_address, class: "block text-sm/6 font-medium #{@user.errors[:email_address].present? ? "text-red-600" : "text-gray-900"}" %>
+      <%= form.email_field :email_address, required: true, autocomplete: "email", placeholder: "Enter your email address", class: "block shadow rounded-md border #{@user.errors[:email_address].present? ? "border-red-500" : "border-gray-400"} px-3 py-2 mt-2 w-full" %>
+      <% if @user.errors[:email_address].present? %>
+        <p class="mt-1 text-sm text-red-600">
+          <%= @user.errors.full_messages_for(:email_address).join(", ") %>
+        </p>
+      <% end %>
+    </div>
+
+    <div class="my-5">
+      <%= form.label :password, class: "block text-sm/6 font-medium #{@user.errors[:password].present? ? "text-red-600" : "text-gray-900"}" %>
+      <%= form.password_field :password, required: true, autocomplete: "new-password", placeholder: "Enter your password", maxlength: 72, class: "block shadow rounded-md border #{@user.errors[:password].present? ? "border-red-500" : "border-gray-400"} px-3 py-2 mt-2 w-full" %>
+      <% if @user.errors[:password].present? %>
+        <p class="mt-1 text-sm text-red-600">
+          <%= @user.errors.full_messages_for(:password).join(", ") %>
+        </p>
+      <% end %>
+    </div>
+
+    <div class="my-5">
+      <%= form.label :password_confirmation, class: "block text-sm/6 font-medium #{@user.errors[:password_confirmation].present? ? "text-red-600" : "text-gray-900"}" %>
+      <%= form.password_field :password_confirmation, required: true, autocomplete: "new-password", placeholder: "Confirm your password", maxlength: 72, class: "block shadow rounded-md border #{@user.errors[:password_confirmation].present? ? "border-red-500" : "border-gray-400"} px-3 py-2 mt-2 w-full" %>
+      <% if @user.errors[:password_confirmation].present? %>
+        <p class="mt-1 text-sm text-red-600">
+          <%= @user.errors.full_messages_for(:password_confirmation).join(", ") %>
+        </p>
+      <% end %>
+    </div>
+
+    <div class="col-span-6 sm:flex sm:items-center sm:gap-4">
+      <div class="inline">
+        <%= form.submit "Sign up", class: "rounded-md px-3.5 py-2.5 bg-[#DB2955] hover:bg-[#DB2955]/[90%] text-white inline-block font-medium cursor-pointer" %>
+      </div>
+
+      <div class="mt-4 text-sm text-gray-500 sm:mt-0">
+        <%= link_to "Already registered?", sign_in_path, class: "text-gray-700 underline" %>
+      </div>
+    </div>
+  <% end %>
+</div>
