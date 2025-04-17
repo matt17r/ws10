@@ -23,8 +23,8 @@ class User < ApplicationRecord
     roles.any? { |r| r.name == "Administrator" }
   end
 
-  def organiser?
-    roles.any? { |r| r.name == "Organiser" }
+  def barcode_string
+    "A#{id}"
   end
 
   def confirm!
@@ -38,6 +38,10 @@ class User < ApplicationRecord
 
   def expiring_token
     generate_token_for(:user_confirmation)
+  end
+
+  def organiser?
+    roles.any? { |r| r.name == "Organiser" }
   end
 
   def personal_best
@@ -56,9 +60,5 @@ class User < ApplicationRecord
     if matches.length != 1 || matches.first != emoji
       errors.add(:emoji, "must be a single emoji character from the approved (non-textual) set")
     end
-  end
-
-  def barcode_string
-    "A#{id}"
   end
 end
