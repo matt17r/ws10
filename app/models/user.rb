@@ -56,9 +56,9 @@ class User < ApplicationRecord
 
   def self.csv_template
     csv_data = CSV.generate(headers: true) do |csv|
-      csv << ["name", "display_name", "email_address"] # headers
-      csv << ["Jane Doe", "Jane", "jane@example.com"] # sample row
-      csv << ["John Smith", "John", "john@example.com"] # another sample
+      csv << [ "email_address", "name", "display_name" ]
+      csv << [ "jane@example.com", "Jane Doe", "Jane" ]
+      csv << [ "john@example.com", "John Smith", "John" ]
     end
   end
 
