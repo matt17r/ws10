@@ -1,9 +1,9 @@
 <% if Current.user %>
   <div class="relative flex group/item relative">
-    <%= link_to "Profile", user_path, class: "flex items-center px-4 py-3 text-base font-semibold text-grey-950" %>
+    <%= link_to "Profile", user_path, class: "flex items-center px-4 py-3 text-base font-semibold text-grey-950 bg-blend-multiply hover:bg-black/[2.5%]" %>
   </div>
   <div class="relative flex group/item relative">
-    <%= button_to "Sign out", sign_out_path, method: :delete, class: "flex items-center px-4 py-3 text-base font-semibold text-[#DB2955] cursor-pointer" %>
+    <%= button_to "Sign out", sign_out_path, method: :delete, class: "flex items-center px-4 py-3 text-base font-semibold text-[#DB2955] cursor-pointer bg-blend-multiply hover:bg-black/[2.5%]" %>
   </div>
 <% else %>
   <div class="relative flex group/item relative">

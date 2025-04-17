@@ -1,7 +1,7 @@
 <% if Current.user %>
   <div class="border-t border-black/5"></div>
-  <%= link_to "Profile", user_path, class: "text-base font-semibold text-grey-950" %>
-  <%= button_to "Sign out", sign_out_path, method: :delete, class: "text-base font-semibold text-[#DB2955] cursor-pointer" %>
+  <%= link_to "Profile", user_path, class: "text-base font-semibold text-grey-950 bg-blend-multiply hover:bg-black/[2.5%]" %>
+  <%= button_to "Sign out", sign_out_path, method: :delete, class: "text-base font-semibold text-[#DB2955] cursor-pointer bg-blend-multiply hover:bg-black/[2.5%]" %>
 <% else %>
-  <%= link_to "Sign in/up", sign_in_path, class: "text-base font-semibold text-[#DB2955]" %>
+  <%= link_to "Sign in/up", sign_in_path, class: "text-base font-semibold text-[#DB2955] bg-blend-multiply hover:bg-black/[2.5%]" %>
 <% end %>
