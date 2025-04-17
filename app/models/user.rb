@@ -1,3 +1,5 @@
+require "csv"
+
 class User < ApplicationRecord
   include Barcodeable
 
@@ -50,6 +52,14 @@ class User < ApplicationRecord
 
   def send_confirmation_email
     UsersMailer.account_confirmation(self).deliver_later
+  end
+
+  def self.csv_template
+    csv_data = CSV.generate(headers: true) do |csv|
+      csv << ["name", "display_name", "email_address"] # headers
+      csv << ["Jane Doe", "Jane", "jane@example.com"] # sample row
+      csv << ["John Smith", "John", "john@example.com"] # another sample
+    end
   end
 
   private

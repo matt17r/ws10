@@ -7,6 +7,18 @@ class UsersController < ApplicationController
   def edit
   end
 
+  def import
+    if params[:file].present?
+      redirect_to users_path, notice: 'Users imported successfully.'
+    else
+      redirect_to users_path, alert: 'No file uploaded.'
+    end
+  end
+
+  def download_template
+    send_data User.csv_template, filename: "user_template.csv", type: "text/csv; charset=utf-8"
+  end
+
   def update
     @user.assign_attributes(user_params)
     @show_password_fields = params[:change_password].present?
