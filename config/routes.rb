@@ -28,4 +28,12 @@ Rails.application.routes.draw do
 
   resources :events, param: :number, only: [ :index, :show ]
   resource :user, only: [ :show, :edit, :update ], path: "profile"
+
+  constraints AdminUser do
+    scope :admin do
+      post :user_import, to: "users#import"
+      get :dashboard, to: "static_pages#admin_dashboard"
+      get "user_import/template", to: "users#download_template"
+    end
+  end
 end

@@ -6,6 +6,9 @@ class StaticPagesController < ApplicationController
   def about
   end
 
+  def admin_dashboard
+  end
+
   def courses
   end
 

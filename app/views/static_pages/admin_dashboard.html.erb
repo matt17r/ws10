@@ -1,0 +1,15 @@
+<div class="mt-16 px-6 lg:px-8">
+  <div class="mx-auto max-w-2xl lg:max-w-7xl">
+    <h1 class="text-pretty text-4xl font-medium tracking-tight text-gray-950 dark:text-white sm:text-6xl">Admin dashboard</h1>
+    <%= form_with url: user_import_path, method: :post, multipart: true do |f| %>
+      <div class="my-5">
+        <%= f.label :file, "CSV File", class: "block text-sm font-medium text-gray-700" %>
+        <%= f.file_field :file, accept: ".csv", class: "block rounded-md border border-gray-300 shadow-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-gray-50 file:text-gray-700 hover:file:bg-gray-100 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" %>
+      </div>
+      <p class="mt-1">Download this <%= link_to "sample CSV template", user_import_template_path, data: { turbo: false } %> for reference.</p>
+      <div class="my-5">
+        <%= f.submit "Import Users", class: "justify-center rounded-md border border-transparent bg-[#DB2955] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#DB2955]/[90%] cursor-pointer" %>
+      </div>
+    <% end %>
+  </div>
+</div>
