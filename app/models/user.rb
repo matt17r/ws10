@@ -1,11 +1,12 @@
 class User < ApplicationRecord
+  include Barcodeable
+
   has_secure_password
   attr_accessor :current_password
 
   has_many :sessions, dependent: :destroy
   has_many :assignments
   has_many :roles, through: :assignments, dependent: :destroy
-
   has_many :results, dependent: :destroy
   has_many :volunteers, dependent: :destroy
 
@@ -22,8 +23,8 @@ class User < ApplicationRecord
     roles.any? { |r| r.name == "Administrator" }
   end
 
-  def organiser?
-    roles.any? { |r| r.name == "Organiser" }
+  def barcode_string
+    "A#{id}"
   end
 
   def confirm!
@@ -37,6 +38,10 @@ class User < ApplicationRecord
 
   def expiring_token
     generate_token_for(:user_confirmation)
+  end
+
+  def organiser?
+    roles.any? { |r| r.name == "Organiser" }
   end
 
   def personal_best
