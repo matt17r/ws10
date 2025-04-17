@@ -1,11 +1,12 @@
 class User < ApplicationRecord
+  include Barcodeable
+
   has_secure_password
   attr_accessor :current_password
 
   has_many :sessions, dependent: :destroy
   has_many :assignments
   has_many :roles, through: :assignments, dependent: :destroy
-
   has_many :results, dependent: :destroy
   has_many :volunteers, dependent: :destroy
 
@@ -55,5 +56,9 @@ class User < ApplicationRecord
     if matches.length != 1 || matches.first != emoji
       errors.add(:emoji, "must be a single emoji character from the approved (non-textual) set")
     end
+  end
+
+  def barcode_string
+    "A#{id}"
   end
 end
