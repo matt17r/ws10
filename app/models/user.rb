@@ -24,7 +24,7 @@ class User < ApplicationRecord
   end
 
   def barcode_string
-    "A#{id}"
+    "A#{sprintf("%06d", id)}"
   end
 
   def confirm!
