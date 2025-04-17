@@ -9,9 +9,32 @@ class UsersController < ApplicationController
 
   def import
     if params[:file].present?
-      redirect_to users_path, notice: 'Users imported successfully.'
+      created = 0
+      skipped = 0
+      errors = 0
+      CSV.foreach(params[:file], headers: true) do |row|
+        unless row["email_address"].present? && row["name"].present?
+          puts "Could not import user - #{row}"
+          error += 1
+          next
+        end
+
+        user = User.create({
+            email_address: row["email_address"],
+            name: row["name"],
+            display_name: row["display_name"],
+            password: SecureRandom.hex(12)
+          })
+
+        if user.persisted?
+          created += 1
+        else
+          skipped += 1
+        end
+      end
+      redirect_to dashboard_path, notice: "#{created} users created (#{skipped} skipped, #{errors} errors)."
     else
-      redirect_to users_path, alert: 'No file uploaded.'
+      redirect_to dashboard_path, alert: "No file selected/uploaded."
     end
   end
 
