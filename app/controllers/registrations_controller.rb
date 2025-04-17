@@ -1,5 +1,7 @@
 class RegistrationsController < ApplicationController
   allow_unauthenticated_access
+  before_action :validate_cloudflare_turnstile, only: [ :create ] if Rails.env.production?
+  rescue_from RailsCloudflareTurnstile::Forbidden, with: :forbidden_turnstile
 
   def new
     @user = User.new
@@ -20,5 +22,10 @@ class RegistrationsController < ApplicationController
 
   def user_params
     params.require(:user).permit(:name, :display_name, :email_address, :password, :password_confirmation)
+  end
+
+  def forbidden_turnstile
+    flash[:alert] = "Turnstile (bot protection) error, please reload the page and try again."
+    redirect_to root_path
   end
 end

@@ -20,6 +20,7 @@
     <%# Includes all stylesheet files in app/assets/stylesheets %>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
+    <%= cloudflare_turnstile_script_tag %>
   </head>
 
   <body class="text-gray-950 antialiased">
