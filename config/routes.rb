@@ -34,6 +34,14 @@ Rails.application.routes.draw do
       post :user_import, to: "users#import"
       get :dashboard, to: "static_pages#admin_dashboard"
       get "user_import/template", to: "users#download_template"
+      resources :finish_positions, only: [ :create, :destroy ]
+    end
+  end
+
+  constraints OrganiserUser do
+    scope :admin do
+      get :dashboard, to: "static_pages#admin_dashboard"
+      resources :finish_positions, only: [ :create, :destroy ]
     end
   end
 end

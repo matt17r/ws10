@@ -2,7 +2,7 @@
   <div class="relative flex group/item relative">
     <%= link_to "Profile", user_path, class: "flex items-center px-4 py-3 text-base font-semibold text-grey-950 bg-blend-multiply hover:bg-black/[2.5%]" %>
   </div>
-  <% if Current.user.admin? %>
+  <% if Current.user.admin? || Current.user.organiser? %>
     <div class="relative flex group/item relative">
       <%= link_to "Admin", dashboard_path, class: "flex items-center px-4 py-3 text-base font-semibold text-grey-950 bg-blend-multiply hover:bg-black/[2.5%]" %>
     </div>
