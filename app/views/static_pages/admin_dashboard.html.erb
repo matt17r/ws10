@@ -1,14 +1,75 @@
 <div class="mt-16 px-6 lg:px-8">
   <div class="mx-auto max-w-2xl lg:max-w-7xl">
-    <h1 class="text-pretty text-4xl font-medium tracking-tight text-gray-950 dark:text-white sm:text-6xl">Admin dashboard</h1>
-    <%= form_with url: user_import_path, method: :post, multipart: true do |f| %>
-      <div class="my-5">
-        <%= f.label :file, "CSV File", class: "block text-sm font-medium text-gray-700" %>
-        <%= f.file_field :file, accept: ".csv", class: "block rounded-md border border-gray-300 shadow-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-gray-50 file:text-gray-700 hover:file:bg-gray-100 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" %>
+    <h1 class="text-pretty text-4xl font-medium tracking-tight text-gray-950">Admin dashboard</h1>
+    <% if Current.user.admin? %>
+      <div>
+        <%= form_with url: user_import_path, method: :post, multipart: true do |f| %>
+          <div class="my-5">
+            <%= f.label :file, "CSV File", class: "block text-sm font-medium text-gray-700" %>
+            <%= f.file_field :file, accept: ".csv", class: "block rounded-md border border-gray-300 shadow-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-gray-50 file:text-gray-700 hover:file:bg-gray-100 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" %>
+          </div>
+          <p class="mt-1">Download this <%= link_to "sample CSV template", user_import_template_path, data: { turbo: false } %> for reference.</p>
+          <div class="my-5">
+            <%= f.submit "Import Users", class: "justify-center rounded-md border border-transparent bg-[#DB2955] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#DB2955]/[90%] cursor-pointer" %>
+          </div>
+        <% end %>
       </div>
-      <p class="mt-1">Download this <%= link_to "sample CSV template", user_import_template_path, data: { turbo: false } %> for reference.</p>
-      <div class="my-5">
-        <%= f.submit "Import Users", class: "justify-center rounded-md border border-transparent bg-[#DB2955] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#DB2955]/[90%] cursor-pointer" %>
+    <% end %>
+
+    <% @in_progress_events.each do |event| %>
+      <h2 class="text-pretty text-3xl font-medium tracking-tight text-gray-950 my-3"><%= "#{event.location} - #{event.date}" %></h2>
+      <div class="my-3 grid grid-cols-1 font-sm md:grid-cols-2">
+        <div>
+          <h3 class="text-pretty text-2xl font-medium tracking-tight text-gray-950 mt-2">All users</h3>
+          <table class="table-fixed border-separate [border-spacing:0.75rem]">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Position</th>
+                <th></th>
+            </thead>
+            <tbody>
+              <% event.unplaced_users.order(:name).each do |user| %>
+                <% form_id = dom_id(user, :finish_position_form) %>
+                <tr>
+                  <td>
+                    <%= form_with model: FinishPosition.new(user: user, event: event), url: finish_positions_path, local: true, html: { id: form_id } do |f| %>
+                      <%= f.hidden_field :user_id, value: user.id %>
+                      <%= f.hidden_field :event_id, value: event.id %>
+                    <% end %>
+                    <%= user.name %>
+                  </td>
+                  <td>
+                    <input form="<%= form_id %>" type="number" name="finish_position[position]" id="<%= dom_id(user, :position) %>"  min="1" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-[#DB2955] sm:text-sm/6" />
+                  </td>
+                  <td>
+                    <input form="<%= form_id %>" type="submit" value="Add" class="justify-center rounded-md border border-transparent bg-[#DB2955] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#DB2955]/[90%] cursor-pointer" />
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+        <div>
+          <h3 class="text-pretty text-2xl font-medium tracking-tight text-gray-950 mt-2">Finish Positions</h3>
+          <table class="table-fixed border-separate [border-spacing:0.75rem]">
+            <thead>
+              <tr>
+                <th>Position</th>
+                <th>Name</th>
+                <th>Actions</th>
+            </thead>
+            <tbody>
+              <% event.finish_positions.order(:position).each do |fp| %>
+                <tr>
+                  <td><%= fp.position %></td>
+                  <td><%= "#{fp.user.name} (#{fp.user.display_name})" %></td>
+                  <td><%= button_to "Delete", finish_position_path(fp), method: :delete, class: "text-base font-semibold text-[#DB2955] cursor-pointer" %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
       </div>
     <% end %>
   </div>

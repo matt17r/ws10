@@ -1,5 +1,5 @@
 RailsCloudflareTurnstile.configure do |c|
-  if ENV["SECRET_KEY_BASE_DUMMY"]
+  if ENV["SECRET_KEY_BASE_DUMMY"].present? || ENV["CI"].present?
     c.site_key = "DUMMY"
     c.secret_key = "DUMMY"
   else
