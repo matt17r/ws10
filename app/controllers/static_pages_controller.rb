@@ -15,9 +15,9 @@ class StaticPagesController < ApplicationController
 
   def home
     @upcoming_events = [
-      EventStruct.new(nickname: "Bungarribee", location: "Bungarribee Park", date: "20th Apr"),
       EventStruct.new(nickname: "Nepean River", location: "Tench Reserve, Jamisontown", date: "18th May"),
-      EventStruct.new(nickname: "Parramatta", location: "Parramatta Park", date: "15th Jun")
+      EventStruct.new(nickname: "Parramatta", location: "Parramatta Park", date: "15th Jun"),
+      EventStruct.new(nickname: "Bungarribee", location: "Bungarribee Park", date: "20th Jul")
     ]
   end
 
