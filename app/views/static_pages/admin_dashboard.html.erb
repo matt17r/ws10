@@ -18,6 +18,28 @@
 
     <% @in_progress_events.each do |event| %>
       <h2 class="text-pretty text-3xl font-medium tracking-tight text-gray-950 my-3"><%= "#{event.location} - #{event.date}" %></h2>
+      <% if event.results.any? %>
+        <h3 class="text-pretty text-2xl font-medium tracking-tight text-gray-950 mt-2">Results</h3>
+        <table class="table-fixed border-separate [border-spacing:0.75rem]">
+          <thead>
+            <tr>
+              <th>Place</th>
+              <th>Name</th>
+              <th>Time</th>
+              <th>Actions</th>
+          </thead>
+          <tbody>
+            <% event.results.order(:time).each do |result| %>
+              <tr>
+                <td><%= result.place %></td>
+                <td><%= result.user.name %></td>
+                <td><%= result.time_string %></td>
+                <td><%= button_to "Delete", result_path(result), method: :delete, class: "text-base font-semibold text-[#DB2955] cursor-pointer" %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      <% end %>
       <div class="my-3 grid grid-cols-1 font-sm md:grid-cols-2 lg:grid-cols-3">
         <div>
           <h3 class="text-pretty text-2xl font-medium tracking-tight text-gray-950 mt-2">Unplaced runners</h3>
@@ -79,7 +101,8 @@
                 <tr>
                   <th>Position</th>
                   <th>Time</th>
-                  <th>Actions</th>
+                  <th>Delete?</th>
+                  <th>Link?</th>
               </thead>
               <tbody>
                 <% event.finish_times.order(:position).each do |ft| %>
@@ -87,6 +110,7 @@
                     <td><%= ft.position %></td>
                     <td><%= ft.time_string %></td>
                     <td><%= button_to "Delete", finish_time_path(ft), method: :delete, class: "text-base font-semibold text-[#DB2955] cursor-pointer" %></td>
+                    <td><%= button_to "Link", result_link_path, params: { event_id: event.id, position: ft.position }, class: "text-base font-semibold text-[#DB2955] cursor-pointer" %></td>
                   </tr>
                 <% end %>
               </tbody>
