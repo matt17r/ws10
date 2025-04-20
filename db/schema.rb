@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_04_18_033146) do
+ActiveRecord::Schema[8.0].define(version: 2025_04_20_031926) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -70,6 +70,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_18_033146) do
     t.index ["position", "event_id"], name: "index_finish_positions_on_position_and_event_id", unique: true
     t.index ["user_id", "event_id"], name: "index_finish_positions_on_user_id_and_event_id", unique: true
     t.index ["user_id"], name: "index_finish_positions_on_user_id"
+  end
+
+  create_table "finish_times", force: :cascade do |t|
+    t.integer "event_id", null: false
+    t.integer "position"
+    t.integer "time"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["event_id"], name: "index_finish_times_on_event_id"
+    t.index ["position"], name: "index_finish_times_on_position"
   end
 
   create_table "results", force: :cascade do |t|
@@ -132,6 +142,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_18_033146) do
   add_foreign_key "assignments", "users"
   add_foreign_key "finish_positions", "events"
   add_foreign_key "finish_positions", "users"
+  add_foreign_key "finish_times", "events"
   add_foreign_key "results", "events"
   add_foreign_key "results", "users"
   add_foreign_key "sessions", "users"

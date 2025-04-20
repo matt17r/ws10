@@ -1,5 +1,6 @@
 class Event < ApplicationRecord
   has_many :finish_positions
+  has_many :finish_times
   has_many :finished_users, through: :finish_positions, source: :user
 
   def unplaced_users
