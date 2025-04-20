@@ -1,19 +1,10 @@
 class FinishTimesController < ApplicationController
-#   def create
-#     @finish_time = FinishTime.new(finish_time_params)
-#
-#     if @finish_time.save
-#       redirect_to dashboard_path, notice: "Finish time for ##{@finish_time.position} added"
-#     else
-#       redirect_to dashboard_path, alert: "Can't add finish time at ##{@finish_time.position}... #{@finish_time.errors.full_messages.to_sentence}"
-#     end
-#   end
-
   def import
     if params[:file].present?
       created = 0
       skipped = 0
       errors = 0
+      # ## Sample Data
       # STARTOFEVENT, 20/04/2025 07:00:23, virtual_volunteer_ios_2.3.0_85
       # 0,            20/04/2025 07:00:23,
       # 1,            20/04/2025 07:35:24, 00:35:00
