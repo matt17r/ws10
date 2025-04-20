@@ -5,7 +5,7 @@
         <%= link_to "Other Events", events_path, class: "mb-4 text-right text-2xl underline underline underline-offset-[3px] basis-full lg:basis-auto lg:order-last" %>
         <h1 class="text-2xl font-semibold text-gray-900 basis-full lg:basis-auto lg:grow lg:order-first"><%= "Event ##{@event.number} – #{l @event.date} – #{@event.location}" %></h1>
       </div>
-      <% if @event.description.present? %>
+      <% if @event.results_ready? && @event.description.present? %>
         <p class="mt-2 text-gray-700"><%= sanitize @event.description %></p>
       <% end %>
       <div class="mt-4 flow-root">
