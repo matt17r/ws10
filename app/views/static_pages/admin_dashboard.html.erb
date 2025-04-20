@@ -18,9 +18,31 @@
 
     <% @in_progress_events.each do |event| %>
       <h2 class="text-pretty text-3xl font-medium tracking-tight text-gray-950 my-3"><%= "#{event.location} - #{event.date}" %></h2>
-      <div class="my-3 grid grid-cols-1 font-sm md:grid-cols-2">
+      <% if event.results.any? %>
+        <h3 class="text-pretty text-2xl font-medium tracking-tight text-gray-950 mt-2">Results</h3>
+        <table class="table-fixed border-separate [border-spacing:0.75rem]">
+          <thead>
+            <tr>
+              <th>Place</th>
+              <th>Name</th>
+              <th>Time</th>
+              <th>Actions</th>
+          </thead>
+          <tbody>
+            <% event.results.order(:time).each do |result| %>
+              <tr>
+                <td><%= result.place %></td>
+                <td><%= result.user.name %></td>
+                <td><%= result.time_string %></td>
+                <td><%= button_to "Delete", result_path(result), method: :delete, class: "text-base font-semibold text-[#DB2955] cursor-pointer" %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      <% end %>
+      <div class="my-3 grid grid-cols-1 font-sm md:grid-cols-2 lg:grid-cols-3">
         <div>
-          <h3 class="text-pretty text-2xl font-medium tracking-tight text-gray-950 mt-2">All users</h3>
+          <h3 class="text-pretty text-2xl font-medium tracking-tight text-gray-950 mt-2">Unplaced runners</h3>
           <table class="table-fixed border-separate [border-spacing:0.75rem]">
             <thead>
               <tr>
@@ -69,6 +91,44 @@
               <% end %>
             </tbody>
           </table>
+        </div>
+
+        <div>
+          <h3 class="text-pretty text-2xl font-medium tracking-tight text-gray-950 mt-2">Finish Times</h3>
+          <% if event.finish_times.any? %>
+            <table class="table-fixed border-separate [border-spacing:0.75rem]">
+              <thead>
+                <tr>
+                  <th>Position</th>
+                  <th>Time</th>
+                  <th>Delete?</th>
+                  <th>Link?</th>
+              </thead>
+              <tbody>
+                <% event.finish_times.order(:position).each do |ft| %>
+                  <tr>
+                    <td><%= ft.position %></td>
+                    <td><%= ft.time_string %></td>
+                    <td><%= button_to "Delete", finish_time_path(ft), method: :delete, class: "text-base font-semibold text-[#DB2955] cursor-pointer" %></td>
+                    <td><%= button_to "Link", result_link_path, params: { event_id: event.id, position: ft.position }, class: "text-base font-semibold text-[#DB2955] cursor-pointer" %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          <% else %>
+            <div>
+              <%= form_with url: finish_time_import_path, method: :post, multipart: true do |f| %>
+                <div class="my-5">
+                  <%= f.hidden_field :event_id, value: event.id %>
+                  <%= f.label :file, "CSV File", class: "block text-sm font-medium text-gray-700" %>
+                  <%= f.file_field :file, accept: ".csv", class: "block rounded-md border border-gray-300 shadow-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-gray-50 file:text-gray-700 hover:file:bg-gray-100 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" %>
+                </div>
+                <div class="my-5">
+                  <%= f.submit "Upload times", class: "justify-center rounded-md border border-transparent bg-[#DB2955] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#DB2955]/[90%] cursor-pointer" %>
+                </div>
+              <% end %>
+            </div>
+          <% end %>
         </div>
       </div>
     <% end %>
