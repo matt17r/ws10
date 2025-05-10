@@ -57,18 +57,19 @@
         </div>
       </section>
       <section class="mt-8 lg:mt-16 grid grid-cols-1 lg:grid-cols-2 lg:gap-x-12">
-        <div class="max-w-lg">
+        <div class="max-w-lg lg:order-2">
           <h2 class="text-2xl font-medium tracking-tight" id="course-description-bungarribee">Course Description</h2>
           <p class="mt-6 text/6 text-gray-600">The course is mostly on sealed (concrete/bitumen) tracks but there are two gravel sections and a dirt section that can be muddy after rain. The course is a large, looping out and back course and you're never more than about 1.5km from the start point.</p>
           <p class="mt-6 text-lg/6 text-gray-600"><a class="text-[#54494B] underline underline-offset-[3px] hover:no-underline hover:text-[#9DA39A]" href="https://www.strava.com/routes/3336193874389944524">Strava Route</a></p>
         </div>
-        <div class="lg:row-span-2 mt-8 lg:my-auto">
+        <div class="lg:row-span-2 mt-8 lg:my-auto lg:order-1">
           <div class="strava-embed-placeholder" data-embed-type="route" data-embed-id="3336193874389944524" data-units="metric" data-full-width="true" data-style="standard" data-surface-type="true" data-map-hash="12.89/-33.78104/150.86593" data-club-id="1343589" data-from-embed="true"></div><script src="https://strava-embeds.com/embed.js"></script>
         </div>
-        <div class="max-w-lg">
+        <div class="max-w-lg lg:order-3">
           <h2 class="mt-9 lg:mt-0 text-2xl font-medium tracking-tight" id="event-rego-bungarribee">Event Registration</h2>
-          <p class="mt-6 text/6 text-gray-600">Pre-registration is helpful but not required, you can simply show up on the morning and run. To register to attend, please send an email to <%= mail_to "matt@ws10.run", subject: "WS10 Bungarribee - 20 April", body: "I will be attending the WS10 at Bungarribbe Park on 20/04/2025. This is the email address for my results email after the event.", class: "text-[#54494B] underline underline-offset-[3px] hover:no-underline hover:text-[#9DA39A]" %></p>
-          <p class="mt-6 text/6 text-gray-600">You can also help us gauge interest (and spread the word!) by indicating you will come to the <a class="text-[#54494B] underline underline-offset-[3px] hover:no-underline hover:text-[#9DA39A]" href="https://www.strava.com/clubs/1343589/group_events/1978026">Strava Event</a> or the <a class="text-[#54494B] underline underline-offset-[3px] hover:no-underline hover:text-[#9DA39A]" href="https://facebook.com/events/1155100105816677">Facebook Event</a>.</p>
+          <p class="mt-6 text/6 text-gray-600">To participate, you just need to be registered on this site. If you've run or signed up before, you're all set. Use the <%= link_to "forgot password form", forgot_password_path, class: "underline hover:no-underline" %> to reset your password or set it for the first time.</p>
+          <p class="mt-6 text/6 text-gray-600">To register as a WS10 runner, fill in the <%= link_to "registration form", sign_up_path, class: "underline hover:no-underline" %> and then click on the confirmation link in your email.</p>
+          <p class="mt-6 text/6 text-gray-600">Tell us your coming (and help spread the word!) by indicating you will come to the <a class="text-[#54494B] underline underline-offset-[3px] hover:no-underline hover:text-[#9DA39A]" href="https://www.strava.com/clubs/1343589/group_events/2010525">Strava Event</a> or the <a class="text-[#54494B] underline underline-offset-[3px] hover:no-underline hover:text-[#9DA39A]" href="https://m.facebook.com/events/652478077589803?">Facebook Event</a>.</p>
         </div>
       </section>
     </div>
@@ -80,7 +81,12 @@
           <div class="overflow-hidden rounded-lg bg-white px-4 py-5 shadow-sm sm:p-6">
             <div class="mt-1 text-3xl font-semibold tracking-tight text-gray-500 line-through">16 February</div>
           </div>
-          <div class="overflow-hidden rounded-lg bg-white px-4 py-5 shadow-sm sm:p-6">
+          <div class="relative overflow-hidden rounded-lg bg-white px-4 py-5 shadow-sm sm:p-6">
+            <div class="absolute top-0 right-0 w-16 h-16">
+              <div class="bg-[#DB2955] absolute transform rotate-45 text-center text-white font-semibold py-1 right-[-60px] top-[20px] w-[190px]">
+                Next Event
+              </div>
+            </div>
             <div class="mt-1 text-3xl font-semibold tracking-tight text-[#DB2955]">18 May</div>
           </div>
           <div class="overflow-hidden rounded-lg bg-white px-4 py-5 shadow-sm sm:p-6">
@@ -94,7 +100,7 @@
       <section class="mt-16 grid grid-cols-1 lg:grid-cols-2 lg:gap-12">
         <div class="max-w-lg">
           <h2 class="text-2xl font-medium tracking-tight" id="course-start-nepean">Course Start Point</h2>
-          <p class="mt-6 text/6 text-gray-600">The course starts and finishes in Tench Reserve, in the same area as Nepean River parkrun. If driving, there is parking on Tench Avenue and in carparks off Tench avenue.</p>
+          <p class="mt-6 text/6 text-gray-600">The course starts and finishes in Tench Reserve, in the same general area as Nepean River parkrun. If driving, there is parking on Tench Avenue and in carparks off Tench avenue.</p>
           <p class="mt-6 text/6 text-gray-600">Arrive at 6:45am for a 7am race start.</p>
           <p class="mt-8 text-lg/6 text-gray-600"><a class="text-[#54494B] underline underline-offset-[3px] hover:no-underline hover:text-[#9DA39A]" href="https://www.google.com/maps/place/Nepean+River+Parkrun/@-33.7623863,150.6611338,17z/data=!4m6!3m5!1s0x6b1289ec090c8baf:0xa9d1ffa8acefca12!8m2!3d-33.7623908!4d150.6637087!16s%2Fg%2F11t9c9zkpm!5m1!1e1?entry=ttu&g_ep=EgoyMDI1MDEyNi4wIKXMDSoASAFQAw%3D%3D">Google Maps Link</a> | <a class="text-[#54494B] underline underline-offset-[3px] hover:no-underline hover:text-[#9DA39A]" href="https://maps.apple.com/?address=163%E2%80%93165%20Tench%20Ave%0APenrith%20NSW%202750%0AAustralia&auid=1916632410848447481&ll=-33.762531,150.663880&lsp=9902&q=Nepean%20River%20Parkrun&t=m">Apple Maps Link</a></p>
         </div>
@@ -108,12 +114,19 @@
         </div>
       </section>
       <section class="mt-16 grid grid-cols-1 lg:grid-cols-2 lg:gap-12">
-        <div class="max-w-lg order-1 lg:order-2">
+        <div class="max-w-lg lg:order-2">
           <h2 class="text-2xl font-medium tracking-tight" id="course-description-nepean">Course Description</h2>
           <p class="mt-6 text/6 text-gray-600">The event is run entirely on sealed cycle/pedestrian paths that are well suited to pushing a pram and resistant to adverse weather. The course is an out and back course around the river. There are no road crossings but expect to encounter lots of runners and walkers along with some cyclists.</p>
+          <p class="mt-6 text-lg/6 text-gray-600"><a class="text-[#54494B] underline underline-offset-[3px] hover:no-underline hover:text-[#9DA39A]" href="https://www.strava.com/routes/3349254877669215002">Strava Route</a></p>
         </div>
-        <div class="mt-8 lg:mt-0 ml-0 lg:mx-auto order-2 lg:order-1">
-          <%= image_tag "nepean-route.png", class: "rounded-lg" %>
+        <div class="lg:row-span-2 mt-8 lg:my-auto lg:order-1">
+          <div class="strava-embed-placeholder" data-embed-type="route" data-embed-id="3349254877669215002" data-units="metric" data-full-width="true" data-style="standard" data-surface-type="true" data-map-hash="12.66/-33.75417/150.67187" data-club-id="1343589" data-from-embed="true"></div><script src="https://strava-embeds.com/embed.js"></script>
+        </div>
+        <div class="max-w-lg lg:order-3">
+          <h2 class="mt-9 lg:mt-0 text-2xl font-medium tracking-tight" id="event-rego-nepean">Event Registration</h2>
+          <p class="mt-6 text/6 text-gray-600">To participate, you just need to be registered on this site. If you've run or signed up before, you're all set. Use the <%= link_to "forgot password form", forgot_password_path, class: "underline hover:no-underline" %> to reset your password or set it for the first time.</p>
+          <p class="mt-6 text/6 text-gray-600">To register as a new WS10 runner, fill in the <%= link_to "registration form", sign_up_path, class: "underline hover:no-underline" %> and then click on the confirmation link in your email.</p>
+          <p class="mt-6 text/6 text-gray-600">Once you're registered, tell us your coming to this particular event (and help spread the word!) by RSVPing to the <a class="text-[#54494B] underline underline-offset-[3px] hover:no-underline hover:text-[#9DA39A]" href="https://www.strava.com/clubs/1343589/group_events/2010525">Strava Event</a> or the <a class="text-[#54494B] underline underline-offset-[3px] hover:no-underline hover:text-[#9DA39A]" href="https://m.facebook.com/events/652478077589803?">Facebook Event</a>.</p>
         </div>
       </section>
     </div>
