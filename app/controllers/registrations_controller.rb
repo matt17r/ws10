@@ -4,7 +4,7 @@ class RegistrationsController < ApplicationController
   rescue_from RailsCloudflareTurnstile::Forbidden, with: :forbidden_turnstile
 
   def new
-    @user = User.new
+    @user = User.new(display_name: nil)
   end
 
   def create

@@ -19,7 +19,7 @@
 
     <div class="my-5">
       <%= form.label :display_name, class: "block text-sm/6 font-medium #{@user.errors[:display_name].present? ? "text-red-600" : "text-gray-900"}" %>
-      <%= form.text_field :display_name, required: true, autocomplete: "given-name", placeholder: "Public name or nickname", class: "block shadow rounded-md border #{@user.errors[:display_name].present? ? "border-red-500" : "border-gray-400"} px-3 py-2 mt-2 w-full" %>
+      <%= form.text_field :display_name, required: true, autocomplete: "given-name", placeholder: "Public name or nickname (shown on the results page)", class: "block shadow rounded-md border #{@user.errors[:display_name].present? ? "border-red-500" : "border-gray-400"} px-3 py-2 mt-2 w-full" %>
       <% if @user.errors[:display_name].present? %>
         <p class="mt-1 text-sm text-red-600">
           <%= @user.errors.full_messages_for(:display_name).join(", ") %>
