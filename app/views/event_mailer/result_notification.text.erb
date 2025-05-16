@@ -1,0 +1,12 @@
+Congratulations <%= @user.name %> on completing your <%= @result_count.ordinalize %> Western Sydney 10 <% if @result_count > 1 %>and your <%= @location_count.ordinalize %> <% end %>at <%= @event.location %> this morning (<%= @event.date.strftime("%A, %-d %B %Y") %>). Your time was <%= @result.time_string %> and you finished in <%= @result.place.ordinalize %> place out of <%= @event.results.count %> participants.
+
+You can view all of this week's results at <%= event_url(@event) %>.
+
+If you enjoyed this event, please:
+ - Come along to the next event (<%= courses_url %>)
+ - Tell a friend (or running foe) about it
+ - Share your result on Strava or social media
+
+Western Sydney 10 is a young event and we're still learning. If you've got any suggestions for how to improve the events, the website or these results emails, simply reply to this email to let me know!
+
+You received this transactional email because you registered as a runner at https://ws10.run and completed an event. This is not a marketing email so there is no unsubscribe option.
