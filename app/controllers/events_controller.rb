@@ -4,7 +4,7 @@ class EventsController < ApplicationController
   skip_before_action :require_admin!, only: [ :index, :show, :show_latest ]
   allow_unauthenticated_access(only: [ :index, :show, :show_latest ])
 
-  before_action :set_event, only: [:show, :edit, :update, :destroy]
+  before_action :set_event, only: [ :show, :edit, :update, :destroy ]
 
   # Public actions
   def index
