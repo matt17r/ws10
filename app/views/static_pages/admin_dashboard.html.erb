@@ -14,6 +14,7 @@
           </div>
         <% end %>
       </div>
+      <%= link_to "Create new event", new_event_path, class: "justify-center rounded-md border border-transparent bg-[#DB2955] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#DB2955]/[90%] cursor-pointer" %>
     <% end %>
 
     <% @in_progress_events.each do |event| %>
