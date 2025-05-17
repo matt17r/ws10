@@ -21,7 +21,7 @@ class Event < ApplicationRecord
   end
 
   def unplaced_users
-    User.where.not(id: finished_users.select(:id)).order(Arel.sql("LOWER(name) ASC"))
+    User.where.not(id: finished_users.select(:id)).order(Arel.sql("LOWER(name) ASC")).left_joins(:results).select("users.*, COUNT(results.id) AS results_count").group("users.id").order("users.name")
   end
 
   private

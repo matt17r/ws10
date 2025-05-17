@@ -64,6 +64,8 @@
                       <%= f.hidden_field :event_id, value: event.id %>
                     <% end %>
                     <%= user.name %>
+                    <%= "(#{user.results_count})" %>
+                    <%= "⚠️" if user.confirmed_at.nil? %>
                   </td>
                   <td>
                     <input form="<%= form_id %>" type="number" name="finish_position[position]" id="<%= dom_id(user, :position) %>"  min="1" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-[#DB2955] sm:text-sm/6" />
