@@ -6,7 +6,7 @@ class Event < ApplicationRecord
   after_update :send_results_emails_if_ready
 
   def unplaced_users
-    User.where.not(id: finished_users.select(:id)).order(:name)
+    User.where.not(id: finished_users.select(:id)).order(Arel.sql("LOWER(name) ASC"))
   end
 
   has_many :results
@@ -22,10 +22,6 @@ class Event < ApplicationRecord
 
   def to_param
     number.to_s
-  end
-
-  def unplaced_users
-    User.where.not(id: finished_users.select(:id))
   end
 
   private
