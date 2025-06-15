@@ -44,6 +44,8 @@
             <% end %>
           </tbody>
         </table>
+      <% else %>
+        <%= button_to "Link all finish positions and times", result_link_path(event_id: event.id), method: :post, class: "my-4 rounded-md border border-transparent bg-[#DB2955] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#DB2955]/90 cursor-pointer" %>
       <% end %>
       <div class="my-3 grid grid-cols-1 font-sm md:grid-cols-2 lg:grid-cols-3">
         <div>
@@ -125,7 +127,6 @@
                   <th>Position</th>
                   <th>Time</th>
                   <th>Delete?</th>
-                  <th>Link?</th>
                 </tr>
               </thead>
               <tbody>
@@ -134,7 +135,6 @@
                     <td><%= ft.position %></td>
                     <td><%= ft.time_string %></td>
                     <td><%= button_to "Delete", finish_time_path(ft), method: :delete, class: "text-base font-semibold text-[#DB2955] cursor-pointer" %></td>
-                    <td><%= button_to "Link", result_link_path, params: { event_id: event.id, position: ft.position }, class: "text-base font-semibold text-[#DB2955] cursor-pointer" %></td>
                   </tr>
                 <% end %>
               </tbody>

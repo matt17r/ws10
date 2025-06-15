@@ -1,15 +1,30 @@
 class ResultsController < ApplicationController
   def link
     event = Event.find(params[:event_id])
-    fp = FinishPosition.find_by(event_id: params[:event_id], position: params[:position])
-    ft = FinishTime.find_by(event_id: params[:event_id], position: params[:position])
-    raise unless event && fp && ft
-    @result = Result.create!(event: event, user: fp.user, time: ft.time)
+    matched_positions = event.finish_positions.pluck(:position) & event.finish_times.pluck(:position)
+    created = []
+    skipped = []
+    matched_positions.each do |position|
+      fp = event.finish_positions.find_by(position: position)
+      ft = event.finish_times.find_by(position: position)
+      next unless fp && ft
 
-    if @result.save
-      redirect_to dashboard_path, notice: "Result created for #{params[:position]}"
+      unless event.results.exists?(user: fp.user, time: ft.time)
+        result = event.results.build(user: fp.user, time: ft.time)
+        if result.save
+          created << position
+        else
+          skipped << "#{position} (#{result.errors.full_messages.to_sentence})"
+        end
+      else
+        skipped << "#{position} (already linked)"
+      end
+    end
+
+    if skipped.empty?
+      redirect_to dashboard_path, notice: "Linked #{created.count} results successfully."
     else
-      redirect_to dashboard_path, alert: "Couldn't create result... #{@result.errors.full_messages.to_sentence}"
+      redirect_to dashboard_path, alert: "Linked #{created.count} results. Skipped: #{skipped.join(', ')}"
     end
   end
 
