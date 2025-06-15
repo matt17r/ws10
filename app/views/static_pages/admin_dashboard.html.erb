@@ -1,4 +1,4 @@
-<div class="mt-16 px-6 lg:px-8">
+<div class="mt-16 px-6 lg:px-8" data: { turbo: false }>
   <div class="mx-auto max-w-2xl lg:max-w-7xl mb-8">
     <h1 class="text-pretty text-4xl font-medium tracking-tight text-gray-950">Admin dashboard</h1>
     <% if Current.user.admin? %>
@@ -31,12 +31,13 @@
               <th>Name</th>
               <th>Time</th>
               <th>Actions</th>
+            </tr>
           </thead>
           <tbody>
             <% event.results.order(:time).each do |result| %>
               <tr>
                 <td><%= result.place %></td>
-                <td><%= result.user.name %></td>
+                <td><%= result.user&.name || "Unknown" %></td>
                 <td><%= result.time_string %></td>
                 <td><%= button_to "Delete", result_path(result), method: :delete, class: "text-base font-semibold text-[#DB2955] cursor-pointer" %></td>
               </tr>
@@ -53,6 +54,7 @@
                 <th>Name</th>
                 <th>Position</th>
                 <th></th>
+              </tr>
             </thead>
             <tbody>
               <% event.unplaced_users.order(:name).each do |user| %>
@@ -68,7 +70,7 @@
                     <%= "⚠️" if user.confirmed_at.nil? %>
                   </td>
                   <td>
-                    <input form="<%= form_id %>" type="number" name="finish_position[position]" id="<%= dom_id(user, :position) %>"  min="1" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-[#DB2955] sm:text-sm/6" />
+                    <input form="<%= form_id %>" type="number" name="finish_position[position]" id="<%= dom_id(user, :position) %>"  min="1" class="block w-24 rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-[#DB2955] sm:text-sm/6" />
                   </td>
                   <td>
                     <input form="<%= form_id %>" type="submit" value="Add" class="justify-center rounded-md border border-transparent bg-[#DB2955] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#DB2955]/[90%] cursor-pointer" />
@@ -86,17 +88,32 @@
                 <th>Position</th>
                 <th>Name</th>
                 <th>Actions</th>
+              </tr>
             </thead>
             <tbody>
               <% event.finish_positions.order(:position).each do |fp| %>
                 <tr>
                   <td><%= fp.position %></td>
-                  <td><%= "#{fp.user.name} (#{fp.user.display_name})" %></td>
+                  <td><%= "#{fp.user&.name} (#{fp.user&.display_name || "Unknown"})" %></td>
                   <td><%= button_to "Delete", finish_position_path(fp), method: :delete, class: "text-base font-semibold text-[#DB2955] cursor-pointer" %></td>
                 </tr>
               <% end %>
             </tbody>
           </table>
+          <%= form_with model: FinishPosition.new(event: event), local: true, html: { id: "unknown_finisher_form" } do |f| %>
+            <%= f.hidden_field :event_id %>
+
+            <div class="my-4 flex items-center space-x-4">
+              <div>
+                <%= f.label :position, "Position", class: "block text-sm font-medium text-gray-700" %>
+                <%= f.number_field :position, min: 1, class: "w-24 rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:outline-[#DB2955] sm:text-sm" %>
+              </div>
+
+              <div class="self-end">
+                <%= f.submit "Add Unknown Finisher", class: "rounded-md border border-transparent bg-[#DB2955] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#DB2955]/90 cursor-pointer" %>
+              </div>
+            </div>
+          <% end %>
         </div>
 
         <div>
@@ -109,6 +126,7 @@
                   <th>Time</th>
                   <th>Delete?</th>
                   <th>Link?</th>
+                </tr>
               </thead>
               <tbody>
                 <% event.finish_times.order(:position).each do |ft| %>
@@ -121,6 +139,23 @@
                 <% end %>
               </tbody>
             </table>
+            <%= form_with model: FinishTime.new(event: event), local: true do |f| %>
+              <%= f.hidden_field :event_id %>
+
+              <div class="my-2">
+                <%= f.label :position, "Position" %>
+                <%= f.number_field :position, min: 1, class: "block rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-[#DB2955] sm:text-sm/6" %>
+              </div>
+
+              <div class="my-2">
+                <%= f.label :time_string, "Time" %>
+                <%= f.text_field :time_string, class: "block rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-[#DB2955] sm:text-sm/6", placeholder: "HH:MM:SS or MM:SS or 'P'", value: f.object.time.nil? ? "" : f.object.time_string %>
+              </div>
+
+              <div class="my-4">
+                <%= f.submit "Add Finish Time", class: "justify-center rounded-md border border-transparent bg-[#DB2955] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#DB2955]/[90%] cursor-pointer" %>
+              </div>
+            <% end %>
           <% else %>
             <div>
               <%= form_with url: finish_time_import_path, method: :post, multipart: true do |f| %>

@@ -1,4 +1,14 @@
 class FinishTimesController < ApplicationController
+  def create
+    @finish_time = FinishTime.new(finish_time_params)
+
+    if @finish_time.save
+      redirect_to dashboard_path, notice: "Finish time created for ##{@finish_time.position}"
+    else
+      redirect_to dashboard_path, alert: "Finish time could not be saved"
+    end
+  end
+
   def import
     if params[:file].present?
       created = 0

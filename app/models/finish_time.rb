@@ -7,18 +7,20 @@ class FinishTime < ApplicationRecord
     allow_nil: true
   }
   validates :position, uniqueness: { scope: :event_id, message: "is already taken" }
-  validates :time, numericality: {
+  validates :time, allow_nil: true, numericality: {
     only_integer: true,
     greater_than: Result::MINIMUM_TIME,
     less_than: Result::MAXIMUM_TIME
   }
 
   def time_string
+    return "Participant" if time.nil?
     format_string = (time < 3600 ? "%M:%S" : "%k:%M:%S")
     Time.at(time).utc.strftime(format_string).strip
   end
 
   def time_string=(input)
+    return self.time = nil if input == "P"
     matches = Result::HOUR_MINUTES_SECONDS_REGEXP.match(input.strip)
     raise ArgumentError if matches.nil?
     total_seconds = matches[:hours].to_i * 3600 + matches[:minutes].to_i * 60 + matches[:seconds].to_i

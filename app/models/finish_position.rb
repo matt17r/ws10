@@ -8,5 +8,5 @@ class FinishPosition < ApplicationRecord
     allow_nil: true
   }
   validates :position, uniqueness: { scope: :event_id, message: "is already taken" }
-  validates :user, uniqueness: { scope: :event_id, message: "already has a position" }
+  validates :user, uniqueness: { scope: :event_id, message: "already has a position" }, if: -> { user.present? }
 end

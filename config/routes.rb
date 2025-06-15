@@ -37,7 +37,7 @@ Rails.application.routes.draw do
       get :dashboard, to: "static_pages#admin_dashboard"
       get "user_import/template", to: "users#download_template"
       resources :finish_positions, only: [ :create, :destroy ]
-      resources :finish_times, only: [ :destroy ]
+      resources :finish_times, only: [ :create, :destroy ]
       resources :results, only: [ :destroy ]
       post :finish_time_import, to: "finish_times#import"
       post :result_link, to: "results#link"
