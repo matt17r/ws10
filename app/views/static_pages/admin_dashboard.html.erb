@@ -51,13 +51,7 @@
         <div data-controller="search">
           <h3 class="text-pretty text-2xl font-medium tracking-tight text-gray-950 mt-2">Unplaced runners</h3>
           <div class="my-2">
-            <input
-              id="runner-search"
-              type="search"
-              placeholder="Search by name or barcode"
-              data-search-target="input"
-              data-action="input->search#filter"
-              class="w-full rounded-md border px-3 py-1.5 shadow-sm focus:outline-[#DB2955]" />
+            <input id="runner-search" type="search" placeholder="Search by name or barcode" data-search-target="input" data-action="input->search#filter" class="w-full rounded-md border px-3 py-1.5 shadow-sm focus:outline-[#DB2955]" autofocus />
           </div>
           <table class="table-fixed border-separate [border-spacing:0.75rem]">
             <thead>
