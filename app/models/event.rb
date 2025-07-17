@@ -1,12 +1,13 @@
 class Event < ApplicationRecord
+  after_update :send_results_emails_if_ready
+
   has_many :finish_positions
   has_many :finish_times
   has_many :finished_users, through: :finish_positions, source: :user
-
-  after_update :send_results_emails_if_ready
-
   has_many :results
   has_many :volunteers
+
+  scope :in_progress, -> { where(results_ready: false) }
 
   validates :date, presence: true
   validates :location, presence: true

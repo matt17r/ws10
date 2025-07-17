@@ -48,8 +48,17 @@
         <%= button_to "Link all finish positions and times", result_link_path(event_id: event.id), method: :post, class: "my-4 rounded-md border border-transparent bg-[#DB2955] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#DB2955]/90 cursor-pointer" %>
       <% end %>
       <div class="my-3 grid grid-cols-1 font-sm md:grid-cols-2 lg:grid-cols-3">
-        <div>
+        <div data-controller="search">
           <h3 class="text-pretty text-2xl font-medium tracking-tight text-gray-950 mt-2">Unplaced runners</h3>
+          <div class="my-2">
+            <input
+              id="runner-search"
+              type="search"
+              placeholder="Search by name or barcode"
+              data-search-target="input"
+              data-action="input->search#filter"
+              class="w-full rounded-md border px-3 py-1.5 shadow-sm focus:outline-[#DB2955]" />
+          </div>
           <table class="table-fixed border-separate [border-spacing:0.75rem]">
             <thead>
               <tr>
@@ -61,7 +70,7 @@
             <tbody>
               <% event.unplaced_users.order(:name).each do |user| %>
                 <% form_id = dom_id(user, :finish_position_form) %>
-                <tr>
+                <tr data-search-target="row" data-search-text="<%= "#{user.name} #{user.display_name} #{user.id} #{user.barcode_string}" %>">
                   <td>
                     <%= form_with model: FinishPosition.new(user: user, event: event), url: finish_positions_path, local: true, html: { id: form_id } do |f| %>
                       <%= f.hidden_field :user_id, value: user.id %>
