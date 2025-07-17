@@ -66,7 +66,7 @@
                 <% form_id = dom_id(user, :finish_position_form) %>
                 <tr data-search-target="row" data-search-text="<%= "#{user.name} #{user.display_name} #{user.id} #{user.barcode_string}" %>">
                   <td>
-                    <%= form_with model: FinishPosition.new(user: user, event: event), url: finish_positions_path, local: true, html: { id: form_id } do |f| %>
+                    <%= form_with model: FinishPosition.new(user: user, event: event), url: finish_positions_path, html: { id: form_id } do |f| %>
                       <%= f.hidden_field :user_id, value: user.id %>
                       <%= f.hidden_field :event_id, value: event.id %>
                     <% end %>
