@@ -11,23 +11,33 @@ class StaticPagesController < ApplicationController
   end
 
   def courses
-    # 20th July
-    @next_bungarribee_event_fb = "https://www.facebook.com/events/1755918128619731"
-    @next_bungarribee_event_strava = "https://www.strava.com/clubs/1343589/group_events/2125976"
+    @default_tab = "tab-nepean"
+
+    # 19th Oct
+    @next_bungarribee_event_fb = "https://www.facebook.com/events/1226001902067312/"
+    @next_bungarribee_event_strava = "https://www.strava.com/clubs/1343589/group_events/2125977"
+
     # 17th August
     @next_nepean_event_fb = "https://www.facebook.com/events/653019341094234"
+    # 16/11 - https://www.facebook.com/events/693210060205889/
     @next_nepean_event_strava = "https://www.strava.com/clubs/1343589/group_events/2125978"
+    # 16/11 - https://www.strava.com/clubs/1343589/group_events/2125979
+
     # 21st September
     @next_parramatta_event_fb = "https://www.facebook.com/events/711887074801846"
+    # 21/12 - https://www.facebook.com/events/1952283132276856/
     @next_parramatta_event_strava = "https://www.strava.com/clubs/1343589/group_events/2125983"
+    # 21/12 - https://www.strava.com/clubs/1343589/group_events/2125986
   end
 
   def home
     @upcoming_events = [
-      EventStruct.new(nickname: "Bungarribee", location: "Bungarribee Park", date: "20th Jul"),
       EventStruct.new(nickname: "Nepean River", location: "Tench Reserve, Jamisontown", date: "17th Aug"),
-      EventStruct.new(nickname: "Parramatta", location: "Parramatta Park", date: "21st Sep")
-    ]
+      EventStruct.new(nickname: "Parramatta", location: "Parramatta Park", date: "21st Sep"),
+      EventStruct.new(nickname: "Bungarribee", location: "Bungarribee Park", date: "19th Oct"),
+      EventStruct.new(nickname: "Nepean River", location: "Tench Reserve, Jamisontown", date: "16th Nov"),
+      EventStruct.new(nickname: "Parramatta", location: "Parramatta Park", date: "21st Dec")
+    ].first(3)
   end
 
   def results
