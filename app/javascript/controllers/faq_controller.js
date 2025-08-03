@@ -19,7 +19,7 @@ export default class extends Controller {
       if (!dt.querySelector("button")) {
         const button = document.createElement("button")
         button.textContent = "🔗"
-        button.className = "ml-2 text-sm text-blue-600"
+        button.className = "ml-2 text-sm text-[#DB2955] cursor-pointer"
         button.addEventListener("click", () => this.copyLink(dt, button))
         dt.appendChild(button)
       }
