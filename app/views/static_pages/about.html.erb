@@ -11,44 +11,44 @@
     <h1 class="text-4xl font-semibold tracking-tight text-gray-900 sm:text-5xl">Frequently Asked Questions</h1>
     <p class="mt-6 max-w-2xl lg:max-w-4xl text-xl/7 text-gray-600">Here's a bunch of questions I've been asked a few times in one way or another. Got a different question? <a href="mailto:matt@ws10.run" class="font-medium text-[#54494B] hover:text-[#9DA39A] underline underline-offset-[3px] hover:no-underline">Send me an email</a> and I’ll get back to you as soon as I can.</p>
     <div class="mt-20">
-      <dl class="space-y-16 sm:grid sm:grid-cols-2 sm:space-y-0 sm:gap-x-6 sm:gap-y-16 lg:gap-x-10">
+      <dl class="space-y-16 sm:grid sm:grid-cols-2 sm:space-y-0 sm:gap-x-6 sm:gap-y-16 lg:gap-x-10" data-controller="faq">
         <div>
-          <dt class="text-xl/7 font-medium text-gray-900">How fast do I need to be?</dt>
+          <dt class="text-xl/7 font-medium text-gray-900" id="how-fast">How fast do I need to be?</dt>
           <dd class="mt-2 text-xl/7 text-gray-600">The timing will stop at 1 hour 20 minutes. If you can finish a parkrun in less than 35 minutes, without almost dying, you can probably complete a WS10 in the available time.</dd>
         </div>
 
         <div>
-          <dt class="text-xl/7 font-medium text-gray-900">What if I'm slower than that?</dt>
+          <dt class="text-xl/7 font-medium text-gray-900" id="slower-than-that">What if I'm slower than that?</dt>
           <dd class="mt-2 text-xl/7 text-gray-600">If you can't finish in 1 hour 20 minutes but you're still keen to participate, let me know. I'm open to having an earlier start time for slower runners.</dd>
         </div>
 
         <div>
-          <dt class="text-xl/7 font-medium text-gray-900">How do I register?</dt>
+          <dt class="text-xl/7 font-medium text-gray-900" id="how-to-register">How do I register?</dt>
           <dd class="mt-2 text-xl/7 text-gray-600">You only need to register on the site once, and then you can show up to any event. To register go to <%= link_to "the sign up page", sign_up_path, class: "font-medium text-[#54494B] hover:text-[#9DA39A] underline underline-offset-[3px] hover:no-underline" %> and fill in your details. Don't forget to click on the confirmation link in your email afterwards!</dd>
         </div>
 
         <div>
-          <dt class="text-xl/7 font-medium text-gray-900">I tried to register, why didn't I get a confirmation email?</dt>
+          <dt class="text-xl/7 font-medium text-gray-900" id="no-confirmation-email">I tried to register, why didn't I get a confirmation email?</dt>
           <dd class="mt-2 text-xl/7 text-gray-600">The most likely reason is that it went to spam, check your spam for an email from <span class="font-medium">matt@ws10.run</span>. Mark it as not spam (and then try again if the confirmation link has expired). The next most likely reason is a typo in your email address (don't worry, it can happen to anyone). Register again and make sure you're typing it correctly.</dd>
         </div>
 
         <div>
-          <dt class="text-xl/7 font-medium text-gray-900">How much does it cost to participate?</dt>
+          <dt class="text-xl/7 font-medium text-gray-900" id="how-much">How much does it cost to participate?</dt>
           <dd class="mt-2 text-xl/7 text-gray-600">Nothing, it's completely free. I may have to start charging a small amount in future to cover costs, but for now the event is free.</dd>
         </div>
 
         <div>
-          <dt class="text-xl/7 font-medium text-gray-900">No seriously, how much does it actually cost?</dt>
+          <dt class="text-xl/7 font-medium text-gray-900" id="how-much-really">No seriously, how much does it actually cost?</dt>
           <dd class="mt-2 text-xl/7 text-gray-600">Seriously, it costs nothing! At the moment it's completely free to participate!</dd>
         </div>
 
         <div>
-          <dt class="text-xl/7 font-medium text-gray-900">How can such an awesome, well-organised event be free?</dt>
+          <dt class="text-xl/7 font-medium text-gray-900" id="why-free">How can such an awesome, well-organised event be free?</dt>
           <dd class="mt-2 text-xl/7 text-gray-600">It's so kind of you to say that! 😜 First, this is a hobby (weird hobby, I know) so I've been able to keep the costs super low by doing most of it myself... web development, marketing, course planning, signage, results, etc. Second, I have a very understanding wife who has tolerated me spending a small amount of money on my hobby (to buy a domain name, a banner and some drinks or snacks each month).</dd>
         </div>
 
         <div>
-          <dt class="text-xl/7 font-medium text-gray-900">How can I contribute to WS10?</dt>
+          <dt class="text-xl/7 font-medium text-gray-900" id="how-can-i-help">How can I contribute to WS10?</dt>
           <dd class="mt-2 text-xl/7 text-gray-600">There are 3 main ways you can contribute:
             <ol class="list-decimal list-inside">
               <li>Come along and participate! Having a friendly group of people makes it worth organising.</li>
@@ -59,12 +59,12 @@
         </div>
 
         <div>
-          <dt class="text-xl/7 font-medium text-gray-900">Can I donate some money to help cover the costs?</dt>
-          <dd class="mt-2 text-xl/7 text-gray-600">I guess! I haven't built a payment or donation system (I'm trying to keep things lean) but if you really want to chip in $10, my PayID is <span class="font-medium">matt@ws10.run</span>.</dd>
+          <dt class="text-xl/7 font-medium text-gray-900" id="donate">Can I donate some money to help cover the costs?</dt>
+          <dd class="mt-2 text-xl/7 text-gray-600">I guess! I haven't built a payment or donation system (I'm trying to keep things lean) but if you really want to chip in $10 (or whatever), my PayID is <span class="font-medium">matt@ws10.run</span>.</dd>
         </div>
 
         <div>
-          <dt class="text-xl/7 font-medium text-gray-900">I have a different question, how can I get in touch?</dt>
+          <dt class="text-xl/7 font-medium text-gray-900" id="other-question">I have a different question, how can I get in touch?</dt>
           <dd class="mt-2 text-xl/7 text-gray-600">The best way is to <a href="mailto:matt@ws10.run" class="font-medium text-[#54494B] hover:text-[#9DA39A] underline underline-offset-[3px] hover:no-underline">send me an email</a>. I can also be contacted on Strava or you can message the <a href="https://facebook.com/ws10.run" class="font-medium text-[#54494B] underline underline-offset-[3px] hover:no-underline hover:text-[#9DA39A]">ws10.run page</a> on Facebook Messenger.</dd>
         </div>
       </dl>
