@@ -1,0 +1,113 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Development Commands
+
+### Basic Rails Commands
+- `bin/dev` - Start the Rails development server and Tailwind watch process
+- `bin/rails console` - Open Rails console for debugging
+- `bin/rails generate` - Generate Rails components (models, controllers, migrations)
+- `bin/rails db:migrate` - Run database migrations
+- `bin/rails db:rollback:primary` - Revert the most recent Rails database migration
+- `bin/rails db:seed` - Seed the database with initial data
+
+### Testing
+- `bin/rails test` - Run the full test suite, excluding system tests
+- `bin/rails test test/models/event_test.rb` - Run a specific test file
+- `bin/rails test:system` - Run system tests with Capybara/Selenium
+- `bin/rails test:all` - Run the full test suite, including system tests with Capybara/Selenium
+
+### Code Quality
+- `bin/brakeman` - Run security analysis
+- `bin/rubocop` - Run Ruby style linter (uses rubocop-rails-omakase)
+
+### Deployment (Kamal)
+- `kamal setup` - Initial deployment setup
+- `kamal deploy` - Deploy application
+- `kamal console` - Access production Rails console
+- `kamal shell` - SSH into production container
+- `kamal logs` - View production logs
+
+Note: Deployment requires `KAMAL_REGISTRY_PASSWORD` environment variable and SSH access to server specified in `config/deploy.yml`.
+
+## Application Architecture
+
+This is a Rails 8.0 application for managing running events with user registration and results tracking.
+
+### Core Models
+- **Event** (`app/models/event.rb`) - Central entity representing running events with date, location, and number. Manages finish positions, times, and results.
+- **User** (`app/models/user.rb`) - Handles authentication and user management with email confirmation.
+- **Result** (`app/models/result.rb`) - Links users to events with optional completion times.
+- **FinishPosition** / **FinishTime** - Track event completion data.
+- **Volunteer** / **Role** / **Assignment** - Manage event staffing.
+
+### Authentication
+Uses a custom authentication system (`app/controllers/concerns/authentication.rb`) with session-based login. No external auth gems like Devise.
+
+### Key Features
+- **Email Notifications**: Automatic result/participation emails when events are marked ready
+- **Admin Dashboard**: Admin access controlled via `AdminAuthentication` concern
+- **Barcode Generation**: Uses `barby` gem for generating barcodes
+- **Cloudflare Turnstile**: CAPTCHA integration via `rails_cloudflare_turnstile`
+
+### Frontend Stack
+- **Stimulus**: JavaScript framework for Rails
+- **Turbo**: For rapid navigation between pages
+- **Tailwind CSS**: Styling framework
+- **Importmap**: JavaScript module management
+
+### Background Jobs
+- **Solid Queue**: Background job processing (runs in Puma process via `SOLID_QUEUE_IN_PUMA`)
+- **Solid Cache/Cable**: Rails caching and ActionCable
+
+### Database
+- **SQLite**: Used in all environments with Active Storage for file uploads
+- **Migrations**: Located in `db/migrate/` with models for users, events, results, etc.
+
+### Testing Structure
+- **Fixtures**: Test data in `test/fixtures/`
+- **System Tests**: Browser-based tests in `test/system/`
+- **Model/Controller Tests**: Unit tests in respective directories
+- **Mailer Previews**: Located in `test/mailers/previews/`
+
+### Deployment Notes
+- Uses Kamal for containerized deployment
+- Deployed to custom server (svr-02) with Cloudflare proxy
+- Assets are fingerprinted and served via Propshaft
+- Production uses persistent volumes for SQLite and Active Storage
+
+## Common Patterns
+
+### Controllers
+All controllers inherit from `ApplicationController` which includes `Authentication` concern. Use `allow_unauthenticated_access` to skip authentication on specific actions. Ask or confirm before skipping authentication.
+
+### Models
+Models follow standard Rails patterns with Active Record. The `Event` model contains the main business logic for result notifications and user management.
+
+### Email System
+Event-related emails are triggered automatically when `results_ready` is set to true on an Event. Uses Action Mailer with deliver_later for background processing.
+
+### Admin Features
+Admin functionality is separated into `app/controllers/admin/` namespace with `AdminAuthentication` concern for access control.
+
+## Development Best Practices
+
+### Database Migrations
+**Always test migration reversibility**: After creating and running a new migration with `bin/rails db:migrate`, immediately test that it can be rolled back with `bin/rails db:rollback:primary`, then re-run `bin/rails db:migrate` to ensure the migration works in both directions. This prevents production deployment issues.
+
+### Test Coverage
+**Always include tests for new code**: Always write tests to cover new code or changes to existing code, even if that code wasn't previously tested.
+
+### Dependencies
+**Avoid introducing new dependencies**: Where possible, use existing Ruby gems to accomplish tasks. Ask before introducing a new gem. Be extra cautious before before introducing new JavaScript dependencies. Don't introduce a JavaScript dependency when a 20-50 lines of vanilla JavaScript will fill the need.
+
+### Progressive Enhancement
+**Build vanilla-first, enhance with JavaScript**: Always implement features to work completely without JavaScript first using standard Rails patterns (forms, links, redirects). Then add Stimulus controllers as progressive enhancements to improve the user experience for those with JavaScript enabled. This ensures accessibility and graceful degradation.
+
+### Data Integrity
+**Use database constraints alongside Rails validations**: Add database-level constraints (NOT NULL, foreign key constraints, unique indexes) in migrations for critical data integrity, in addition to Rails model validations. Test these constraints separately from model validations in your test suite to ensure they work at the database level.
+
+### Security
+**Respect Rails' built-in protections**: Never bypass or work around Rails' built-in security features (CSRF protection, parameter filtering, SQL injection protection, etc.) without explicit approval. When implementing any feature that might have security implications, ask for review and confirmation before proceeding.
+
