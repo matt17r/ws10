@@ -6,6 +6,7 @@ gem "barby"
 gem "bcrypt", "~> 3.1.7"
 gem "bootsnap", require: false
 gem "chunky_png"
+gem "csv"
 gem "importmap-rails"
 gem "kamal", require: false
 gem "propshaft"
