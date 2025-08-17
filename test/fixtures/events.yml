@@ -2,8 +2,19 @@ one:
   date: "2025-05-15"
   location: "Over there"
   number: 1
+  description: "First test event"
+  results_ready: true
 
 two:
   date: "2025-05-22"
   location: "Here"
   number: 2
+  description: "Second test event"
+  results_ready: true
+
+draft_event:
+  date: "2025-05-29"
+  location: "Draft location"
+  number: 3
+  description: "Draft event for testing"
+  results_ready: false
