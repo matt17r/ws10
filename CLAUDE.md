@@ -99,6 +99,12 @@ Admin functionality is separated into `app/controllers/admin/` namespace with `A
 ### Test Coverage
 **Always include tests for new code**: Always write tests to cover new code or changes to existing code, even if that code wasn't previously tested.
 
+### Test Setup
+**Keep shared setup minimal**: Shared setup blocks should be as minimal as possible (preferably empty). Test setup should be explicit and local to each individual test for clarity and maintainability.
+
+### Test Coverage Strategy
+**Layer tests by scope and thoroughness**: System tests should focus on happy path user flows. Controller tests should cover the happy path and common error scenarios. Model tests should be very thorough, covering happy path, common errors, edge cases, and business logic validation.
+
 ### Dependencies
 **Avoid introducing new dependencies**: Where possible, use existing Ruby gems to accomplish tasks. Ask before introducing a new gem. Be extra cautious before before introducing new JavaScript dependencies. Don't introduce a JavaScript dependency when a 20-50 lines of vanilla JavaScript will fill the need.
 
@@ -110,4 +116,7 @@ Admin functionality is separated into `app/controllers/admin/` namespace with `A
 
 ### Security
 **Respect Rails' built-in protections**: Never bypass or work around Rails' built-in security features (CSRF protection, parameter filtering, SQL injection protection, etc.) without explicit approval. When implementing any feature that might have security implications, ask for review and confirmation before proceeding.
+
+### Code Clarity
+**Avoid comments in favor of clear code**: Instead of writing comments, use clearer variable names, extract methods with descriptive names, or refactor code to be self-documenting. Comments should be extremely rare and only used when the "why" cannot be expressed through code itself.
 
