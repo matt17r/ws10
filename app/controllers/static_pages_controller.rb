@@ -11,9 +11,9 @@ class StaticPagesController < ApplicationController
   end
 
   def courses
-    # @default_tab = "tab-bungarribee"
+    @default_tab = "tab-bungarribee"
     # @default_tab = "tab-nepean"
-    @default_tab = "tab-parramatta"
+    # @default_tab = "tab-parramatta"
 
     # 19th Oct
     @next_bungarribee_event_fb = "https://www.facebook.com/events/1226001902067312/"
@@ -32,7 +32,6 @@ class StaticPagesController < ApplicationController
 
   def home
     @upcoming_events = [
-      EventStruct.new(nickname: "Parramatta", location: "Parramatta Park", date: "21st Sep"),
       EventStruct.new(nickname: "Bungarribee", location: "Bungarribee Park", date: "19th Oct"),
       EventStruct.new(nickname: "Nepean River", location: "Tench Reserve, Jamisontown", date: "16th Nov"),
       EventStruct.new(nickname: "Parramatta", location: "Parramatta Park", date: "21st Dec")
