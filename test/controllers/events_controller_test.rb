@@ -1,7 +1,6 @@
 require "test_helper"
 
 class EventsControllerTest < ActionDispatch::IntegrationTest
-
   test "should get index without authentication" do
     get events_url
     assert_response :success
