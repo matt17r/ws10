@@ -59,10 +59,10 @@ class EventTest < ActiveSupport::TestCase
   test "in_progress scope should return events not ready" do
     ready_event = events(:one)
     draft_event = events(:draft_event)
-    
+
     ready_event.update!(results_ready: true)
     draft_event.update!(results_ready: false)
-    
+
     in_progress_events = Event.in_progress
     assert_includes in_progress_events, draft_event
     assert_not_includes in_progress_events, ready_event
@@ -83,9 +83,9 @@ class EventTest < ActiveSupport::TestCase
     event = events(:one)
     user_with_result = users(:one)
     user_without_result = users(:two)
-    
+
     event.finish_positions.create!(user: user_with_result, position: 1)
-    
+
     unplaced = event.unplaced_users
     assert_not_includes unplaced, user_with_result
     assert_includes unplaced, user_without_result
@@ -94,10 +94,10 @@ class EventTest < ActiveSupport::TestCase
   test "should send emails when results_ready changes from false to true" do
     event = events(:draft_event)
     event.update!(results_ready: false)
-    
+
     result_with_time = event.results.create!(user: users(:one), time: 1600)
     result_without_time = event.results.create!(user: users(:two))
-    
+
     assert_enqueued_jobs 2 do
       event.update!(results_ready: true)
     end
@@ -106,7 +106,7 @@ class EventTest < ActiveSupport::TestCase
   test "should not send emails when results_ready stays true" do
     event = events(:one)
     event.update!(results_ready: true)
-    
+
     assert_no_enqueued_jobs do
       event.update!(description: "Updated description")
     end
@@ -115,7 +115,7 @@ class EventTest < ActiveSupport::TestCase
   test "should not send emails when results_ready changes from true to false" do
     event = events(:one)
     event.update!(results_ready: true)
-    
+
     assert_no_enqueued_jobs do
       event.update!(results_ready: false)
     end
@@ -124,10 +124,10 @@ class EventTest < ActiveSupport::TestCase
   test "should send different email types based on result time" do
     event = events(:draft_event)
     event.update!(results_ready: false)
-    
+
     result_with_time = event.results.create!(user: users(:one), time: 1800)
     result_without_time = event.results.create!(user: users(:two))
-    
+
     assert_enqueued_jobs 2 do
       event.update!(results_ready: true)
     end
@@ -136,7 +136,7 @@ class EventTest < ActiveSupport::TestCase
   test "should handle events with no results when marking ready" do
     event = events(:draft_event)
     event.results.destroy_all
-    
+
     assert_no_enqueued_jobs do
       event.update!(results_ready: true)
     end
@@ -150,7 +150,7 @@ class EventTest < ActiveSupport::TestCase
   test "should handle future and past dates" do
     future_event = Event.new(number: 1, date: 1.year.from_now, location: "Future")
     past_event = Event.new(number: 2, date: 1.year.ago, location: "Past")
-    
+
     assert future_event.valid?
     assert past_event.valid?
   end
@@ -158,7 +158,7 @@ class EventTest < ActiveSupport::TestCase
   test "unplaced_users should work with no finish_positions" do
     event = events(:one)
     event.finish_positions.destroy_all
-    
+
     unplaced = event.unplaced_users
     assert_includes unplaced, users(:one)
     assert_includes unplaced, users(:two)
@@ -167,10 +167,10 @@ class EventTest < ActiveSupport::TestCase
   test "unplaced_users should handle users with multiple results" do
     event = events(:one)
     user = users(:one)
-    
+
     event.results.create!(user: user, time: 1600)
     event.results.create!(user: user, time: 1650)
-    
+
     unplaced = event.unplaced_users
     user_count = unplaced.select { |u| u.id == user.id }.count
     assert_equal 1, user_count
