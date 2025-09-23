@@ -1,6 +1,6 @@
 source "https://rubygems.org"
 
-gem "rails", "~> 8.0.1"
+gem "rails", "~> 8.0.3"
 
 gem "barby"
 gem "bcrypt", "~> 3.1.7"
