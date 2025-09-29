@@ -119,4 +119,4 @@ Admin functionality is separated into `app/controllers/admin/` namespace with `A
 
 ### Code Clarity
 **Avoid comments in favor of clear code**: Instead of writing comments, use clearer variable names, extract methods with descriptive names, or refactor code to be self-documenting. Comments should be extremely rare and only used when the "why" cannot be expressed through code itself.
-
+- The linting command is `bin/rubocop -f github`

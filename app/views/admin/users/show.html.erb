@@ -1,0 +1,143 @@
+<div class="mx-auto w-full max-w-4xl p-8">
+  <div class="flex justify-between items-center mb-8">
+    <h1 class="text-3xl font-bold text-[#DB2955]">User Details</h1>
+    <div class="flex gap-2">
+      <%= link_to "Back to Users", admin_users_path, class: "inline-flex items-center gap-x-1.5 rounded-md bg-gray-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-gray-500" %>
+      <%= link_to "Edit User", edit_admin_user_path(@user), class: "inline-flex items-center gap-x-1.5 rounded-md bg-[#DB2955] px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-[#DB2955]/[90%]" %>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- User Info -->
+    <div class="lg:col-span-2">
+      <div class="bg-white shadow rounded-lg p-6 mb-6">
+        <h2 class="text-xl font-semibold text-gray-900 mb-4">Personal Information</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-500">Full Name</label>
+            <p class="mt-1 text-sm text-gray-900"><%= @user.name %></p>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-500">Display Name</label>
+            <p class="mt-1 text-sm text-gray-900"><%= @user.display_name %></p>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-500">Email Address</label>
+            <p class="mt-1 text-sm text-gray-900"><%= @user.email_address %></p>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-500">Emoji</label>
+            <p class="mt-1 text-sm text-gray-900"><%= @user.emoji %></p>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-500">Barcode ID</label>
+            <p class="mt-1 text-sm text-gray-900"><%= @user.barcode_string %></p>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-500">Account Confirmed</label>
+            <p class="mt-1 text-sm text-gray-900">
+              <% if @user.confirmed? %>
+                <span class="text-green-600">✓ Confirmed</span>
+              <% else %>
+                <span class="text-red-600">✗ Not confirmed</span>
+              <% end %>
+            </p>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-500">Member Since</label>
+            <p class="mt-1 text-sm text-gray-900"><%= @user.created_at.strftime("%B %d, %Y") %></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Role Management -->
+      <div class="bg-white shadow rounded-lg p-6 mb-6">
+        <h2 class="text-xl font-semibold text-gray-900 mb-4">Role Management</h2>
+
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-500 mb-2">Current Roles</label>
+          <% if @user.roles.any? %>
+            <div class="flex flex-wrap gap-2">
+              <% @user.roles.each do |role| %>
+                <div class="flex items-center gap-2 bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
+                  <span><%= role.name %></span>
+                  <% unless @user == Current.user && role.name == 'Administrator' %>
+                    <%= link_to remove_role_admin_user_path(@user, role_id: role.id), method: :delete,
+                          data: { confirm: "Remove #{role.name} role from #{@user.name}?" },
+                          class: "text-blue-600 hover:text-blue-800" do %>
+                      <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                      </svg>
+                    <% end %>
+                  <% end %>
+                </div>
+              <% end %>
+            </div>
+          <% else %>
+            <p class="text-sm text-gray-500">No roles assigned</p>
+          <% end %>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-500 mb-2">Assign New Role</label>
+          <% available_roles = Role.all.reject { |role| @user.roles.include?(role) } %>
+          <% if available_roles.any? %>
+            <div class="flex gap-2">
+              <% available_roles.each do |role| %>
+                <%= link_to assign_role_admin_user_path(@user, role_id: role.id), method: :post,
+                      class: "inline-flex items-center gap-x-1.5 rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-green-500" do %>
+                  Add <%= role.name %>
+                <% end %>
+              <% end %>
+            </div>
+          <% else %>
+            <p class="text-sm text-gray-500">All available roles already assigned</p>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats and Actions -->
+    <div class="lg:col-span-1">
+      <!-- Stats -->
+      <div class="bg-white shadow rounded-lg p-6 mb-6">
+        <h2 class="text-xl font-semibold text-gray-900 mb-4">Activity Stats</h2>
+        <div class="space-y-4">
+          <div class="flex justify-between">
+            <span class="text-sm font-medium text-gray-500">Personal Best</span>
+            <span class="text-sm text-gray-900"><%= @user.personal_best&.time_string || "—" %></span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-sm font-medium text-gray-500">Total Runs</span>
+            <span class="text-sm text-gray-900"><%= @user.results.count %></span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-sm font-medium text-gray-500">Times Volunteered</span>
+            <span class="text-sm text-gray-900"><%= @user.volunteers.count %></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="bg-white shadow rounded-lg p-6">
+        <h2 class="text-xl font-semibold text-gray-900 mb-4">Quick Actions</h2>
+        <div class="space-y-3">
+          <% unless @user.confirmed? %>
+            <%= link_to confirm_admin_user_path(@user), method: :patch,
+                  class: "w-full inline-flex justify-center items-center gap-x-1.5 rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-green-500" do %>
+              Confirm Email
+            <% end %>
+          <% end %>
+
+          <% unless @user == Current.user %>
+            <%= link_to admin_user_path(@user), method: :delete,
+                  data: { confirm: "Are you sure you want to delete #{@user.name}? This action cannot be undone and will remove all associated data." },
+                  class: "w-full inline-flex justify-center items-center gap-x-1.5 rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-red-500" do %>
+              Delete User
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
