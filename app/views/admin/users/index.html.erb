@@ -1,26 +1,23 @@
 <div class="mx-auto w-full max-w-7xl p-8">
   <div class="flex justify-between items-center mb-8">
     <h1 class="text-3xl font-bold text-[#DB2955]">User Management</h1>
-    <%= link_to "Import Users", user_import_path, class: "inline-flex items-center gap-x-1.5 rounded-md bg-[#DB2955] px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-[#DB2955]/[90%]" %>
   </div>
 
-  <!-- Stats Cards -->
-  <div class="grid grid-cols-1 md:grid-cols-1 gap-6 mb-8">
-    <div class="bg-white p-6 rounded-lg shadow">
-      <div class="flex items-center">
-        <div class="flex-shrink-0">
-          <svg class="h-8 w-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"></path>
-          </svg>
-        </div>
-        <div class="ml-5 w-0 flex-1">
-          <dl>
-            <dt class="text-sm font-medium text-gray-500 truncate">Total Users</dt>
-            <dd class="text-lg font-medium text-gray-900"><%= @total_users %></dd>
-          </dl>
-        </div>
+  <!-- CSV Import Section -->
+  <div class="bg-white p-6 rounded-lg shadow mb-8">
+    <h2 class="text-xl font-semibold text-gray-900 mb-4">Import Users from CSV</h2>
+    <%= form_with url: user_import_path, method: :post, multipart: true, class: "flex flex-wrap gap-4 items-end" do |f| %>
+      <div class="flex-1 min-w-64">
+        <%= f.label :file, "CSV File", class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <%= f.file_field :file, accept: ".csv", class: "block w-full rounded-md border-gray-300 shadow-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-gray-50 file:text-gray-700 hover:file:bg-gray-100 focus:border-[#DB2955] focus:ring-[#DB2955]" %>
       </div>
-    </div>
+
+      <div class="flex gap-2">
+        <%= f.submit "Import Users", class: "inline-flex items-center gap-x-1.5 rounded-md bg-[#DB2955] px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-[#DB2955]/[90%]" %>
+        <%= link_to "Download Template", user_import_template_path, class: "inline-flex items-center gap-x-1.5 rounded-md bg-gray-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-gray-500", data: { turbo: false } %>
+      </div>
+    <% end %>
+    <p class="mt-2 text-sm text-gray-500">Upload a CSV file with columns: email_address, name, display_name</p>
   </div>
 
   <!-- Search and Filters -->
@@ -49,9 +46,9 @@
       <thead class="bg-gray-50">
         <tr>
           <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Roles</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Activity</th>
-          <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden xl:table-cell">Roles</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">Activity</th>
+          <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">Actions</th>
         </tr>
       </thead>
       <tbody class="bg-white divide-y divide-gray-200">
@@ -59,19 +56,24 @@
           <tr class="hover:bg-gray-50">
             <td class="px-6 py-4 whitespace-nowrap">
               <div class="flex items-center">
-                <div class="flex-shrink-0 h-10 w-10">
-                  <div class="h-10 w-10 rounded-full bg-[#DB2955] flex items-center justify-center text-white font-semibold">
-                    <%= user.emoji.presence || user.name.first.upcase %>
+                <%= link_to admin_user_path(user), class: "flex items-center hover:bg-gray-50 transition-colors duration-150 rounded-lg p-2 -m-2" do %>
+                  <div class="flex-shrink-0 h-10 w-10">
+                    <div class="h-10 w-10 rounded-full bg-[#9DA39A] flex items-center justify-center text-white font-semibold">
+                      <%= user.emoji.presence || user.name.first.upcase %>
+                    </div>
                   </div>
-                </div>
-                <div class="ml-4">
-                  <div class="text-sm font-medium text-gray-900"><%= user.name %></div>
-                  <div class="text-sm text-gray-500"><%= user.email_address %></div>
-                  <div class="text-xs text-gray-400">Display: <%= user.display_name %></div>
-                </div>
+                  <div class="ml-4">
+                    <div class="text-sm font-medium text-gray-900"><%= user.display_name %></div>
+                    <div class="text-sm text-gray-500">
+                      <%= user.email_address %>
+                      <% unless user.confirmed? %>⚠️<% end %>
+                    </div>
+                    <div class="text-xs text-gray-400">Full name: <%= user.name %></div>
+                  </div>
+                <% end %>
               </div>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 hidden xl:table-cell">
               <% if user.roles.any? %>
                 <% user.roles.each do |role| %>
                   <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800 mr-1">
@@ -82,19 +84,19 @@
                 <span class="text-gray-400">No roles</span>
               <% end %>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden lg:table-cell">
               <div><%= pluralize(user.results.count, 'run') %></div>
               <div><%= pluralize(user.volunteers.count, 'volunteer session') %></div>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium hidden md:table-cell">
               <div class="flex justify-end gap-2">
-                <%= link_to "View", admin_user_path(user), class: "text-[#DB2955] hover:text-[#DB2955]/[90%]" %>
-                <%= link_to "Edit", edit_admin_user_path(user), class: "text-indigo-600 hover:text-indigo-900" %>
-                <% unless user == Current.user %>
-                  <%= link_to "Delete", admin_user_path(user), method: :delete,
-                        data: { confirm: "Are you sure you want to delete #{user.name}? This action cannot be undone." },
-                        class: "text-red-600 hover:text-red-900" %>
+                <%= link_to "View", admin_user_path(user), class: "text-[#9DA39A] hover:text-[#8A948A]" %>
+                <% unless user.confirmed? %>
+                  <%= link_to "Confirm", confirm_admin_user_path(user), method: :patch,
+                        data: { turbo_method: :patch, confirm: "Confirm #{user.name}'s email address?" },
+                        class: "text-[#9DA39A] hover:text-[#8A948A]" %>
                 <% end %>
+                <%= link_to "Edit", edit_admin_user_path(user), class: "text-[#9DA39A] hover:text-[#8A948A]" %>
               </div>
             </td>
           </tr>

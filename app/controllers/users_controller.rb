@@ -32,9 +32,9 @@ class UsersController < ApplicationController
           skipped += 1
         end
       end
-      redirect_to dashboard_path, notice: "#{created} users created (#{skipped} skipped, #{errors} errors)."
+      redirect_to admin_users_path, notice: "#{created} users created (#{skipped} skipped, #{errors} errors)."
     else
-      redirect_to dashboard_path, alert: "No file selected/uploaded."
+      redirect_to admin_users_path, alert: "No file selected/uploaded."
     end
   end
 

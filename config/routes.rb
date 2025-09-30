@@ -42,7 +42,7 @@ Rails.application.routes.draw do
       post :finish_time_import, to: "finish_times#import"
       post :result_link, to: "results#link"
 
-      resources :users, controller: "admin/users", except: [ :new, :create ] do
+      resources :users, controller: "admin/users", except: [ :new, :create, :destroy ], as: :admin_users do
         member do
           patch :confirm
           post :assign_role

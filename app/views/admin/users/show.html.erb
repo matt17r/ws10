@@ -63,7 +63,7 @@
                   <span><%= role.name %></span>
                   <% unless @user == Current.user && role.name == 'Administrator' %>
                     <%= link_to remove_role_admin_user_path(@user, role_id: role.id), method: :delete,
-                          data: { confirm: "Remove #{role.name} role from #{@user.name}?" },
+                          data: { turbo_method: :delete, confirm: "Remove #{role.name} role from #{@user.name}?" },
                           class: "text-blue-600 hover:text-blue-800" do %>
                       <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -85,6 +85,7 @@
             <div class="flex gap-2">
               <% available_roles.each do |role| %>
                 <%= link_to assign_role_admin_user_path(@user, role_id: role.id), method: :post,
+                      data: { turbo_method: :post, confirm: "Assign #{role.name} role to #{@user.name}?" },
                       class: "inline-flex items-center gap-x-1.5 rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-green-500" do %>
                   Add <%= role.name %>
                 <% end %>
@@ -119,25 +120,18 @@
       </div>
 
       <!-- Actions -->
-      <div class="bg-white shadow rounded-lg p-6">
-        <h2 class="text-xl font-semibold text-gray-900 mb-4">Quick Actions</h2>
-        <div class="space-y-3">
-          <% unless @user.confirmed? %>
+      <% unless @user.confirmed? %>
+        <div class="bg-white shadow rounded-lg p-6">
+          <h2 class="text-xl font-semibold text-gray-900 mb-4">Quick Actions</h2>
+          <div class="space-y-3">
             <%= link_to confirm_admin_user_path(@user), method: :patch,
+                  data: { turbo_method: :patch, confirm: "Confirm #{@user.name}'s email address?" },
                   class: "w-full inline-flex justify-center items-center gap-x-1.5 rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-green-500" do %>
               Confirm Email
             <% end %>
-          <% end %>
-
-          <% unless @user == Current.user %>
-            <%= link_to admin_user_path(@user), method: :delete,
-                  data: { confirm: "Are you sure you want to delete #{@user.name}? This action cannot be undone and will remove all associated data." },
-                  class: "w-full inline-flex justify-center items-center gap-x-1.5 rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-red-500" do %>
-              Delete User
-            <% end %>
-          <% end %>
+          </div>
         </div>
-      </div>
+      <% end %>
     </div>
   </div>
 </div>

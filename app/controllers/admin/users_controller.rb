@@ -1,15 +1,15 @@
 class Admin::UsersController < ApplicationController
   include AdminAuthentication
 
-  before_action :set_user, only: [ :show, :edit, :update, :destroy, :confirm ]
+  before_action :set_user, only: [ :show, :edit, :update, :confirm, :assign_role, :remove_role ]
 
   def index
     @users = User.includes(:roles)
 
     if params[:search].present?
-      search_term = "%#{params[:search]}%"
+      search_term = "%#{params[:search].downcase}%"
       @users = @users.where(
-        "name ILIKE ? OR email_address ILIKE ? OR display_name ILIKE ?",
+        "LOWER(name) LIKE ? OR LOWER(email_address) LIKE ? OR LOWER(display_name) LIKE ?",
         search_term, search_term, search_term
       )
     end
@@ -36,15 +36,6 @@ class Admin::UsersController < ApplicationController
     end
   end
 
-  def destroy
-    if @user == Current.user
-      redirect_to admin_users_path, alert: "You cannot delete your own account."
-      return
-    end
-
-    @user.destroy
-    redirect_to admin_users_path, notice: "User was successfully deleted."
-  end
 
   def confirm
     @user.confirm!
@@ -52,7 +43,6 @@ class Admin::UsersController < ApplicationController
   end
 
   def assign_role
-    @user = User.find(params[:user_id])
     @role = Role.find(params[:role_id])
 
     unless @user.roles.include?(@role)
@@ -64,7 +54,6 @@ class Admin::UsersController < ApplicationController
   end
 
   def remove_role
-    @user = User.find(params[:user_id])
     @role = Role.find(params[:role_id])
 
     if @user == Current.user && @role.name == "Administrator"
