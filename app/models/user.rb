@@ -21,6 +21,40 @@ class User < ApplicationRecord
   validates :email_address, format: { with: URI::MailTo::EMAIL_REGEXP }, presence: true, uniqueness: true
   validate :emoji_must_be_single_emoji
 
+  scope :with_activity, -> {
+    joins("LEFT JOIN results ON results.user_id = users.id")
+      .joins("LEFT JOIN volunteers ON volunteers.user_id = users.id")
+      .where("results.id IS NOT NULL OR volunteers.id IS NOT NULL")
+      .select("users.*,
+               COUNT(DISTINCT COALESCE(results.event_id, volunteers.event_id)) as total_events_count,
+               COUNT(DISTINCT results.id) as runs_count,
+               COUNT(DISTINCT volunteers.id) as volunteers_count,
+               MIN(CASE WHEN results.time IS NOT NULL THEN results.time END) as best_time,
+               CASE
+                 WHEN MIN(CASE WHEN results.time IS NOT NULL THEN results.time END) IS NULL
+                 THEN 999999
+                 ELSE MIN(CASE WHEN results.time IS NOT NULL THEN results.time END)
+               END as best_time_with_nulls_last")
+      .group("users.id")
+  }
+
+  scope :sorted_by, ->(column, direction = nil) {
+    allowed_sorts = {
+      "display_name" => "LOWER(users.display_name)",
+      "events" => "total_events_count",
+      "runs" => "runs_count",
+      "volunteers" => "volunteers_count",
+      "personal_best" => "best_time_with_nulls_last"
+    }
+
+    sort_sql = allowed_sorts[column.to_s] || "LOWER(users.display_name)"
+
+    default_direction = %w[events runs volunteers].include?(column.to_s) ? "desc" : "asc"
+    sort_direction = direction.to_s.downcase == "desc" ? "desc" : default_direction
+
+    order("#{sort_sql} #{sort_direction}")
+  }
+
   def admin?
     roles.any? { |r| r.name == "Administrator" }
   end
@@ -47,7 +81,7 @@ class User < ApplicationRecord
   end
 
   def personal_best
-    results.order(:time).first
+    results.where.not(time: nil).order(:time).first
   end
 
   def send_confirmation_email

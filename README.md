@@ -72,11 +72,38 @@ For a better development experience with custom domains:
 - `bin/brakeman` - Run security analysis
 - `bin/rubocop` - Run Ruby style linter
 
+### Database Management
+
+#### Production Data in Development
+
+To work with real production data in development:
+
+```bash
+# Two-step process:
+bin/rails db:dump      # Download SQL dump from production (creates tmp/db.sql)
+bin/rails db:restore   # Restore from SQL dump to development
+
+# Or combined:
+bin/rails db:dump && bin/rails db:restore
+
+# Restore development database from backup if needed
+bin/rails db:restore_dev_backup
+```
+
+**Safety Features:**
+- Automatically backs up current development database before restore
+- Timestamped backups stored in `tmp/development_backup_YYYYMMDD_HHMMSS.sqlite3`
+- Recovery available via `db:restore_dev_backup` task
+
+**Requirements:**
+- SSH access to production server (svr-02) using key-based authentication
+- Production server configured in Kamal deployment
+
 ### Emails
 
 Email functionality uses Action Mailer with `deliver_later` for background processing. Event-related emails are triggered automatically when `results_ready` is set to true on an Event.
 
-**Development**: Emails are previewed in development mode
+**Development**: Emails are blocked (`delivery_method = :test`) - no emails sent
 **Production**: Uses configured SMTP settings for delivery
 
 ### Credentials

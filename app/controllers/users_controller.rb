@@ -1,5 +1,17 @@
 class UsersController < ApplicationController
+  allow_unauthenticated_access only: [ :index, :results ]
+
   before_action :set_current_user, only: [ :show, :edit, :update ]
+  before_action :set_user, only: [ :results ]
+
+  def index
+    sort_column = params[:sort] || "display_name"
+    sort_direction = params[:direction]
+
+    @users = User.with_activity.sorted_by(sort_column, sort_direction)
+    @sort_column = sort_column
+    @sort_direction = sort_direction
+  end
 
   def show
   end
@@ -7,40 +19,11 @@ class UsersController < ApplicationController
   def edit
   end
 
-  def import
-    if params[:file].present?
-      created = 0
-      skipped = 0
-      errors = 0
-      CSV.foreach(params[:file], headers: true) do |row|
-        unless row["email_address"].present? && row["name"].present?
-          puts "Could not import user - #{row}"
-          error += 1
-          next
-        end
-
-        user = User.create({
-            email_address: row["email_address"],
-            name: row["name"],
-            display_name: row["display_name"],
-            password: SecureRandom.hex(12)
-          })
-
-        if user.persisted?
-          created += 1
-        else
-          skipped += 1
-        end
-      end
-      redirect_to admin_users_path, notice: "#{created} users created (#{skipped} skipped, #{errors} errors)."
-    else
-      redirect_to admin_users_path, alert: "No file selected/uploaded."
-    end
+  def results
+    @results = @user.results.includes(:event).order(created_at: :desc)
+    @volunteers = @user.volunteers.includes(:event).order(created_at: :desc)
   end
 
-  def download_template
-    send_data User.csv_template, filename: "user_template.csv", type: "text/csv; charset=utf-8"
-  end
 
   def update
     @user.assign_attributes(user_params)
@@ -70,5 +53,15 @@ class UsersController < ApplicationController
 
   def user_params
     params.require(:user).permit(:name, :email_address, :display_name, :emoji, :current_password, :password, :password_confirmation)
+  end
+
+  def set_user
+    # Extract ID from barcode (e.g., "A000001" -> 1)
+    if params[:barcode] =~ /\AA(\d+)\z/
+      user_id = $1.to_i
+      @user = User.find(user_id)
+    else
+      raise ActiveRecord::RecordNotFound
+    end
   end
 end

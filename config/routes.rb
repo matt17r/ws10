@@ -29,13 +29,15 @@ Rails.application.routes.draw do
 
   resources :events, param: :number, only: [ :index, :show ]
   resource :user, only: [ :show, :edit, :update ], path: "profile"
+  resources :users, only: [ :index ], path: "participants", param: :barcode
+  get "participants/:barcode/results", to: "users#results", as: :user_results
 
   constraints AdminUser do
     resources :events, param: :number, only: [ :new, :create, :edit, :destroy ]
     scope :admin do
-      post :user_import, to: "users#import"
+      post :user_import, to: "admin/users#import"
       get :dashboard, to: "static_pages#admin_dashboard"
-      get "user_import/template", to: "users#download_template"
+      get "user_import/template", to: "admin/users#download_template"
       resources :finish_positions, only: [ :create, :destroy ]
       resources :finish_times, only: [ :create, :destroy ]
       resources :results, only: [ :destroy ]
