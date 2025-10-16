@@ -30,31 +30,31 @@
               <table class="table-fixed min-w-full divide-y divide-gray-300">
                 <thead>
                   <tr>
-                    <th scope="col" class="py-3.5 pl-4 pr-3 w-40"><%= sort_link("display_name", "Participant", @sort_column, @sort_direction) %></th>
-                    <th scope="col" class="py-3.5 px-3 w-24"><%= sort_link("events", "Events", @sort_column, @sort_direction) %></th>
-                    <th scope="col" class="py-3.5 px-3 w-24"><%= sort_link("runs", "Runs", @sort_column, @sort_direction) %></th>
-                    <th scope="col" class="py-3.5 px-3 w-32"><%= sort_link("volunteers", "Volunteers", @sort_column, @sort_direction) %></th>
-                    <th scope="col" class="py-3.5 pl-3 pr-4 w-32"><%= sort_link("personal_best", "Personal Best", @sort_column, @sort_direction) %></th>
+                    <th scope="col" class="py-3.5 pl-4 pr-3 w-40 text-left"><%= sort_link("display_name", "Participant", @sort_column, @sort_direction) %></th>
+                    <th scope="col" class="py-3.5 px-3 w-24 text-center"><%= sort_link("events", "Events", @sort_column, @sort_direction) %></th>
+                    <th scope="col" class="py-3.5 px-3 w-24 text-center"><%= sort_link("runs", "Runs", @sort_column, @sort_direction) %></th>
+                    <th scope="col" class="py-3.5 px-3 w-32 text-center"><%= sort_link("volunteers", "Volunteers", @sort_column, @sort_direction) %></th>
+                    <th scope="col" class="py-3.5 pl-3 pr-4 w-32 text-right"><%= sort_link("personal_best", "Personal Best", @sort_column, @sort_direction) %></th>
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200 bg-white">
                   <% @users.each do |user| %>
                     <tr class="hover:bg-[#9DA39A]/50">
-                      <td class="whitespace-nowrap pl-4 pr-3 py-5 text-xl text-gray-700">
+                      <td class="whitespace-nowrap pl-4 pr-3 py-5 text-xl text-gray-700 text-left">
                         <%= link_to user_results_path(user.barcode_string) do %>
                           <%= user.emoji %> <%= user.display_name %>
                         <% end %>
                       </td>
-                      <td class="whitespace-nowrap px-3 py-5 text-xl text-gray-700">
+                      <td class="whitespace-nowrap px-3 py-5 text-xl text-gray-700 text-center">
                         <%= link_to user.total_events_count, user_results_path(user.barcode_string) %>
                       </td>
-                      <td class="whitespace-nowrap px-3 py-5 text-xl text-gray-700">
+                      <td class="whitespace-nowrap px-3 py-5 text-xl text-gray-700 text-center">
                         <%= link_to user.runs_count, user_results_path(user.barcode_string) %>
                       </td>
-                      <td class="whitespace-nowrap px-3 py-5 text-xl text-gray-700">
+                      <td class="whitespace-nowrap px-3 py-5 text-xl text-gray-700 text-center">
                         <%= link_to user.volunteers_count, user_results_path(user.barcode_string) %>
                       </td>
-                      <td class="whitespace-nowrap pl-3 pr-4 py-5 text-xl text-gray-700">
+                      <td class="whitespace-nowrap pl-3 pr-4 py-5 text-xl text-gray-700 text-right">
                         <% if user.best_time %>
                           <% format_string = (user.best_time < 3600 ? "%M:%S" : "%k:%M:%S") %>
                           <%= link_to Time.at(user.best_time).utc.strftime(format_string).strip, user_results_path(user.barcode_string) %>
