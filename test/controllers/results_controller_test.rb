@@ -123,6 +123,25 @@ class ResultsControllerTest < ActionDispatch::IntegrationTest
     assert_equal 2, results.count
   end
 
+  test "linking skips discarded finish positions entirely" do
+    sign_in_as users(:one)
+    event = events(:draft_event)
+
+    FinishPosition.create!(event: event, user: users(:one), position: 1, discarded: false)
+    FinishTime.create!(event: event, position: 1, time: 1800)
+
+    FinishPosition.create!(event: event, user: users(:two), position: 2, discarded: true)
+    FinishTime.create!(event: event, position: 2, time: 1900)
+
+    assert_difference "Result.count", 1 do
+      post result_link_path, params: { event_id: event.id }
+    end
+
+    assert event.results.exists?(user: users(:one), time: 1800)
+    assert_not event.results.exists?(time: 1900)
+    assert_not event.results.exists?(user: users(:two))
+  end
+
   test "can delete all results for an event" do
     sign_in_as users(:one)
     event = events(:one)

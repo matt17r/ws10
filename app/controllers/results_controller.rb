@@ -10,6 +10,7 @@ class ResultsController < ApplicationController
       fp = event.finish_positions.find_by(position: position)
       ft = event.finish_times.find_by(position: position)
       next unless fp || ft
+      next if fp&.discarded?
 
       user = fp&.user
       time = ft&.time

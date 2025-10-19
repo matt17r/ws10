@@ -89,9 +89,15 @@
             </thead>
             <tbody>
               <% event.finish_positions.order(:position).each do |fp| %>
-                <tr>
+                <tr class="<%= 'opacity-50' if fp.discarded? %>">
                   <td><%= fp.position %></td>
-                  <td><%= "#{fp.user&.name} (#{fp.user&.display_name || "Unknown"})" %></td>
+                  <td>
+                    <% if fp.discarded? %>
+                      (DISCARDED)
+                    <% else %>
+                      <%= "#{fp.user&.name} (#{fp.user&.display_name || "Unknown"})" %>
+                    <% end %>
+                  </td>
                   <td><%= button_to "Delete", finish_position_path(fp), method: :delete, class: "text-base font-semibold text-[#DB2955] cursor-pointer" %></td>
                 </tr>
               <% end %>
@@ -107,7 +113,11 @@
               </div>
 
               <div class="self-end">
-                <%= f.submit "Add Unknown Finisher", class: "rounded-md border border-transparent bg-[#DB2955] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#DB2955]/90 cursor-pointer" %>
+                <%= f.submit "Unknown", class: "rounded-md border border-transparent bg-[#DB2955] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#DB2955]/90 cursor-pointer" %>
+              </div>
+
+              <div class="self-end">
+                <%= f.submit "Discard", name: "discard", formnovalidate: true, class: "rounded-md border border-transparent bg-red-500 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-600 cursor-pointer" %>
               </div>
             </div>
           <% end %>
@@ -134,7 +144,6 @@
                 <% end %>
               </tbody>
             </table>
-            <%= button_to "Delete All Finish Times", finish_times_destroy_all_path(event_id: event.id), method: :delete, form: { data: { turbo_confirm: "Are you sure you want to delete all #{event.finish_times.count} finish times? This cannot be undone." } }, class: "my-4 rounded-md border border-transparent bg-red-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-red-700 cursor-pointer" %>
             <%= form_with model: FinishTime.new(event: event), local: true do |f| %>
               <%= f.hidden_field :event_id %>
 
@@ -152,6 +161,7 @@
                 <%= f.submit "Add Finish Time", class: "justify-center rounded-md border border-transparent bg-[#DB2955] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#DB2955]/[90%] cursor-pointer" %>
               </div>
             <% end %>
+            <%= button_to "Delete All Finish Times", finish_times_destroy_all_path(event_id: event.id), method: :delete, form: { data: { turbo_confirm: "Are you sure you want to delete all #{event.finish_times.count} finish times? This cannot be undone." } }, class: "my-4 rounded-md border border-transparent bg-red-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-red-700 cursor-pointer" %>
           <% else %>
             <div>
               <%= form_with url: finish_time_import_path, method: :post, multipart: true do |f| %>
