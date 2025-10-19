@@ -25,7 +25,7 @@
             </tr>
           </thead>
           <tbody>
-            <% event.results.order(:time).each do |result| %>
+            <% event.results.order(Result.arel_table[:time].asc.nulls_last).each do |result| %>
               <tr>
                 <td><%= result.place %></td>
                 <td><%= result.user&.name || "Unknown" %></td>
@@ -35,6 +35,7 @@
             <% end %>
           </tbody>
         </table>
+        <%= button_to "Delete All Results", results_destroy_all_path(event_id: event.id), method: :delete, form: { data: { turbo_confirm: "Are you sure you want to delete all #{event.results.count} results? This cannot be undone." } }, class: "my-4 rounded-md border border-transparent bg-red-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-red-700 cursor-pointer" %>
       <% else %>
         <%= button_to "Link all finish positions and times", result_link_path(event_id: event.id), method: :post, class: "my-4 rounded-md border border-transparent bg-[#DB2955] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#DB2955]/90 cursor-pointer" %>
       <% end %>
@@ -133,6 +134,7 @@
                 <% end %>
               </tbody>
             </table>
+            <%= button_to "Delete All Finish Times", finish_times_destroy_all_path(event_id: event.id), method: :delete, form: { data: { turbo_confirm: "Are you sure you want to delete all #{event.finish_times.count} finish times? This cannot be undone." } }, class: "my-4 rounded-md border border-transparent bg-red-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-red-700 cursor-pointer" %>
             <%= form_with model: FinishTime.new(event: event), local: true do |f| %>
               <%= f.hidden_field :event_id %>
 

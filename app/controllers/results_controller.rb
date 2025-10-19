@@ -1,16 +1,23 @@
 class ResultsController < ApplicationController
+  include AdminAuthentication
+
   def link
     event = Event.find(params[:event_id])
-    matched_positions = event.finish_positions.pluck(:position) & event.finish_times.pluck(:position)
+    all_positions = (event.finish_positions.pluck(:position) + event.finish_times.pluck(:position)).uniq.sort
     created = []
     skipped = []
-    matched_positions.each do |position|
+    all_positions.each do |position|
       fp = event.finish_positions.find_by(position: position)
       ft = event.finish_times.find_by(position: position)
-      next unless fp && ft
+      next unless fp || ft
 
-      unless event.results.exists?(user: fp.user, time: ft.time)
-        result = event.results.build(user: fp.user, time: ft.time)
+      user = fp&.user
+      time = ft&.time
+
+      already_linked = user.present? && event.results.exists?(user: user, time: time)
+
+      unless already_linked
+        result = event.results.build(user: user, time: time)
         if result.save
           created << position
         else
@@ -36,5 +43,14 @@ class ResultsController < ApplicationController
     else
       redirect_to dashboard_path, alert: @result.errors.full_messages.to_sentence
     end
+  end
+
+  def destroy_all
+    event = Event.find(params[:event_id])
+    count = event.results.count
+
+    event.results.destroy_all
+
+    redirect_to dashboard_path, notice: "Deleted #{count} results"
   end
 end

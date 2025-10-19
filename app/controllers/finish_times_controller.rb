@@ -56,6 +56,15 @@ class FinishTimesController < ApplicationController
     end
   end
 
+  def destroy_all
+    event = Event.find(params[:event_id])
+    count = event.finish_times.count
+
+    event.finish_times.destroy_all
+
+    redirect_to dashboard_path, notice: "Deleted #{count} finish times"
+  end
+
   private
 
   def finish_time_params

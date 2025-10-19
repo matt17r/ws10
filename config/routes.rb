@@ -42,7 +42,9 @@ Rails.application.routes.draw do
       resources :finish_times, only: [ :create, :destroy ]
       resources :results, only: [ :destroy ]
       post :finish_time_import, to: "finish_times#import"
+      delete :finish_times_destroy_all, to: "finish_times#destroy_all"
       post :result_link, to: "results#link"
+      delete :results_destroy_all, to: "results#destroy_all"
 
       resources :users, controller: "admin/users", except: [ :new, :create, :destroy ], as: :admin_users do
         member do

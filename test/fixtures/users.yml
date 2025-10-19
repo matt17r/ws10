@@ -7,12 +7,14 @@ one:
   display_name: Number one
   emoji: 1️⃣
   results_count: 1
+  confirmed_at: <%= 1.day.ago %>
 
 two:
   email_address: two@example.com
   name: Two
   password_digest: <%= password_digest %>
   results_count: 1
+  confirmed_at: <%= 1.day.ago %>
 
 three:
   email_address: three@example.com
@@ -21,3 +23,4 @@ three:
   emoji: 🥉
   password_digest: <%= password_digest %>
   volunteers_count: 1
+  confirmed_at: <%= 1.day.ago %>
