@@ -54,7 +54,7 @@
             </thead>
             <tbody>
               <% event.unplaced_users.order(:name).each do |user| %>
-                <% form_id = dom_id(user, :finish_position_form) %>
+                <% form_id = "#{dom_id(event)}_#{dom_id(user, :finish_position_form)}" %>
                 <tr data-search-target="row" data-search-text="<%= "#{user.name} #{user.display_name} #{user.id} #{user.barcode_string}" %>">
                   <td>
                     <%= form_with model: FinishPosition.new(user: user, event: event), url: finish_positions_path, html: { id: form_id } do |f| %>
@@ -66,7 +66,7 @@
                     <%= "⚠️" if user.confirmed_at.nil? %>
                   </td>
                   <td>
-                    <input form="<%= form_id %>" type="number" name="finish_position[position]" id="<%= dom_id(user, :position) %>"  min="1" class="block w-24 rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-[#DB2955] sm:text-sm/6" />
+                    <input form="<%= form_id %>" type="number" name="finish_position[position]" id="<%= "#{dom_id(event)}_#{dom_id(user, :position)}" %>"  min="1" class="block w-24 rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-[#DB2955] sm:text-sm/6" />
                   </td>
                   <td>
                     <input form="<%= form_id %>" type="submit" value="Add" class="justify-center rounded-md border border-transparent bg-[#DB2955] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#DB2955]/[90%] cursor-pointer" />
