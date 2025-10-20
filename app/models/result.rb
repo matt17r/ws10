@@ -8,6 +8,8 @@ class Result < ApplicationRecord
   belongs_to :user, counter_cache: true, optional: true
   belongs_to :event
 
+  scope :by_time, -> { order(arel_table[:time].asc.nulls_last).includes(:user) }
+
   validate :user_or_time_present
   validate :no_setter_errors
   validates :user_id, uniqueness: { scope: :event_id, allow_nil: true, message: "already has a result for this event" }
@@ -56,6 +58,10 @@ class Result < ApplicationRecord
     @setter_errors ||= {}
     @setter_errors[:time_string] ||= []
     @setter_errors[:time_string] << "must be a valid time greater than #{MINIMUM_TIME_STRING} and less than #{MAXIMUM_TIME_STRING}"
+  end
+
+  def user_name
+    user&.name_with_display_name || "Unknown"
   end
 
   private

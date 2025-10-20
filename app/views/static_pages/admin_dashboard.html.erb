@@ -28,7 +28,7 @@
             <% event.results.order(Result.arel_table[:time].asc.nulls_last).each do |result| %>
               <tr>
                 <td><%= result.place %></td>
-                <td><%= result.user&.name || "Unknown" %></td>
+                <td><%= result.user_name %></td>
                 <td><%= result.time_string %></td>
                 <td><%= button_to "Delete", result_path(result), method: :delete, class: "text-base font-semibold text-[#DB2955] cursor-pointer" %></td>
               </tr>
@@ -95,7 +95,7 @@
                     <% if fp.discarded? %>
                       (DISCARDED)
                     <% else %>
-                      <%= "#{fp.user&.name} (#{fp.user&.display_name || "Unknown"})" %>
+                      <%= fp.user_name %>
                     <% end %>
                   </td>
                   <td><%= button_to "Delete", finish_position_path(fp), method: :delete, class: "text-base font-semibold text-[#DB2955] cursor-pointer" %></td>

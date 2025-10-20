@@ -13,14 +13,14 @@ class EventsController < ApplicationController
 
   def show
     return redirect_to results_path unless @event.present?
-    @results = @event.results.order(Result.arel_table[:time].asc.nulls_last).includes(:user)
-    @volunteers = @event.volunteers.order(:role).includes(:user)
+    @results = @event.results.by_time
+    @volunteers = @event.volunteers.by_role
   end
 
   def show_latest
     @event = Event.where(results_ready: true).order(number: :desc).first
-    @results = @event.results.order(Result.arel_table[:time].asc.nulls_last).includes(:user)
-    @volunteers = @event.volunteers.order(:role).includes(:user)
+    @results = @event.results.by_time
+    @volunteers = @event.volunteers.by_role
     render :show
   end
 
@@ -55,8 +55,8 @@ class EventsController < ApplicationController
   end
 
   def edit_results
-    @results = @event.results.order(Result.arel_table[:time].asc.nulls_last).includes(:user)
-    @volunteers = @event.volunteers.order(:role).includes(:user)
+    @results = @event.results.by_time
+    @volunteers = @event.volunteers.by_role
   end
 
   private

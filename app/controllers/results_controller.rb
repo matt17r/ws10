@@ -15,7 +15,7 @@ class ResultsController < ApplicationController
     @result = Result.new(result_params)
 
     if @result.save
-      user_name = @result.user&.name || "Unknown participant"
+      user_name = @result.user_name
       redirect_to edit_results_admin_event_path(@result.event.number), notice: "Result created for #{user_name}."
     else
       @event = Event.find(result_params[:event_id])
@@ -25,7 +25,7 @@ class ResultsController < ApplicationController
 
   def update
     if @result.update(result_params)
-      user_name = @result.user&.name || "Unknown participant"
+      user_name = @result.user_name
       redirect_to edit_results_admin_event_path(@result.event.number), notice: "Result updated for #{user_name}."
     else
       render :edit
@@ -69,7 +69,7 @@ class ResultsController < ApplicationController
 
   def destroy
     event = @result.event
-    user_name = @result.user&.name || "Unknown participant"
+    user_name = @result.user_name
     if @result.destroy
       redirect_to edit_results_admin_event_path(event.number), notice: "Result deleted for #{user_name}"
     else

@@ -16,7 +16,7 @@
 
   <div class="mb-4">
     <%= f.label :user_id, "Athlete", class: "block text-sm font-medium text-gray-700 mb-1" %>
-    <%= f.collection_select :user_id, User.order(:name), :id, :name, { include_blank: "Unknown" }, class: "block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 outline-gray-300 focus:outline-2 focus:outline-[#DB2955] sm:text-sm" %>
+    <%= f.collection_select :user_id, User.order(:name), :id, :name_with_display_name, { include_blank: "Unknown" }, class: "block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 outline-gray-300 focus:outline-2 focus:outline-[#DB2955] sm:text-sm" %>
   </div>
 
   <div class="mb-4">
