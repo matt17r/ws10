@@ -47,6 +47,6 @@ class VolunteersController < ApplicationController
   end
 
   def volunteer_params
-    params.require(:volunteer).permit(:user_id, :role)
+    params.require(:volunteer).permit(:user_id, :role) # see `config/brakeman.ignore`
   end
 end
