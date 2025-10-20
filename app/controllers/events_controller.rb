@@ -4,7 +4,7 @@ class EventsController < ApplicationController
   skip_before_action :require_admin!, only: [ :index, :show, :show_latest ]
   allow_unauthenticated_access(only: [ :index, :show, :show_latest ])
 
-  before_action :set_event, only: [ :show, :edit, :update, :destroy ]
+  before_action :set_event, only: [ :show, :edit, :update, :destroy, :edit_results ]
 
   # Public actions
   def index
@@ -13,14 +13,14 @@ class EventsController < ApplicationController
 
   def show
     return redirect_to results_path unless @event.present?
-    @results = @event.results.order(Result.arel_table[:time].asc.nulls_last).includes(:user)
-    @volunteers = @event.volunteers.order(:role).includes(:user)
+    @results = @event.results.by_time
+    @volunteers = @event.volunteers.by_role
   end
 
   def show_latest
     @event = Event.where(results_ready: true).order(number: :desc).first
-    @results = @event.results.order(Result.arel_table[:time].asc.nulls_last).includes(:user)
-    @volunteers = @event.volunteers.order(:role).includes(:user)
+    @results = @event.results.by_time
+    @volunteers = @event.volunteers.by_role
     render :show
   end
 
@@ -32,7 +32,7 @@ class EventsController < ApplicationController
   def create
     @event = Event.new(event_params)
     if @event.save
-      redirect_to @event, notice: "Event #{@event} created."
+      redirect_to event_path(@event), notice: "Event #{@event} created."
     else
       render :new
     end
@@ -43,7 +43,7 @@ class EventsController < ApplicationController
 
   def update
     if @event.update(event_params)
-      redirect_to @event, notice: "Event #{@event} updated."
+      redirect_to event_path(@event), notice: "Event #{@event} updated."
     else
       render :edit
     end
@@ -54,10 +54,15 @@ class EventsController < ApplicationController
     redirect_to events_path, alert: "Event #{@event} deleted."
   end
 
+  def edit_results
+    @results = @event.results.by_time
+    @volunteers = @event.volunteers.by_role
+  end
+
   private
 
   def set_event
-    @event = Event.find_by number: params[:id]
+    @event = Event.find_by number: params[:number]
   end
 
   def event_params

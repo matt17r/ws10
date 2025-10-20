@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_10_19_030733) do
+ActiveRecord::Schema[8.0].define(version: 2025_10_20_004011) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -90,6 +90,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_19_030733) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["event_id"], name: "index_results_on_event_id"
+    t.index ["user_id", "event_id"], name: "index_results_on_user_id_and_event_id", unique: true, where: "user_id IS NOT NULL"
     t.index ["user_id"], name: "index_results_on_user_id"
     t.check_constraint "user_id IS NOT NULL OR time IS NOT NULL", name: "check_user_or_time_not_null"
   end

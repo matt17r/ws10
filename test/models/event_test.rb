@@ -164,14 +164,13 @@ class EventTest < ActiveSupport::TestCase
     assert_includes unplaced, users(:two)
   end
 
-  test "unplaced_users should handle users with multiple results" do
-    event = events(:one)
-    user = users(:one)
+  test "unplaced_users should handle users with multiple results across events" do
+    user = users(:three)
 
-    event.results.create!(user: user, time: 1600)
-    event.results.create!(user: user, time: 1650)
+    events(:one).results.create!(user: user, time: 1600)
+    events(:two).results.create!(user: user, time: 1650)
 
-    unplaced = event.unplaced_users
+    unplaced = events(:draft_event).unplaced_users
     user_count = unplaced.select { |u| u.id == user.id }.count
     assert_equal 1, user_count
   end

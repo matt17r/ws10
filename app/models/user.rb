@@ -88,6 +88,10 @@ class User < ApplicationRecord
     UsersMailer.account_confirmation(self).deliver_later
   end
 
+  def name_with_display_name
+    "#{name} (#{display_name})"
+  end
+
   def self.csv_template
     csv_data = CSV.generate(headers: true) do |csv|
       csv << [ "email_address", "name", "display_name" ]

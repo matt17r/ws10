@@ -11,7 +11,7 @@
     <% @in_progress_events.each do |event| %>
       <h2 class="text-pretty text-3xl font-medium tracking-tight text-gray-950 my-3"><%= "#{event.location} - #{event.date}" %></h2>
       <% if Current.user.admin? %>
-        <%= link_to "Edit this event", edit_event_path(event), class: "justify-center rounded-md border border-transparent bg-[#DB2955] px-4 py-2 my-4 text-sm font-medium text-white shadow-sm hover:bg-[#DB2955]/[90%] cursor-pointer" %>
+        <%= link_to "Edit this event", edit_admin_event_path(event.number), class: "justify-center rounded-md border border-transparent bg-[#DB2955] px-4 py-2 my-4 text-sm font-medium text-white shadow-sm hover:bg-[#DB2955]/[90%] cursor-pointer" %>
       <% end %>
       <% if event.results.any? %>
         <h3 class="text-pretty text-2xl font-medium tracking-tight text-gray-950 mt-2">Results</h3>
@@ -28,7 +28,7 @@
             <% event.results.order(Result.arel_table[:time].asc.nulls_last).each do |result| %>
               <tr>
                 <td><%= result.place %></td>
-                <td><%= result.user&.name || "Unknown" %></td>
+                <td><%= result.user_name %></td>
                 <td><%= result.time_string %></td>
                 <td><%= button_to "Delete", result_path(result), method: :delete, class: "text-base font-semibold text-[#DB2955] cursor-pointer" %></td>
               </tr>
@@ -95,7 +95,7 @@
                     <% if fp.discarded? %>
                       (DISCARDED)
                     <% else %>
-                      <%= "#{fp.user&.name} (#{fp.user&.display_name || "Unknown"})" %>
+                      <%= fp.user_name %>
                     <% end %>
                   </td>
                   <td><%= button_to "Delete", finish_position_path(fp), method: :delete, class: "text-base font-semibold text-[#DB2955] cursor-pointer" %></td>

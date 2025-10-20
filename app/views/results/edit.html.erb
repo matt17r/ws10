@@ -1,0 +1,13 @@
+<div class="my-16 px-6 lg:px-8">
+  <div class="mx-auto max-w-2xl">
+    <div class="px-4 sm:px-6 lg:px-8">
+      <h1 class="text-3xl font-bold text-gray-900 mb-6">Edit Result</h1>
+
+      <%= render "form", result: @result, event: @result.event %>
+
+      <div class="mt-6 pt-6 border-t border-gray-200">
+        <%= button_to "Delete Result", result_path(@result), method: :delete, form: { data: { turbo_confirm: "Are you sure you want to delete this result?" } }, class: "rounded-md border border-transparent bg-red-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-red-700 cursor-pointer" %>
+      </div>
+    </div>
+  </div>
+</div>

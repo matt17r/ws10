@@ -1,0 +1,34 @@
+<%= form_with model: result, url: result.persisted? ? result_path(result) : "/admin/results", method: result.persisted? ? :patch : :post, local: true do |f| %>
+  <% if result.errors.any? %>
+    <div class="mb-4 p-4 bg-red-50 border border-red-200 rounded-md">
+      <h3 class="text-sm font-medium text-red-800">
+        <%= pluralize(result.errors.count, "error") %> prohibited this result from being saved:
+      </h3>
+      <ul class="mt-2 text-sm text-red-700 list-disc list-inside">
+        <% result.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <%= f.hidden_field :event_id, value: event.id %>
+
+  <div class="mb-4">
+    <%= f.label :user_id, "Athlete", class: "block text-sm font-medium text-gray-700 mb-1" %>
+    <%= f.collection_select :user_id, User.order(:name), :id, :name_with_display_name, { include_blank: "Unknown" }, class: "block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 outline-gray-300 focus:outline-2 focus:outline-[#DB2955] sm:text-sm" %>
+  </div>
+
+  <div class="mb-4">
+    <%= f.label :time_string, "Time", class: "block text-sm font-medium text-gray-700 mb-1" %>
+    <%= f.text_field :time_string, value: (result.time ? result.time_string : ""), placeholder: "MM:SS or HH:MM:SS or leave blank for participant only", class: "block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 outline-gray-300 focus:outline-2 focus:outline-[#DB2955] sm:text-sm" %>
+    <p class="mt-1 text-xs text-gray-500">Leave blank for known participant who didn't finish</p>
+  </div>
+
+  <div class="flex gap-2">
+    <%= f.submit result.persisted? ? "Update Result" : "Create Result", class: "rounded-md border border-transparent bg-[#DB2955] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#DB2955]/90 cursor-pointer" %>
+    <% if result.persisted? %>
+      <%= link_to "Cancel", edit_results_admin_event_path(event.number), class: "rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 cursor-pointer" %>
+    <% end %>
+  </div>
+<% end %>

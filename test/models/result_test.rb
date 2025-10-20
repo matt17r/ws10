@@ -2,7 +2,7 @@ require "test_helper"
 
 class ResultTest < ActiveSupport::TestCase
   test "can create a result" do
-    result = Result.new(user: users(:one), event: events(:one), time: 3600)
+    result = Result.new(user: users(:three), event: events(:one), time: 3600)
     assert result.valid?
   end
 
@@ -17,7 +17,7 @@ class ResultTest < ActiveSupport::TestCase
   end
 
   test "result doesn't need a time" do
-    result = Result.new(user: users(:one), event: events(:one))
+    result = Result.new(user: users(:three), event: events(:one))
     assert result.valid?
   end
 
