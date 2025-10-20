@@ -1,6 +1,37 @@
 class ResultsController < ApplicationController
   include AdminAuthentication
 
+  before_action :set_result, only: [ :edit, :update, :destroy ]
+
+  def new
+    @event = Event.find(params[:event_id])
+    @result = @event.results.build
+  end
+
+  def edit
+  end
+
+  def create
+    @result = Result.new(result_params)
+
+    if @result.save
+      user_name = @result.user&.name || "Unknown participant"
+      redirect_to edit_results_admin_event_path(@result.event.number), notice: "Result created for #{user_name}."
+    else
+      @event = Event.find(result_params[:event_id])
+      render :new, status: :unprocessable_entity
+    end
+  end
+
+  def update
+    if @result.update(result_params)
+      user_name = @result.user&.name || "Unknown participant"
+      redirect_to edit_results_admin_event_path(@result.event.number), notice: "Result updated for #{user_name}."
+    else
+      render :edit
+    end
+  end
+
   def link
     event = Event.find(params[:event_id])
     all_positions = (event.finish_positions.pluck(:position) + event.finish_times.pluck(:position)).uniq.sort
@@ -37,12 +68,12 @@ class ResultsController < ApplicationController
   end
 
   def destroy
-    @result = Result.find(params[:id])
-
+    event = @result.event
+    user_name = @result.user&.name || "Unknown participant"
     if @result.destroy
-      redirect_to dashboard_path, notice: "Result deleted"
+      redirect_to edit_results_admin_event_path(event.number), notice: "Result deleted for #{user_name}"
     else
-      redirect_to dashboard_path, alert: @result.errors.full_messages.to_sentence
+      redirect_to edit_results_admin_event_path(event.number), alert: @result.errors.full_messages.to_sentence
     end
   end
 
@@ -53,5 +84,15 @@ class ResultsController < ApplicationController
     event.results.destroy_all
 
     redirect_to dashboard_path, notice: "Deleted #{count} results"
+  end
+
+  private
+
+  def set_result
+    @result = Result.find(params[:id])
+  end
+
+  def result_params
+    params.require(:result).permit(:user_id, :event_id, :time_string)
   end
 end

@@ -11,7 +11,7 @@
     <% @in_progress_events.each do |event| %>
       <h2 class="text-pretty text-3xl font-medium tracking-tight text-gray-950 my-3"><%= "#{event.location} - #{event.date}" %></h2>
       <% if Current.user.admin? %>
-        <%= link_to "Edit this event", edit_event_path(event), class: "justify-center rounded-md border border-transparent bg-[#DB2955] px-4 py-2 my-4 text-sm font-medium text-white shadow-sm hover:bg-[#DB2955]/[90%] cursor-pointer" %>
+        <%= link_to "Edit this event", edit_admin_event_path(event.number), class: "justify-center rounded-md border border-transparent bg-[#DB2955] px-4 py-2 my-4 text-sm font-medium text-white shadow-sm hover:bg-[#DB2955]/[90%] cursor-pointer" %>
       <% end %>
       <% if event.results.any? %>
         <h3 class="text-pretty text-2xl font-medium tracking-tight text-gray-950 mt-2">Results</h3>

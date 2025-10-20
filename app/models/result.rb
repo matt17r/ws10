@@ -10,6 +10,7 @@ class Result < ApplicationRecord
 
   validate :user_or_time_present
   validate :no_setter_errors
+  validates :user_id, uniqueness: { scope: :event_id, allow_nil: true, message: "already has a result for this event" }
   validates :time, numericality: {
     only_integer: true,
     greater_than: MINIMUM_TIME,

@@ -27,44 +27,44 @@ class EventsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should redirect to results for non-existent event" do
-    get event_url(id: 999)
+    get event_url(number: 999)
     assert_redirected_to results_path
   end
 
   test "should require admin for new" do
-    get new_event_url
-    assert_response :redirect
+    get new_admin_event_url
+    assert_response :not_found
   end
 
   test "should require admin for create" do
     event_params = { date: Date.current, description: "Test event", location: "Test location", number: 99, results_ready: false }
 
     assert_no_difference("Event.count") do
-      post events_url, params: { event: event_params }
+      post admin_events_url, params: { event: event_params }
     end
-    assert_response :redirect
+    assert_response :not_found
   end
 
   test "should require admin for edit" do
     event = events(:one)
 
-    get edit_event_url(event)
-    assert_response :redirect
+    get edit_admin_event_url(number: event.number)
+    assert_response :not_found
   end
 
   test "should require admin for update" do
     event = events(:one)
 
-    patch event_url(event), params: { event: { description: "Updated description" } }
-    assert_response :redirect
+    patch admin_event_url(number: event.number), params: { event: { description: "Updated description" } }
+    assert_response :not_found
   end
 
   test "should require admin for destroy" do
     event = events(:one)
 
     assert_no_difference("Event.count") do
-      delete event_url(event)
+      delete admin_event_url(number: event.number)
     end
-    assert_response :redirect
+    assert_response :not_found
   end
 end
