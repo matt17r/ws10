@@ -12,13 +12,13 @@ class ResultsController < ApplicationController
   end
 
   def create
-    @result = Result.new(result_params)
+    @event = Event.find(params[:result][:event_id])
+    @result = @event.results.build(result_params)
 
     if @result.save
       user_name = @result.user_name
       redirect_to edit_results_admin_event_path(@result.event.number), notice: "Result created for #{user_name}."
     else
-      @event = Event.find(result_params[:event_id])
       render :new, status: :unprocessable_entity
     end
   end
@@ -93,6 +93,6 @@ class ResultsController < ApplicationController
   end
 
   def result_params
-    params.require(:result).permit(:user_id, :event_id, :time_string)
+    params.require(:result).permit(:user_id, :time_string)
   end
 end

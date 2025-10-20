@@ -12,12 +12,12 @@ class VolunteersController < ApplicationController
   end
 
   def create
-    @volunteer = Volunteer.new(volunteer_params)
+    @event = Event.find(params[:volunteer][:event_id])
+    @volunteer = @event.volunteers.build(volunteer_params)
 
     if @volunteer.save
       redirect_to edit_results_admin_event_path(@volunteer.event.number), notice: "Volunteer created for #{@volunteer.user.name}."
     else
-      @event = Event.find(volunteer_params[:event_id])
       render :new, status: :unprocessable_entity
     end
   end
@@ -47,6 +47,6 @@ class VolunteersController < ApplicationController
   end
 
   def volunteer_params
-    params.require(:volunteer).permit(:user_id, :event_id, :role)
+    params.require(:volunteer).permit(:user_id, :role)
   end
 end
