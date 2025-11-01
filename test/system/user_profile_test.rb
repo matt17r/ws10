@@ -10,7 +10,7 @@ class UserProfileTest < ApplicationSystemTestCase
 
     click_link "View All Results"
 
-    assert_current_path user_results_path(user.barcode_string)
     assert_selector "h1", text: "#{user.emoji} #{user.display_name}"
+    assert_current_path user_results_path(user.barcode_string)
   end
 end
