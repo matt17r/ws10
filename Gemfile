@@ -1,21 +1,21 @@
 source "https://rubygems.org"
 
-gem "rails", "~> 8.0.1"
+gem "rails"
 
 gem "barby"
-gem "bcrypt", "~> 3.1.7"
+gem "bcrypt"
 gem "bootsnap", require: false
 gem "chunky_png"
 gem "csv"
 gem "importmap-rails"
 gem "kamal", require: false
 gem "propshaft"
-gem "puma", ">= 5.0"
+gem "puma"
 gem "rails_cloudflare_turnstile"
 gem "solid_cable"
 gem "solid_cache"
 gem "solid_queue"
-gem "sqlite3", ">= 2.1"
+gem "sqlite3"
 gem "stimulus-rails"
 gem "tailwindcss-rails"
 gem "thruster", require: false
