@@ -33,7 +33,7 @@ Note: Deployment requires `KAMAL_REGISTRY_PASSWORD` environment variable and SSH
 
 ## Application Architecture
 
-This is a Rails 8.0 application for managing running events with user registration and results tracking.
+This is a Rails 8.x application for managing running events with user registration and results tracking.
 
 ### Core Models
 - **Event** (`app/models/event.rb`) - Central entity representing running events with date, location, and number. Manages finish positions, times, and results.
@@ -97,7 +97,12 @@ Admin functionality is separated into `app/controllers/admin/` namespace with `A
 **Always test migration reversibility**: After creating and running a new migration with `bin/rails db:migrate`, immediately test that it can be rolled back with `bin/rails db:rollback:primary`, then re-run `bin/rails db:migrate` to ensure the migration works in both directions. This prevents production deployment issues.
 
 ### Test Coverage
-**Always include tests for new code**: Always write tests to cover new code or changes to existing code, even if that code wasn't previously tested.
+**Always include tests for new code**: Always write tests to cover new code or changes to existing code, even if that code wasn't previously tested. Write the test first and confirm it fails before writing the code.
+
+### Test Expansion
+**Ask whether to look for additional bugs**: If you add a test and fix 1 bug, it may be a sign that there are other similar bugs lurking. Once you've fixed a bug and the tests are passing again, ask me if I want you to search the codebase for similar bugs.
+
+**Ask whether to add additional tests**: If you add a new test to one method/action/controller, ask me if I want you to find similar actions or codepaths that are still untested.
 
 ### Test Setup
 **Keep shared setup minimal**: Shared setup blocks should be as minimal as possible (preferably empty). Test setup should be explicit and local to each individual test for clarity and maintainability.
@@ -106,7 +111,7 @@ Admin functionality is separated into `app/controllers/admin/` namespace with `A
 **Layer tests by scope and thoroughness**: System tests should focus on happy path user flows. Controller tests should cover the happy path and common error scenarios. Model tests should be very thorough, covering happy path, common errors, edge cases, and business logic validation.
 
 ### Dependencies
-**Avoid introducing new dependencies**: Where possible, use existing Ruby gems to accomplish tasks. Ask before introducing a new gem. Be extra cautious before before introducing new JavaScript dependencies. Don't introduce a JavaScript dependency when a 20-50 lines of vanilla JavaScript will fill the need.
+**Avoid introducing new dependencies**: Where possible, use gems that are already included (can be dependencies of explicitly required gems) to accomplish tasks. Ask before introducing a new gem. Be extra cautious before before introducing new JavaScript dependencies. Don't introduce a JavaScript dependency when 20-50 lines of vanilla JavaScript will fill the need.
 
 ### Progressive Enhancement
 **Build vanilla-first, enhance with JavaScript**: Always implement features to work completely without JavaScript first using standard Rails patterns (forms, links, redirects). Then add Stimulus controllers as progressive enhancements to improve the user experience for those with JavaScript enabled. This ensures accessibility and graceful degradation.
@@ -118,5 +123,5 @@ Admin functionality is separated into `app/controllers/admin/` namespace with `A
 **Respect Rails' built-in protections**: Never bypass or work around Rails' built-in security features (CSRF protection, parameter filtering, SQL injection protection, etc.) without explicit approval. When implementing any feature that might have security implications, ask for review and confirmation before proceeding.
 
 ### Code Clarity
-**Avoid comments in favor of clear code**: Instead of writing comments, use clearer variable names, extract methods with descriptive names, or refactor code to be self-documenting. Comments should be extremely rare and only used when the "why" cannot be expressed through code itself.
+**Avoid comments in favour of clear code**: Instead of writing comments, use clearer variable names, extract methods with descriptive names, or refactor code to be self-documenting. Comments should be extremely rare and only used when the "why" cannot be expressed through code itself.
 - The linting command is `bin/rubocop -f github`

@@ -3,7 +3,9 @@
     "allow": [
       "Bash(bundle exec rake:*)",
       "Bash(bin/rails:*)",
-      "Bash(bin/rubocop:*)"
+      "Bash(bin/rubocop:*)",
+      "WebSearch",
+      "WebFetch(domain:docs.github.com)"
     ],
     "deny": []
   }
