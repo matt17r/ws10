@@ -59,6 +59,18 @@ class EventsControllerTest < ActionDispatch::IntegrationTest
     assert_response :not_found
   end
 
+  test "admin should be able to update event" do
+    admin_user = users(:one)
+    sign_in_as(admin_user)
+    event = events(:one)
+
+    patch admin_event_url(number: event.number), params: { event: { description: "Updated description" } }
+    assert_redirected_to event_url(number: event.number)
+
+    event.reload
+    assert_equal "Updated description", event.description
+  end
+
   test "should require admin for destroy" do
     event = events(:one)
 

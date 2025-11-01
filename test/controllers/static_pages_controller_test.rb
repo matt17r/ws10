@@ -5,4 +5,13 @@ class StaticPagesControllerTest < ActionDispatch::IntegrationTest
     get root_url
     assert_response :success
   end
+
+  test "admin user should be able to view admin dashboard" do
+    admin_user = users(:one)
+    sign_in_as(admin_user)
+
+    get dashboard_url
+    assert_response :success
+    assert_select "a[href=?]", new_admin_event_path, text: "Create new event"
+  end
 end
