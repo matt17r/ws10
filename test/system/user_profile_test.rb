@@ -8,8 +8,17 @@ class UserProfileTest < ApplicationSystemTestCase
     visit user_url
     assert_selector "h1", text: "Profile"
 
-    click_link "View All Results"
+    visit user_results_path(user.barcode_string)
 
-    assert_current_path user_results_path(user.barcode_string)
+    assert_selector "h2", text: "Results"
+  end
+
+  test "signed in user can access their results via profile/results" do
+    user = users(:one)
+    sign_in_as user
+
+    visit my_results_path
+
+    assert_selector "h2", text: "Results"
   end
 end
