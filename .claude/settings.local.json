@@ -5,7 +5,10 @@
       "Bash(bin/rails:*)",
       "Bash(bin/rubocop:*)",
       "WebSearch",
-      "WebFetch(domain:docs.github.com)"
+      "WebFetch(domain:docs.github.com)",
+      "Bash(for i in {1..10})",
+      "Bash(do bin/rails test test/system/user_profile_test.rb:4)",
+      "Bash(done)"
     ],
     "deny": []
   }

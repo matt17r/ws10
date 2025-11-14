@@ -28,6 +28,7 @@ Rails.application.routes.draw do
 
   resources :events, param: :number, only: [ :index, :show ]
   resource :user, only: [ :show, :edit, :update ], path: "profile"
+  get "profile/results", to: "users#my_results", as: :my_results
   resources :users, only: [ :index ], path: "participants", param: :barcode
   get "participants/:barcode/results", to: "users#results", as: :user_results
 

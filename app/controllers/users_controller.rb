@@ -1,7 +1,7 @@
 class UsersController < ApplicationController
   allow_unauthenticated_access only: [ :index, :results ]
 
-  before_action :set_current_user, only: [ :show, :edit, :update ]
+  before_action :set_current_user, only: [ :show, :edit, :update, :my_results ]
   before_action :set_user, only: [ :results ]
 
   def index
@@ -24,6 +24,9 @@ class UsersController < ApplicationController
     @volunteers = @user.volunteers.includes(:event).order(created_at: :desc)
   end
 
+  def my_results
+    redirect_to user_results_path(barcode: @user.barcode_string)
+  end
 
   def update
     @user.assign_attributes(user_params)
