@@ -85,14 +85,14 @@
         <div class="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center space-y-2">
           <% if alert = flash[:alert] %>
             <div id="alert" data-controller="flash" data-flash-delay-value="30000" class="bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-4 transition-opacity duration-500">
-              <span><%= alert %></span>
+              <span><%= sanitize alert, tags: %w[ul li], attributes: %w[class] %></span>
               <button type="button" data-action="click->flash#close" class="text-white hover:text-red-100 text-xl leading-none" aria-label="Dismiss">&times;</button>
             </div>
           <% end %>
 
           <% if notice = flash[:notice] %>
             <div id="notice" data-controller="flash" data-flash-delay-value="30000" class="bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-4 transition-opacity duration-500">
-              <span><%= notice %></span>
+              <span><%= sanitize notice, tags: %w[ul li], attributes: %w[class] %></span>
               <button type="button" data-action="click->flash#close" class="text-white hover:text-green-100 text-xl leading-none" aria-label="Dismiss">&times;</button>
             </div>
           <% end %>

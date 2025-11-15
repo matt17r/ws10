@@ -44,7 +44,12 @@ Rails.application.routes.draw do
       post :user_import, to: "admin/users#import"
       get :dashboard, to: "static_pages#admin_dashboard"
       get "user_import/template", to: "admin/users#download_template"
-      resources :finish_positions, only: [ :create, :destroy ]
+      resources :finish_positions, only: [ :create, :destroy ] do
+        member do
+          get :new_user
+          post :create_user
+        end
+      end
       resources :finish_times, only: [ :create, :destroy ]
       resources :results, only: [ :new, :create, :edit, :update, :destroy ]
       resources :volunteers, only: [ :new, :create, :edit, :update, :destroy ]
