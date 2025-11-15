@@ -34,9 +34,11 @@ class ResultsController < ApplicationController
 
   def link
     event = Event.find(params[:event_id])
-    all_positions = (event.finish_positions.pluck(:position) + event.finish_times.pluck(:position)).uniq.sort
+    all_positions = (event.finish_positions.pluck(:position) + event.finish_times.pluck(:position)).uniq.compact.sort
     created = []
     skipped = []
+
+    # Process positions with position numbers
     all_positions.each do |position|
       fp = event.finish_positions.find_by(position: position)
       ft = event.finish_times.find_by(position: position)
@@ -53,17 +55,34 @@ class ResultsController < ApplicationController
         if result.save
           created << position
         else
-          skipped << "#{position} (#{result.errors.full_messages.to_sentence})"
+          skipped << "Position #{position} (#{result.errors.full_messages.to_sentence})"
         end
       else
-        skipped << "#{position} (already linked)"
+        skipped << "Position #{position} (already linked)"
+      end
+    end
+
+    # Process participants without position numbers
+    event.finish_positions.where(position: nil).where.not(discarded: true).each do |fp|
+      next unless fp.known_user?
+
+      unless event.results.exists?(user: fp.user, time: nil)
+        result = event.results.build(user: fp.user, time: nil)
+        if result.save
+          created << "P"
+        else
+          skipped << "Participant #{fp.user_name} (#{result.errors.full_messages.to_sentence})"
+        end
+      else
+        skipped << "Participant #{fp.user_name} (already linked)"
       end
     end
 
     if skipped.empty?
       redirect_to dashboard_path, notice: "Linked #{created.count} results successfully."
     else
-      redirect_to dashboard_path, alert: "Linked #{created.count} results. Skipped: #{skipped.join(', ')}"
+      skipped_list = skipped.map { |s| "<li>#{s}</li>" }.join
+      redirect_to dashboard_path, alert: "Linked #{created.count} results. Skipped:<ul class='list-disc ml-5 mt-1'>#{skipped_list}</ul>"
     end
   end
 

@@ -123,6 +123,57 @@ class ResultsControllerTest < ActionDispatch::IntegrationTest
     assert_equal 2, results.count
   end
 
+  test "linking creates results for participants without position numbers" do
+    sign_in_as users(:one)
+    event = events(:draft_event)
+
+    # Participant with no position number
+    FinishPosition.create!(event: event, user: users(:two), position: nil)
+
+    assert_difference "Result.count", 1 do
+      post result_link_path, params: { event_id: event.id }
+    end
+
+    result = event.results.find_by(user: users(:two))
+    assert_not_nil result
+    assert_nil result.time
+    assert_equal "P", result.place
+    assert_equal "Participant", result.time_string
+  end
+
+  test "linking creates results for multiple participants without position numbers" do
+    sign_in_as users(:one)
+    event = events(:draft_event)
+
+    # Multiple participants with no position numbers
+    FinishPosition.create!(event: event, user: users(:one), position: nil)
+    FinishPosition.create!(event: event, user: users(:two), position: nil)
+    FinishPosition.create!(event: event, user: users(:three), position: nil)
+
+    assert_difference "Result.count", 3 do
+      post result_link_path, params: { event_id: event.id }
+    end
+
+    assert event.results.exists?(user: users(:one), time: nil)
+    assert event.results.exists?(user: users(:two), time: nil)
+    assert event.results.exists?(user: users(:three), time: nil)
+  end
+
+  test "linking skips participants without position numbers if already linked" do
+    sign_in_as users(:one)
+    event = events(:draft_event)
+
+    FinishPosition.create!(event: event, user: users(:two), position: nil)
+    Result.create!(event: event, user: users(:two), time: nil)
+
+    assert_no_difference "Result.count" do
+      post result_link_path, params: { event_id: event.id }
+    end
+
+    assert_redirected_to dashboard_path
+    assert_match(/Skipped.*already linked/, flash[:alert])
+  end
+
   test "linking skips discarded finish positions entirely" do
     sign_in_as users(:one)
     event = events(:draft_event)

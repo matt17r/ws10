@@ -25,9 +25,34 @@ class FinishPositionsController < ApplicationController
     end
   end
 
+  def new_user
+    @finish_position = FinishPosition.find(params[:id])
+    @user = User.new
+  end
+
+  def create_user
+    @finish_position = FinishPosition.find(params[:id])
+
+    @user = User.new(user_params)
+    @user.password = SecureRandom.hex(12)
+    @user.emoji = "👤"
+
+    if @user.save
+      @finish_position.update(user: @user)
+      @user.send_confirmation_email
+      redirect_to dashboard_path, notice: "#{@user.name} created and placed at ##{@finish_position.position}"
+    else
+      render :new_user, status: :unprocessable_entity
+    end
+  end
+
   private
 
   def finish_position_params
     params.require(:finish_position).permit(:user_id, :event_id, :position, :discarded)
+  end
+
+  def user_params
+    params.require(:user).permit(:name, :email_address, :display_name)
   end
 end

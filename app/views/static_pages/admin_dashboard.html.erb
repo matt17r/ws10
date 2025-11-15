@@ -94,8 +94,10 @@
                   <td>
                     <% if fp.discarded? %>
                       (DISCARDED)
-                    <% else %>
+                    <% elsif fp.known_user? %>
                       <%= fp.user_name %>
+                    <% else %>
+                      <%= link_to fp.user_name, new_user_finish_position_path(fp), class: "text-[#DB2955] hover:text-[#DB2955]/80 font-medium underline" %>
                     <% end %>
                   </td>
                   <td><%= button_to "Delete", finish_position_path(fp), method: :delete, class: "text-base font-semibold text-[#DB2955] cursor-pointer" %></td>
@@ -109,7 +111,7 @@
             <div class="my-4 flex items-center space-x-4">
               <div>
                 <%= f.label :position, "Position", class: "block text-sm font-medium text-gray-700" %>
-                <%= f.number_field :position, min: 1, class: "w-24 rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:outline-[#DB2955] sm:text-sm" %>
+                <%= f.number_field :position, min: 1, required: true, class: "w-24 rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:outline-[#DB2955] sm:text-sm" %>
               </div>
 
               <div class="self-end">
@@ -117,7 +119,7 @@
               </div>
 
               <div class="self-end">
-                <%= f.submit "Discard", name: "discard", formnovalidate: true, class: "rounded-md border border-transparent bg-red-500 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-600 cursor-pointer" %>
+                <%= f.submit "Discard", name: "discard", class: "rounded-md border border-transparent bg-red-500 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-600 cursor-pointer" %>
               </div>
             </div>
           <% end %>
@@ -172,6 +174,25 @@
                 </div>
                 <div class="my-5">
                   <%= f.submit "Upload times", class: "justify-center rounded-md border border-transparent bg-[#DB2955] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#DB2955]/[90%] cursor-pointer" %>
+                </div>
+              <% end %>
+
+              <h4 class="text-pretty text-xl font-medium tracking-tight text-gray-950 mt-6 mb-2">Or add one manually</h4>
+              <%= form_with model: FinishTime.new(event: event), local: true do |f| %>
+                <%= f.hidden_field :event_id %>
+
+                <div class="my-2">
+                  <%= f.label :position, "Position" %>
+                  <%= f.number_field :position, min: 1, class: "block rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-[#DB2955] sm:text-sm/6" %>
+                </div>
+
+                <div class="my-2">
+                  <%= f.label :time_string, "Time" %>
+                  <%= f.text_field :time_string, class: "block rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-[#DB2955] sm:text-sm/6", placeholder: "HH:MM:SS or MM:SS or 'P'", value: f.object.time.nil? ? "" : f.object.time_string %>
+                </div>
+
+                <div class="my-4">
+                  <%= f.submit "Add Finish Time", class: "justify-center rounded-md border border-transparent bg-[#DB2955] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#DB2955]/[90%] cursor-pointer" %>
                 </div>
               <% end %>
             </div>

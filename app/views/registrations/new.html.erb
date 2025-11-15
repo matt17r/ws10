@@ -32,7 +32,11 @@
       <%= form.email_field :email_address, required: true, autocomplete: "username", placeholder: "Enter your email address", class: "block shadow rounded-md border #{@user.errors[:email_address].present? ? "border-red-500" : "border-gray-400"} px-3 py-2 mt-2 w-full" %>
       <% if @user.errors[:email_address].present? %>
         <p class="mt-1 text-sm text-red-600">
-          <%= @user.errors.full_messages_for(:email_address).join(", ") %>
+          <% if @user.errors[:email_address].include?("has already been taken") %>
+            Email address has already been taken. If that was you, you can <%= link_to "sign in", sign_in_path(email_address: @user.email_address), class: "font-medium underline" %> with that email address or <%= link_to "reset your password", forgot_password_path(email_address: @user.email_address), class: "font-medium underline" %>.
+          <% else %>
+            <%= @user.errors.full_messages_for(:email_address).join(", ") %>
+          <% end %>
         </p>
       <% end %>
     </div>

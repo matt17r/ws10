@@ -1,0 +1,43 @@
+<div class="my-16 px-6 lg:px-8">
+  <div class="mx-auto max-w-2xl lg:max-w-7xl">
+    <div class="md:w-2/3 w-full">
+      <h1 class="font-bold text-4xl">Quick add user for position #<%= @finish_position.position %></h1>
+      <p class="text-gray-600 mt-2">The user will be created with a random password and the default emoji (👤). They will receive a confirmation email.</p>
+
+      <%= form_with model: @user, url: create_user_finish_position_path(@finish_position), method: :post, class: "contents" do |form| %>
+        <% if @user.errors.any? %>
+          <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-md mt-3">
+            <h2><%= pluralize(@user.errors.count, "error") %> prohibited this user from being saved:</h2>
+
+            <ul class="list-disc ml-6">
+              <% @user.errors.each do |error| %>
+                <li><%= error.full_message %></li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+
+        <div class="my-5">
+          <%= form.label :name, "Real Name" %>
+          <%= form.text_field :name, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": @user.errors[:name].none?, "border-red-400 focus:outline-red-600": @user.errors[:name].any?}], autofocus: true %>
+        </div>
+
+        <div class="my-5">
+          <%= form.label :display_name %>
+          <%= form.text_field :display_name, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": @user.errors[:display_name].none?, "border-red-400 focus:outline-red-600": @user.errors[:display_name].any?}] %>
+        </div>
+
+        <div class="my-5">
+          <%= form.label :email_address %>
+          <%= form.email_field :email_address, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": @user.errors[:email_address].none?, "border-red-400 focus:outline-red-600": @user.errors[:email_address].any?}] %>
+        </div>
+
+        <div class="inline">
+          <%= form.submit "Create User", class: "w-full sm:w-auto rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white inline-block font-medium cursor-pointer" %>
+        </div>
+      <% end %>
+
+      <%= link_to "Back to dashboard", dashboard_path, class: "w-full sm:w-auto text-center mt-2 sm:mt-0 sm:ml-2 rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
+    </div>
+  </div>
+</div>
