@@ -12,16 +12,16 @@ class StaticPagesController < ApplicationController
 
   def courses
     # @default_tab = "tab-bungarribee"
-    @default_tab = "tab-nepean"
-    # @default_tab = "tab-parramatta"
+    # @default_tab = "tab-nepean"
+    @default_tab = "tab-parramatta"
 
     # 19th Oct
     # @next_bungarribee_event_fb = "https://www.facebook.com/events/1226001902067312/"
     # @next_bungarribee_event_strava = "https://www.strava.com/clubs/1343589/group_events/2125977"
 
     # 16th November
-    @next_nepean_event_fb = "https://www.facebook.com/events/693210060205889/"
-    @next_nepean_event_strava = "https://www.strava.com/clubs/1343589/group_events/2125979"
+    # @next_nepean_event_fb = "https://www.facebook.com/events/693210060205889/"
+    # @next_nepean_event_strava = "https://www.strava.com/clubs/1343589/group_events/2125979"
 
     # 21st December
     @next_parramatta_event_fb = "https://www.facebook.com/events/1952283132276856/"
@@ -30,9 +30,9 @@ class StaticPagesController < ApplicationController
 
   def home
     @upcoming_events = [
-      EventStruct.new(nickname: "Nepean River", location: "Tench Reserve, Jamisontown", date: "16th Nov"),
       EventStruct.new(nickname: "Parramatta", location: "Parramatta Park", date: "21st Dec")
-      # EventStruct.new(nickname: "Bungarribee?", location: "Bungarribee Park?", date: "Jan 2026?")
+      # EventStruct.new(nickname: "Bungarribee", location: "Bungarribee Park", date: "?")
+      # EventStruct.new(nickname: "Nepean River", location: "Tench Reserve, Jamisontown", date: "?")
     ].first(3)
   end
 
