@@ -6,7 +6,6 @@ class EventsController < ApplicationController
 
   before_action :set_event, only: [ :show, :edit, :update, :destroy, :edit_results ]
 
-  # Public actions
   def index
     @events = Event.where(results_ready: true).order(number: :desc).includes(:results)
   end
@@ -24,7 +23,6 @@ class EventsController < ApplicationController
     render :show
   end
 
-  # Admin actions
   def new
     @event = Event.new(number: (Event.maximum(:number) || 0) + 1, date: Date.today)
   end
@@ -66,6 +64,6 @@ class EventsController < ApplicationController
   end
 
   def event_params
-    params.expect(event: [ :number, :date, :location, :description, :results_ready ])
+    params.expect(event: [ :number, :date, :location_id, :description, :results_ready, :facebook_url, :strava_url ])
   end
 end

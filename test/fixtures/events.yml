@@ -1,20 +1,23 @@
 one:
   date: "2025-05-15"
-  location: "Over there"
+  location_name: "Bungarribee Park"
+  location: bungarribee
   number: 1
   description: "First test event"
   results_ready: true
 
 two:
   date: "2025-05-22"
-  location: "Here"
+  location_name: "Nepean River"
+  location: nepean
   number: 2
   description: "Second test event"
   results_ready: true
 
 draft_event:
   date: "2025-05-29"
-  location: "Draft location"
+  location_name: "Parramatta Park"
+  location: parramatta
   number: 3
   description: "Draft event for testing"
   results_ready: false

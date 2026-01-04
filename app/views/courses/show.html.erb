@@ -1,0 +1,104 @@
+<% content_for :head do %>
+  <meta property="og:title" content="<%= @location.og_title || @location.name %>" />
+  <meta property="og:description" content="<%= @location.og_description %>" />
+  <meta property="og:url" content="<%= course_url(@location) %>" />
+  <meta property="og:type" content="website" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="<%= @location.og_title || @location.name %>" />
+  <meta name="twitter:description" content="<%= @location.og_description %>" />
+<% end %>
+
+<div class="mx-auto max-w-2xl lg:max-w-screen-2xl my-16 px-6 lg:px-8">
+  <div class="border border-gray-200 px-6 lg:px-8 py-16">
+    <div class="mx-auto max-w-2xl lg:max-w-7xl">
+      <h1 class="text-pretty text-4xl font-medium tracking-tight text-gray-950 data-[dark]:text-white sm:text-6xl"><%= @location.name %></h1>
+      <p class="mt-6 max-w-3xl text-2xl font-medium text-gray-600"><%= @location.subtitle %></p>
+
+      <div>
+        <div class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-4">
+          <% @location.events.order(:date).each do |event| %>
+            <div class="relative overflow-hidden rounded-lg bg-white px-4 py-5 shadow-sm sm:p-6">
+              <% if event == @next_event %>
+                <div class="absolute top-0 right-0 w-16 h-16">
+                  <div class="bg-[#DB2955] absolute transform rotate-45 text-center text-white font-semibold py-1 right-[-60px] top-[20px] w-[190px]">
+                    Next Event
+                  </div>
+                </div>
+                <div class="mt-1 text-3xl font-semibold tracking-tight text-[#DB2955]"><%= event.date.strftime("%-d %B") %></div>
+              <% else %>
+                <div class="mt-1 text-3xl font-semibold tracking-tight <%= event.date < Date.today ? 'text-gray-500 line-through' : 'text-gray-900' %>"><%= event.date.strftime("%-d %B") %></div>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <section class="mt-8 lg:mt-16 grid grid-cols-1 lg:grid-cols-2 lg:gap-x-12">
+        <div class="max-w-lg">
+          <h2 class="text-2xl font-medium tracking-tight" id="course-start-<%= @location.slug %>">Course Start Point</h2>
+          <p class="mt-6 text/6 text-gray-600"><%= simple_format(@location.start_point_description) %></p>
+          <p class="mt-8 text-lg/6 text-gray-600">
+            <a class="text-[#54494B] underline underline-offset-[3px] hover:no-underline hover:text-[#9DA39A]" href="<%= @location.google_maps_url %>">Google Maps Link</a> |
+            <a class="text-[#54494B] underline underline-offset-[3px] hover:no-underline hover:text-[#9DA39A]" href="<%= @location.apple_maps_url %>">Apple Maps Link</a>
+          </p>
+        </div>
+        <div class="lg:row-span-2 mt-8 lg:my-auto">
+          <% if @location.start_image_1 %>
+            <%= image_tag @location.start_image_1, class: "rounded-lg mb-2" %>
+          <% end %>
+          <% if @location.start_image_2 %>
+            <%= image_tag @location.start_image_2, class: "rounded-lg mt-2" %>
+          <% end %>
+        </div>
+        <div class="max-w-lg mt-8 lg:col-span-1">
+          <h2 class="text-2xl font-medium tracking-tight" id="facilities-<%= @location.slug %>">Facilities</h2>
+          <p class="mt-6 text/6 text-gray-600"><%= simple_format(@location.facilities) %></p>
+        </div>
+      </section>
+
+      <section class="mt-8 lg:mt-16 grid grid-cols-1 lg:grid-cols-2 lg:gap-x-12">
+        <div class="max-w-lg lg:order-2">
+          <h2 class="text-2xl font-medium tracking-tight" id="course-description-<%= @location.slug %>">Course Description</h2>
+          <p class="mt-6 text/6 text-gray-600"><%= simple_format(@location.course_description) %></p>
+          <p class="mt-6 text-lg/6 text-gray-600">
+            <a class="text-[#54494B] underline underline-offset-[3px] hover:no-underline hover:text-[#9DA39A]" href="<%= @location.strava_route_url %>">Strava Route</a>
+          </p>
+        </div>
+        <div class="lg:row-span-2 mt-8 lg:my-auto lg:order-1">
+          <div class="strava-embed-placeholder"
+               data-embed-type="route"
+               data-embed-id="<%= @location.strava_embed_id %>"
+               data-units="metric"
+               data-full-width="true"
+               data-style="standard"
+               data-surface-type="true"
+               data-map-hash="<%= @location.strava_map_hash %>"
+               data-club-id="1343589"
+               data-from-embed="true"></div>
+          <script src="https://strava-embeds.com/embed.js"></script>
+        </div>
+        <div class="max-w-lg lg:order-3">
+          <h2 class="mt-9 lg:mt-0 text-2xl font-medium tracking-tight" id="event-rego-<%= @location.slug %>">Event Registration</h2>
+          <p class="mt-6 text/6 text-gray-600">To participate, you just need to be registered on this site. If you've run or signed up before, you're all set. Use the <%= link_to "forgot password form", forgot_password_path, class: "underline hover:no-underline" %> to reset your password or set it for the first time.</p>
+          <p class="mt-6 text/6 text-gray-600">To register as a new WS10 runner, fill in the <%= link_to "registration form", sign_up_path, class: "underline hover:no-underline" %> and then click on the confirmation link in your email.</p>
+
+          <% if @next_event&.has_social_links? %>
+            <p class="mt-6 text/6 text-gray-600">
+              Tell us you're coming (and help spread the word!) by indicating you will come to the
+              <% if @next_event.strava_url.present? %>
+                <a class="text-[#54494B] underline underline-offset-[3px] hover:no-underline hover:text-[#9DA39A]" href="<%= @next_event.strava_url %>">Strava Event</a>
+              <% end %>
+              <% if @next_event.facebook_url.present? && @next_event.strava_url.present? %>
+                or the
+              <% end %>
+              <% if @next_event.facebook_url.present? %>
+                <a class="text-[#54494B] underline underline-offset-[3px] hover:no-underline hover:text-[#9DA39A]" href="<%= @next_event.facebook_url %>">Facebook Event</a>
+              <% end %>.
+            </p>
+          <% end %>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
