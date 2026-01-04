@@ -7,7 +7,7 @@ class StaticPagesController < ApplicationController
   end
 
   def admin_dashboard
-    @in_progress_events = Event.in_progress.includes(:finish_positions, :finish_times, :results, :volunteers, :location)
+    @event = Event.in_progress.order(date: :asc).includes(:finish_positions, :finish_times, :results, :volunteers, :location).first
   end
 
   def courses

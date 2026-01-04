@@ -10,6 +10,25 @@
 <% end %>
 
 <div class="mx-auto max-w-2xl lg:max-w-screen-2xl my-16 px-6 lg:px-8">
+  <div class="grid grid-cols-1 sm:hidden">
+    <select onchange="location = this.value;" aria-label="Select a course" class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-2 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-[#DB2955]">
+      <% @locations.each do |location| %>
+        <option value="<%= course_path(location) %>" <%= 'selected' if location == @location %>><%= location.nickname %></option>
+      <% end %>
+    </select>
+    <svg class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end fill-gray-500" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" data-slot="icon">
+      <path fill-rule="evenodd" d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+    </svg>
+  </div>
+  <div class="hidden sm:block">
+    <div class="border-b border-gray-200">
+      <nav class="-mb-px flex" aria-label="Courses">
+        <% @locations.each do |location| %>
+          <%= link_to location.nickname, course_path(location), class: "w-1/3 border-b-2 #{location == @location ? 'border-[#DB2955] text-[#DB2955]' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'} px-1 py-4 text-center text-sm font-medium", aria_current: (location == @location ? 'page' : nil) %>
+        <% end %>
+      </nav>
+    </div>
+  </div>
   <div class="border border-gray-200 px-6 lg:px-8 py-16">
     <div class="mx-auto max-w-2xl lg:max-w-7xl">
       <h1 class="text-pretty text-4xl font-medium tracking-tight text-gray-950 data-[dark]:text-white sm:text-6xl"><%= @location.name %></h1>
@@ -17,7 +36,7 @@
 
       <div>
         <div class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-4">
-          <% @location.events.order(:date).each do |event| %>
+          <% @current_year_events.each do |event| %>
             <div class="relative overflow-hidden rounded-lg bg-white px-4 py-5 shadow-sm sm:p-6">
               <% if event == @next_event %>
                 <div class="absolute top-0 right-0 w-16 h-16">
@@ -83,7 +102,7 @@
           <p class="mt-6 text/6 text-gray-600">To participate, you just need to be registered on this site. If you've run or signed up before, you're all set. Use the <%= link_to "forgot password form", forgot_password_path, class: "underline hover:no-underline" %> to reset your password or set it for the first time.</p>
           <p class="mt-6 text/6 text-gray-600">To register as a new WS10 runner, fill in the <%= link_to "registration form", sign_up_path, class: "underline hover:no-underline" %> and then click on the confirmation link in your email.</p>
 
-          <% if @next_event&.has_social_links? %>
+          <% if @next_event && @next_event.location == @location && @next_event.has_social_links? %>
             <p class="mt-6 text/6 text-gray-600">
               Tell us you're coming (and help spread the word!) by indicating you will come to the
               <% if @next_event.strava_url.present? %>

@@ -9,12 +9,12 @@
       </div>
     <% end %>
 
-    <% @in_progress_events.each do |event| %>
-      <h2 class="text-pretty text-3xl font-medium tracking-tight text-gray-950 my-3"><%= "#{event.location} - #{event.date}" %></h2>
+    <% if @event %>
+      <h2 class="text-pretty text-3xl font-medium tracking-tight text-gray-950 my-3"><%= "#{@event.location} - #{@event.date}" %></h2>
       <% if Current.user.admin? %>
-        <%= link_to "Edit this event", edit_admin_event_path(event.number), class: "justify-center rounded-md border border-transparent bg-[#DB2955] px-4 py-2 my-4 text-sm font-medium text-white shadow-sm hover:bg-[#DB2955]/[90%] cursor-pointer" %>
+        <%= link_to "Edit this event", edit_admin_event_path(@event.number), class: "justify-center rounded-md border border-transparent bg-[#DB2955] px-4 py-2 my-4 text-sm font-medium text-white shadow-sm hover:bg-[#DB2955]/[90%] cursor-pointer" %>
       <% end %>
-      <% if event.results.any? %>
+      <% if @event.results.any? %>
         <h3 class="text-pretty text-2xl font-medium tracking-tight text-gray-950 mt-2">Results</h3>
         <table class="table-fixed border-separate [border-spacing:0.75rem]">
           <thead>
@@ -26,7 +26,7 @@
             </tr>
           </thead>
           <tbody>
-            <% event.results.order(Result.arel_table[:time].asc.nulls_last).each do |result| %>
+            <% @event.results.order(Result.arel_table[:time].asc.nulls_last).each do |result| %>
               <tr>
                 <td><%= result.place %></td>
                 <td><%= result.user_name %></td>
@@ -36,9 +36,9 @@
             <% end %>
           </tbody>
         </table>
-        <%= button_to "Delete All Results", results_destroy_all_path(event_id: event.id), method: :delete, form: { data: { turbo_confirm: "Are you sure you want to delete all #{event.results.count} results? This cannot be undone." } }, class: "my-4 rounded-md border border-transparent bg-red-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-red-700 cursor-pointer" %>
+        <%= button_to "Delete All Results", results_destroy_all_path(event_id: @event.id), method: :delete, form: { data: { turbo_confirm: "Are you sure you want to delete all #{@event.results.count} results? This cannot be undone." } }, class: "my-4 rounded-md border border-transparent bg-red-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-red-700 cursor-pointer" %>
       <% else %>
-        <%= button_to "Link all finish positions and times", result_link_path(event_id: event.id), method: :post, class: "my-4 rounded-md border border-transparent bg-[#DB2955] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#DB2955]/90 cursor-pointer" %>
+        <%= button_to "Link all finish positions and times", result_link_path(event_id: @event.id), method: :post, class: "my-4 rounded-md border border-transparent bg-[#DB2955] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#DB2955]/90 cursor-pointer" %>
       <% end %>
       <div class="my-3 grid grid-cols-1 font-sm md:grid-cols-2 lg:grid-cols-3">
         <div data-controller="search">
@@ -55,20 +55,20 @@
               </tr>
             </thead>
             <tbody>
-              <% event.unplaced_users.order(:name).each do |user| %>
-                <% form_id = "#{dom_id(event)}_#{dom_id(user, :finish_position_form)}" %>
+              <% @event.unplaced_users.order(:name).each do |user| %>
+                <% form_id = "#{dom_id(@event)}_#{dom_id(user, :finish_position_form)}" %>
                 <tr data-search-target="row" data-search-text="<%= "#{user.name} #{user.display_name} #{user.id} #{user.barcode_string}" %>">
                   <td>
-                    <%= form_with model: FinishPosition.new(user: user, event: event), url: finish_positions_path, html: { id: form_id } do |f| %>
+                    <%= form_with model: FinishPosition.new(user: user, event: @event), url: finish_positions_path, html: { id: form_id } do |f| %>
                       <%= f.hidden_field :user_id, value: user.id %>
-                      <%= f.hidden_field :event_id, value: event.id %>
+                      <%= f.hidden_field :event_id, value: @event.id %>
                     <% end %>
                     <%= user.name %>
                     <%= "(#{user.results_count})" %>
                     <%= "⚠️" if user.confirmed_at.nil? %>
                   </td>
                   <td>
-                    <input form="<%= form_id %>" type="number" name="finish_position[position]" id="<%= "#{dom_id(event)}_#{dom_id(user, :position)}" %>"  min="1" class="block w-24 rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-[#DB2955] sm:text-sm/6" />
+                    <input form="<%= form_id %>" type="number" name="finish_position[position]" id="<%= "#{dom_id(@event)}_#{dom_id(user, :position)}" %>"  min="1" class="block w-24 rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-[#DB2955] sm:text-sm/6" />
                   </td>
                   <td>
                     <input form="<%= form_id %>" type="submit" value="Add" class="justify-center rounded-md border border-transparent bg-[#DB2955] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#DB2955]/[90%] cursor-pointer" />
@@ -89,7 +89,7 @@
               </tr>
             </thead>
             <tbody>
-              <% event.finish_positions.order(:position).each do |fp| %>
+              <% @event.finish_positions.order(:position).each do |fp| %>
                 <tr class="<%= 'opacity-50' if fp.discarded? %>">
                   <td><%= fp.position %></td>
                   <td>
@@ -106,7 +106,7 @@
               <% end %>
             </tbody>
           </table>
-          <%= form_with model: FinishPosition.new(event: event), local: true, html: { id: "unknown_finisher_form" } do |f| %>
+          <%= form_with model: FinishPosition.new(event: @event), local: true, html: { id: "unknown_finisher_form" } do |f| %>
             <%= f.hidden_field :event_id %>
 
             <div class="my-4 flex items-center space-x-4">
@@ -128,7 +128,7 @@
 
         <div>
           <h3 class="text-pretty text-2xl font-medium tracking-tight text-gray-950 mt-2">Finish Times</h3>
-          <% if event.finish_times.any? %>
+          <% if @event.finish_times.any? %>
             <table class="table-fixed border-separate [border-spacing:0.75rem]">
               <thead>
                 <tr>
@@ -138,7 +138,7 @@
                 </tr>
               </thead>
               <tbody>
-                <% event.finish_times.order(:position).each do |ft| %>
+                <% @event.finish_times.order(:position).each do |ft| %>
                   <tr>
                     <td><%= ft.position %></td>
                     <td><%= ft.time_string %></td>
@@ -147,7 +147,7 @@
                 <% end %>
               </tbody>
             </table>
-            <%= form_with model: FinishTime.new(event: event), local: true do |f| %>
+            <%= form_with model: FinishTime.new(event: @event), local: true do |f| %>
               <%= f.hidden_field :event_id %>
 
               <div class="my-2">
@@ -164,12 +164,12 @@
                 <%= f.submit "Add Finish Time", class: "justify-center rounded-md border border-transparent bg-[#DB2955] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#DB2955]/[90%] cursor-pointer" %>
               </div>
             <% end %>
-            <%= button_to "Delete All Finish Times", finish_times_destroy_all_path(event_id: event.id), method: :delete, form: { data: { turbo_confirm: "Are you sure you want to delete all #{event.finish_times.count} finish times? This cannot be undone." } }, class: "my-4 rounded-md border border-transparent bg-red-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-red-700 cursor-pointer" %>
+            <%= button_to "Delete All Finish Times", finish_times_destroy_all_path(event_id: @event.id), method: :delete, form: { data: { turbo_confirm: "Are you sure you want to delete all #{@event.finish_times.count} finish times? This cannot be undone." } }, class: "my-4 rounded-md border border-transparent bg-red-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-red-700 cursor-pointer" %>
           <% else %>
             <div>
               <%= form_with url: finish_time_import_path, method: :post, multipart: true do |f| %>
                 <div class="my-5">
-                  <%= f.hidden_field :event_id, value: event.id %>
+                  <%= f.hidden_field :event_id, value: @event.id %>
                   <%= f.label :file, "CSV File", class: "block text-sm font-medium text-gray-700" %>
                   <%= f.file_field :file, accept: ".csv", class: "block rounded-md border border-gray-300 shadow-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-gray-50 file:text-gray-700 hover:file:bg-gray-100 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" %>
                 </div>
@@ -179,7 +179,7 @@
               <% end %>
 
               <h4 class="text-pretty text-xl font-medium tracking-tight text-gray-950 mt-6 mb-2">Or add one manually</h4>
-              <%= form_with model: FinishTime.new(event: event), local: true do |f| %>
+              <%= form_with model: FinishTime.new(event: @event), local: true do |f| %>
                 <%= f.hidden_field :event_id %>
 
                 <div class="my-2">
@@ -200,6 +200,8 @@
           <% end %>
         </div>
       </div>
+    <% else %>
+      <p class="text-gray-600 mt-8">No in-progress events. All events have been finalized!</p>
     <% end %>
   </div>
 </div>
