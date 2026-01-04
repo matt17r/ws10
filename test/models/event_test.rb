@@ -6,7 +6,7 @@ class EventTest < ActiveSupport::TestCase
     event = Event.new(
       number: 10,
       date: Date.current,
-      location_name: "Test Location",
+      location: locations(:bungarribee),
       description: "Test Event"
     )
     assert event.valid?
@@ -23,25 +23,25 @@ class EventTest < ActiveSupport::TestCase
   end
 
   test "should require date" do
-    event = Event.new(number: 1, location_name: "Test Location")
+    event = Event.new(number: 1, location: locations(:bungarribee))
     assert_not event.valid?
     assert_includes event.errors[:date], "can't be blank"
   end
 
   test "should require number" do
-    event = Event.new(date: Date.current, location_name: "Test Location")
+    event = Event.new(date: Date.current, location: locations(:bungarribee))
     assert_not event.valid?
     assert_includes event.errors[:number], "is not a number"
   end
 
   test "should require number to be integer" do
-    event = Event.new(number: 1.5, date: Date.current, location_name: "Test Location")
+    event = Event.new(number: 1.5, date: Date.current, location: locations(:bungarribee))
     assert_not event.valid?
     assert_includes event.errors[:number], "must be an integer"
   end
 
   test "should require number to be greater than zero" do
-    event = Event.new(number: 0, date: Date.current, location_name: "Test Location")
+    event = Event.new(number: 0, date: Date.current, location: locations(:bungarribee))
     assert_not event.valid?
     assert_includes event.errors[:number], "must be greater than 0"
 
@@ -137,13 +137,13 @@ class EventTest < ActiveSupport::TestCase
   end
 
   test "should handle large event numbers" do
-    event = Event.new(number: 999999, date: Date.current, location_name: "Test")
+    event = Event.new(number: 999999, date: Date.current, location: locations(:bungarribee))
     assert event.valid?
   end
 
   test "should handle future and past dates" do
-    future_event = Event.new(number: 1, date: 1.year.from_now, location_name: "Future")
-    past_event = Event.new(number: 2, date: 1.year.ago, location_name: "Past")
+    future_event = Event.new(number: 1, date: 1.year.from_now, location: locations(:bungarribee))
+    past_event = Event.new(number: 2, date: 1.year.ago, location: locations(:nepean))
 
     assert future_event.valid?
     assert past_event.valid?

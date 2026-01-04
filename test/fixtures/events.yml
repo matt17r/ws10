@@ -1,6 +1,5 @@
 one:
   date: "2025-05-15"
-  location_name: "Bungarribee Park"
   location: bungarribee
   number: 1
   description: "First test event"
@@ -8,7 +7,6 @@ one:
 
 two:
   date: "2025-05-22"
-  location_name: "Nepean River"
   location: nepean
   number: 2
   description: "Second test event"
@@ -16,7 +14,6 @@ two:
 
 draft_event:
   date: "2025-05-29"
-  location_name: "Parramatta Park"
   location: parramatta
   number: 3
   description: "Draft event for testing"

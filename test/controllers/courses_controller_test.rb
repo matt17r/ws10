@@ -20,8 +20,7 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
     future_event = Event.create!(
       number: 999,
       date: 1.week.from_now,
-      location: locations(:bungarribee),
-      location_name: "Bungarribee Park"
+      location: locations(:bungarribee)
     )
 
     get course_url(locations(:bungarribee))

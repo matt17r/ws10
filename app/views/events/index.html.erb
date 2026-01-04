@@ -39,7 +39,7 @@
                 <tbody class="divide-y divide-gray-200 bg-white">
                   <% @events.each do |event| %>
                     <tr class="hover:bg-[#9DA39A]/50">
-                      <td class="whitespace-nowrap pl-4 pr-3 py-5 text-2xl text-gray-700"><%= link_to "##{event.number} – #{event.display_location}", event %></td>
+                      <td class="whitespace-nowrap pl-4 pr-3 py-5 text-2xl text-gray-700"><%= link_to "##{event.number} – #{event.location}", event %></td>
                       <td class="whitespace-nowrap px-3 py-5 text-2xl text-gray-700"><%= link_to l(event.date), event %></td>
                       <td class="whitespace-nowrap px-3 py-5 text-2xl text-gray-700"><%= link_to (event.results.count + event.volunteers.count), event %></td>
                       <td class="whitespace-nowrap pl-3 pr-4 py-5 text-2xl text-gray-700"><%= link_to event.results.order(Result.arel_table[:time].asc.nulls_last).first&.time_string || "N/A", event %></td>

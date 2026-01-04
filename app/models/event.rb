@@ -1,7 +1,7 @@
 class Event < ApplicationRecord
   after_update :send_results_emails_if_ready
 
-  belongs_to :location, optional: true
+  belongs_to :location
   has_many :finish_positions
   has_many :finish_times
   has_many :finished_users, through: :finish_positions, source: :user
@@ -14,10 +14,6 @@ class Event < ApplicationRecord
   validates :number, numericality: { only_integer: true, greater_than: 0 }
   validates :facebook_url, format: { with: URI::DEFAULT_PARSER.make_regexp, allow_blank: true }
   validates :strava_url, format: { with: URI::DEFAULT_PARSER.make_regexp, allow_blank: true }
-
-  def display_location
-    location&.name || location_name
-  end
 
   def self.next_event
     where("date >= ?", Date.today).order(:date).first

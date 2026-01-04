@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_08_102959) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_04_052534) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -53,14 +53,12 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_08_102959) do
     t.date "date", null: false
     t.string "description"
     t.string "facebook_url"
-    t.integer "location_id"
-    t.string "location_name", null: false
+    t.integer "location_id", null: false
     t.integer "number", null: false
     t.boolean "results_ready", default: false, null: false
     t.string "strava_url"
     t.datetime "updated_at", null: false
     t.index ["location_id"], name: "index_events_on_location_id"
-    t.index ["location_name"], name: "index_events_on_location_name"
     t.index ["number"], name: "index_events_on_number", unique: true
   end
 
