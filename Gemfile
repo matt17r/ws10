@@ -35,6 +35,7 @@ end
 
 group :test do
   gem "capybara"
+  gem "minitest", "< 6"
   gem "rails-controller-testing"
   gem "selenium-webdriver"
 end
