@@ -94,7 +94,12 @@ jobs:
         env:
           RAILS_ENV: test
           # REDIS_URL: redis://localhost:6379/0
-        run: bin/rails db:test:prepare test test:system
+        run: |
+          bin/rails db:test:prepare test test:system | tee test_output.log
+          if grep -q "0 runs, 0 assertions" test_output.log; then
+            echo "ERROR: No tests were discovered or run!"
+            exit 1
+          fi
 
       - name: Keep screenshots from failed system tests
         uses: actions/upload-artifact@v6
