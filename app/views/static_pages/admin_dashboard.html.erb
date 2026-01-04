@@ -6,6 +6,7 @@
         <%= link_to "Create new event", new_admin_event_path, class: "justify-center rounded-md border border-transparent bg-[#DB2955] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#DB2955]/[90%] cursor-pointer" %>
         <%= link_to "Manage users", admin_users_path, class: "justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-500 cursor-pointer" %>
         <%= link_to "Manage locations", admin_locations_path, class: "justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-500 cursor-pointer" %>
+        <%= button_to "Clear Stats Cache", invalidate_statistics_cache_path, method: :post, class: "justify-center rounded-md border border-transparent bg-gray-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-500 cursor-pointer" %>
       </div>
     <% end %>
 

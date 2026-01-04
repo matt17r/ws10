@@ -1,0 +1,62 @@
+<section class="rounded-4xl bg-gray-50 p-8 lg:p-12">
+  <h2 class="text-3xl font-medium text-center tracking-tight text-gray-950 mb-8">WS10 By The Numbers</h2>
+
+  <div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
+    <div class="text-center">
+      <div class="text-5xl font-medium text-[#DB2955]"><%= statistics[:unique_participants] %></div>
+      <div class="mt-2 text-gray-600">Unique Participants</div>
+    </div>
+
+    <div class="text-center">
+      <div class="text-5xl font-medium text-[#DB2955]"><%= statistics[:total_participants] %></div>
+      <div class="mt-2 text-gray-600">Total Participants</div>
+    </div>
+
+    <div class="text-center">
+      <div class="text-5xl font-medium text-[#DB2955]"><%= number_with_delimiter(statistics[:total_kilometres]) %>km</div>
+      <div class="mt-2 text-gray-600">Kilometres Run</div>
+    </div>
+
+    <div class="text-center">
+      <div class="text-5xl font-medium text-[#DB2955]"><%= format_total_time(statistics[:total_time_seconds]) %></div>
+      <div class="mt-2 text-gray-600">Time Spent Running</div>
+    </div>
+
+    <div class="text-center">
+      <div class="text-5xl font-medium text-[#DB2955]"><%= format_pace_time(statistics[:fastest_time]) %></div>
+      <div class="mt-2 text-gray-600">Fastest Time</div>
+    </div>
+
+    <div class="text-center">
+      <div class="text-5xl font-medium text-[#DB2955]"><%= format_pace_time(statistics[:average_time]) %></div>
+      <div class="mt-2 text-gray-600">Average Time</div>
+    </div>
+  </div>
+
+  <% if statistics[:location_statistics].any? %>
+    <div class="mt-12">
+      <h3 class="text-2xl font-medium text-gray-950 mb-6">By Location</h3>
+      <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <% statistics[:location_statistics].each do |loc_stat| %>
+          <div class="rounded-3xl bg-white p-6 shadow-md ring-1 ring-black/5">
+            <h4 class="font-semibold text-gray-950"><%= loc_stat[:location].name %></h4>
+            <dl class="mt-4 space-y-2 text-sm">
+              <div class="flex justify-between">
+                <dt class="text-gray-600">Total Participants:</dt>
+                <dd class="font-medium text-gray-950"><%= loc_stat[:total_participants] %></dd>
+              </div>
+              <div class="flex justify-between">
+                <dt class="text-gray-600">Fastest:</dt>
+                <dd class="font-medium text-gray-950"><%= format_pace_time(loc_stat[:quickest_time]) %></dd>
+              </div>
+              <div class="flex justify-between">
+                <dt class="text-gray-600">Average:</dt>
+                <dd class="font-medium text-gray-950"><%= format_pace_time(loc_stat[:average_time]) %></dd>
+              </div>
+            </dl>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</section>

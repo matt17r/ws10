@@ -58,6 +58,7 @@ Rails.application.routes.draw do
       delete :finish_times_destroy_all, to: "finish_times#destroy_all"
       post :result_link, to: "results#link"
       delete :results_destroy_all, to: "results#destroy_all"
+      post :invalidate_statistics_cache, to: "static_pages#invalidate_statistics_cache"
 
       resources :users, controller: "admin/users", except: [ :new, :create, :destroy ], as: :admin_users do
         member do

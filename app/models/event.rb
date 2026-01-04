@@ -1,5 +1,8 @@
 class Event < ApplicationRecord
+  include HomeStatistics
+
   after_update :send_results_emails_if_ready
+  after_update :invalidate_statistics_cache_if_ready
 
   belongs_to :location
   has_many :finish_positions
@@ -46,6 +49,12 @@ class Event < ApplicationRecord
       results.where(time: nil).includes(:user).find_each do |result|
         EventMailer.participation_notification(result: result).deliver_later
       end
+    end
+  end
+
+  def invalidate_statistics_cache_if_ready
+    if saved_change_to_results_ready? && results_ready?
+      Event.invalidate_home_statistics_cache
     end
   end
 end
