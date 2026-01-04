@@ -19,9 +19,9 @@
           </div>
         <% end %>
           <div class="rounded-4xl bg-white p-10 pb-9 shadow-2xl ring-1 ring-black/25 ring-inset">
-            <h2 class="font-mono font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400"><%= event.nickname %></h2>
-            <p class="mt-2 text-gray-950/75"><%= event.location %></p>
-            <div class="mt-8 text-5xl font-medium <%= index == 0 ? "text-[#DB2955]" : "text-gray-950" %>"><%= event.date %></div>
+            <h2 class="font-mono font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400"><%= event.location %></h2>
+            <p class="mt-2 text-gray-950/75"><%= event.location.subtitle %></p>
+            <div class="mt-8 text-5xl font-medium <%= index == 0 ? "text-[#DB2955]" : "text-gray-950" %>"><%= event.date.strftime("%-d %b") %></div>
             <%= link_to "Course Info", courses_path, class: "mt-8 inline-flex items-center justify-center px-4 py-[calc(theme(spacing.2)-1px)] rounded-full border border-transparent bg-[#DB2955] shadow-md whitespace-nowrap text-base font-medium text-white" if index == 0 %>
           </div>
         </div>

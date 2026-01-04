@@ -25,15 +25,12 @@ Rails.application.routes.draw do
   get "confirm_email/:token", to: "confirmations#show", as: :confirm_email
   post "confirm_email/resend", to: "confirmations#create", as: :resend_confirmation
 
+  resources :courses, only: [ :index, :show ], param: :slug
   resources :events, param: :number, only: [ :index, :show ]
   resource :user, only: [ :show, :edit, :update ], path: "profile"
   get "profile/results", to: "users#my_results", as: :my_results
   resources :users, only: [ :index ], path: "participants", param: :barcode
   get "participants/:barcode/results", to: "users#results", as: :user_results
-
-  get "courses", to: "static_pages#courses"
-  get "courses_new", to: "courses#index"
-  get "courses/:slug", to: "courses#show", as: :course
 
   constraints AdminUser do
     scope :admin, as: :admin do

@@ -46,7 +46,7 @@
                 </div>
                 <div class="mt-1 text-3xl font-semibold tracking-tight text-[#DB2955]"><%= event.date.strftime("%-d %B") %></div>
               <% else %>
-                <div class="mt-1 text-3xl font-semibold tracking-tight <%= event.date < Date.today ? 'text-gray-500 line-through' : 'text-gray-900' %>"><%= event.date.strftime("%-d %B") %></div>
+                <div class="mt-1 text-3xl font-semibold tracking-tight <%= event.results_ready? ? 'text-gray-500 line-through' : 'text-gray-900' %>"><%= event.date.strftime("%-d %B") %></div>
               <% end %>
             </div>
           <% end %>

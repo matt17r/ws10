@@ -1,9 +1,6 @@
 require "test_helper"
 
 class CoursesControllerTest < ActionDispatch::IntegrationTest
-  # Note: index action exists but is not publicly routed until Phase 3
-  # The /courses route still points to static_pages#courses in Phase 1
-
   test "show displays location details" do
     get course_url(locations(:bungarribee))
     assert_response :success
