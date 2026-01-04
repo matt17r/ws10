@@ -32,6 +32,8 @@ Rails.application.routes.draw do
   resources :users, only: [ :index ], path: "participants", param: :barcode
   get "participants/:barcode/results", to: "users#results", as: :user_results
 
+  get "courses/:slug", to: "courses#show", as: :course
+
   constraints AdminUser do
     scope :admin, as: :admin do
       resources :events, param: :number, only: [ :new, :create, :edit, :update, :destroy ] do
@@ -39,6 +41,7 @@ Rails.application.routes.draw do
           get :edit_results
         end
       end
+      resources :locations, controller: "admin/locations"
     end
     scope :admin do
       post :user_import, to: "admin/users#import"

@@ -1,0 +1,64 @@
+<div class="my-16 px-6 lg:px-8">
+  <div class="mx-auto max-w-2xl lg:max-w-7xl">
+    <div class="px-4 sm:px-6 lg:px-8">
+      <div class="sm:flex sm:items-center">
+        <div class="sm:flex-auto">
+          <h1 class="text-4xl font-bold text-gray-900">Locations</h1>
+          <p class="mt-2 text-sm text-gray-700">Manage course locations for WS10 events</p>
+        </div>
+        <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
+          <%= link_to "New Location", new_admin_location_path, class: "block rounded-md bg-blue-600 px-3 py-2 text-center text-sm font-semibold text-white hover:bg-blue-500" %>
+        </div>
+      </div>
+      <div class="mt-8 flow-root">
+        <% if @locations.present? %>
+          <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+            <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+              <table class="min-w-full divide-y divide-gray-300">
+                <thead>
+                  <tr>
+                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0">Name</th>
+                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Slug</th>
+                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Nickname</th>
+                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Events</th>
+                    <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-0">
+                      <span class="sr-only">Actions</span>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                  <% @locations.each do |location| %>
+                    <tr>
+                      <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0">
+                        <%= location.name %>
+                      </td>
+                      <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                        <%= location.slug %>
+                      </td>
+                      <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                        <%= location.nickname %>
+                      </td>
+                      <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                        <%= location.events.count %>
+                      </td>
+                      <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0 space-x-2">
+                        <%= link_to "View", admin_location_path(location), class: "text-blue-600 hover:text-blue-500" %>
+                        <%= link_to "Edit", edit_admin_location_path(location), class: "text-blue-600 hover:text-blue-500" %>
+                        <%= button_to "Delete", admin_location_path(location), method: :delete, data: { turbo_confirm: "Are you sure? This will fail if events are linked to this location." }, class: "text-red-600 hover:text-red-500 inline" %>
+                      </td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        <% else %>
+          <p class="text-gray-500 mt-4">No locations yet. Create one to get started!</p>
+        <% end %>
+      </div>
+      <div class="mt-6">
+        <%= link_to "Back to Dashboard", dashboard_path, class: "text-blue-600 hover:text-blue-500" %>
+      </div>
+    </div>
+  </div>
+</div>

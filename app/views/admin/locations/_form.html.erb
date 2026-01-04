@@ -1,0 +1,105 @@
+<%= form_with(model: [:admin, location], class: "contents") do |form| %>
+  <% if location.errors.any? %>
+    <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-md mt-3">
+      <h2><%= pluralize(location.errors.count, "error") %> prohibited this location from being saved:</h2>
+
+      <ul class="list-disc ml-6">
+        <% location.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="my-5">
+    <%= form.label :name %>
+    <%= form.text_field :name, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": location.errors[:name].none?, "border-red-400 focus:outline-red-600": location.errors[:name].any?}], placeholder: "Bungarribee Park" %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :slug %>
+    <%= form.text_field :slug, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": location.errors[:slug].none?, "border-red-400 focus:outline-red-600": location.errors[:slug].any?}], placeholder: "bungarribee" %>
+    <p class="text-sm text-gray-500 mt-1">Used in URL (lowercase, no spaces, hyphens only)</p>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :nickname %>
+    <%= form.text_field :nickname, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": location.errors[:nickname].none?, "border-red-400 focus:outline-red-600": location.errors[:nickname].any?}], placeholder: "Bungarribee" %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :subtitle %>
+    <%= form.text_field :subtitle, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": location.errors[:subtitle].none?, "border-red-400 focus:outline-red-600": location.errors[:subtitle].any?}], placeholder: "Western Sydney Parklands" %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :full_address %>
+    <%= form.text_area :full_address, rows: 2, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": location.errors[:full_address].none?, "border-red-400 focus:outline-red-600": location.errors[:full_address].any?}] %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :start_point_description %>
+    <%= form.text_area :start_point_description, rows: 4, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": location.errors[:start_point_description].none?, "border-red-400 focus:outline-red-600": location.errors[:start_point_description].any?}] %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :facilities %>
+    <%= form.text_area :facilities, rows: 3, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": location.errors[:facilities].none?, "border-red-400 focus:outline-red-600": location.errors[:facilities].any?}] %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :course_description %>
+    <%= form.text_area :course_description, rows: 3, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": location.errors[:course_description].none?, "border-red-400 focus:outline-red-600": location.errors[:course_description].any?}] %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :google_maps_url, "Google Maps URL" %>
+    <%= form.url_field :google_maps_url, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": location.errors[:google_maps_url].none?, "border-red-400 focus:outline-red-600": location.errors[:google_maps_url].any?}], placeholder: "https://maps.google.com/..." %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :apple_maps_url, "Apple Maps URL" %>
+    <%= form.url_field :apple_maps_url, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": location.errors[:apple_maps_url].none?, "border-red-400 focus:outline-red-600": location.errors[:apple_maps_url].any?}], placeholder: "https://maps.apple.com/..." %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :strava_route_url, "Strava Route URL" %>
+    <%= form.url_field :strava_route_url, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": location.errors[:strava_route_url].none?, "border-red-400 focus:outline-red-600": location.errors[:strava_route_url].any?}], placeholder: "https://www.strava.com/routes/..." %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :strava_embed_id, "Strava Embed ID" %>
+    <%= form.text_field :strava_embed_id, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": location.errors[:strava_embed_id].none?, "border-red-400 focus:outline-red-600": location.errors[:strava_embed_id].any?}], placeholder: "3336193874389944524" %>
+    <p class="text-sm text-gray-500 mt-1">Get this from the Strava route URL</p>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :strava_map_hash, "Strava Map Hash" %>
+    <%= form.text_field :strava_map_hash, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": location.errors[:strava_map_hash].none?, "border-red-400 focus:outline-red-600": location.errors[:strava_map_hash].any?}], placeholder: "12.89/-33.78104/150.86593" %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :start_image_1, "Start Image 1 (optional)" %>
+    <%= form.text_field :start_image_1, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": location.errors[:start_image_1].none?, "border-red-400 focus:outline-red-600": location.errors[:start_image_1].any?}], placeholder: "bungarribee-start.png" %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :start_image_2, "Start Image 2 (optional)" %>
+    <%= form.text_field :start_image_2, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": location.errors[:start_image_2].none?, "border-red-400 focus:outline-red-600": location.errors[:start_image_2].any?}], placeholder: "bungarribee-start-2.png" %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :og_title, "Open Graph Title (optional)" %>
+    <%= form.text_field :og_title, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": location.errors[:og_title].none?, "border-red-400 focus:outline-red-600": location.errors[:og_title].any?}], placeholder: "WS10 at Bungarribee Park" %>
+    <p class="text-sm text-gray-500 mt-1">For social media sharing</p>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :og_description, "Open Graph Description (optional)" %>
+    <%= form.text_area :og_description, rows: 2, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": location.errors[:og_description].none?, "border-red-400 focus:outline-red-600": location.errors[:og_description].any?}], placeholder: "Join us for a 10km run..." %>
+  </div>
+
+  <div class="inline">
+    <%= form.submit class: "w-full sm:w-auto rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white inline-block font-medium cursor-pointer" %>
+  </div>
+<% end %>

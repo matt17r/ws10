@@ -1,0 +1,121 @@
+<div class="my-16 px-6 lg:px-8">
+  <div class="mx-auto max-w-2xl lg:max-w-7xl">
+    <div class="md:w-2/3 w-full">
+      <div class="flex justify-between items-center mb-6">
+        <h1 class="font-bold text-4xl"><%= @location.name %></h1>
+        <%= link_to "Edit", edit_admin_location_path(@location), class: "rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white inline-block font-medium" %>
+      </div>
+
+      <div class="space-y-4">
+        <div>
+          <h3 class="font-semibold text-gray-700">Slug</h3>
+          <p class="text-gray-900"><%= @location.slug %></p>
+        </div>
+
+        <div>
+          <h3 class="font-semibold text-gray-700">Nickname</h3>
+          <p class="text-gray-900"><%= @location.nickname %></p>
+        </div>
+
+        <div>
+          <h3 class="font-semibold text-gray-700">Subtitle</h3>
+          <p class="text-gray-900"><%= @location.subtitle %></p>
+        </div>
+
+        <div>
+          <h3 class="font-semibold text-gray-700">Full Address</h3>
+          <p class="text-gray-900 whitespace-pre-wrap"><%= @location.full_address %></p>
+        </div>
+
+        <div>
+          <h3 class="font-semibold text-gray-700">Start Point Description</h3>
+          <p class="text-gray-900 whitespace-pre-wrap"><%= @location.start_point_description %></p>
+        </div>
+
+        <div>
+          <h3 class="font-semibold text-gray-700">Facilities</h3>
+          <p class="text-gray-900 whitespace-pre-wrap"><%= @location.facilities %></p>
+        </div>
+
+        <div>
+          <h3 class="font-semibold text-gray-700">Course Description</h3>
+          <p class="text-gray-900 whitespace-pre-wrap"><%= @location.course_description %></p>
+        </div>
+
+        <div>
+          <h3 class="font-semibold text-gray-700">Google Maps URL</h3>
+          <%= link_to @location.google_maps_url, @location.google_maps_url, target: "_blank", class: "text-blue-600 hover:text-blue-500" %>
+        </div>
+
+        <div>
+          <h3 class="font-semibold text-gray-700">Apple Maps URL</h3>
+          <%= link_to @location.apple_maps_url, @location.apple_maps_url, target: "_blank", class: "text-blue-600 hover:text-blue-500" %>
+        </div>
+
+        <div>
+          <h3 class="font-semibold text-gray-700">Strava Route URL</h3>
+          <%= link_to @location.strava_route_url, @location.strava_route_url, target: "_blank", class: "text-blue-600 hover:text-blue-500" %>
+        </div>
+
+        <div>
+          <h3 class="font-semibold text-gray-700">Strava Embed ID</h3>
+          <p class="text-gray-900"><%= @location.strava_embed_id %></p>
+        </div>
+
+        <div>
+          <h3 class="font-semibold text-gray-700">Strava Map Hash</h3>
+          <p class="text-gray-900"><%= @location.strava_map_hash %></p>
+        </div>
+
+        <% if @location.start_image_1.present? %>
+          <div>
+            <h3 class="font-semibold text-gray-700">Start Image 1</h3>
+            <p class="text-gray-900"><%= @location.start_image_1 %></p>
+          </div>
+        <% end %>
+
+        <% if @location.start_image_2.present? %>
+          <div>
+            <h3 class="font-semibold text-gray-700">Start Image 2</h3>
+            <p class="text-gray-900"><%= @location.start_image_2 %></p>
+          </div>
+        <% end %>
+
+        <% if @location.og_title.present? %>
+          <div>
+            <h3 class="font-semibold text-gray-700">Open Graph Title</h3>
+            <p class="text-gray-900"><%= @location.og_title %></p>
+          </div>
+        <% end %>
+
+        <% if @location.og_description.present? %>
+          <div>
+            <h3 class="font-semibold text-gray-700">Open Graph Description</h3>
+            <p class="text-gray-900"><%= @location.og_description %></p>
+          </div>
+        <% end %>
+
+        <div class="pt-4">
+          <h3 class="font-semibold text-gray-700 mb-2">Events at this Location (<%= @location.events.count %>)</h3>
+          <% if @location.events.any? %>
+            <ul class="list-disc ml-6">
+              <% @location.events.order(:date).each do |event| %>
+                <li><%= link_to "Event ##{event.number} - #{event.date}", admin_event_path(event), class: "text-blue-600 hover:text-blue-500" %></li>
+              <% end %>
+            </ul>
+          <% else %>
+            <p class="text-gray-500">No events yet</p>
+          <% end %>
+        </div>
+
+        <div class="pt-4">
+          <%= link_to "Preview Course Page", course_path(@location.slug), target: "_blank", class: "rounded-md px-3.5 py-2.5 bg-green-600 hover:bg-green-500 text-white inline-block font-medium" %>
+        </div>
+      </div>
+
+      <div class="mt-6">
+        <%= link_to "Back to locations", admin_locations_path, class: "text-blue-600 hover:text-blue-500" %>
+      </div>
+    </div>
+  </div>
+</div>
