@@ -10,7 +10,7 @@ class EventsController < ApplicationController
     if Current.user&.admin?
       @events = Event.order(number: :desc).includes(:results)
     else
-      @events = Event.where(status: 'finalised').order(number: :desc).includes(:results)
+      @events = Event.where(status: "finalised").order(number: :desc).includes(:results)
     end
   end
 
@@ -27,7 +27,7 @@ class EventsController < ApplicationController
   end
 
   def show_latest
-    @event = Event.where(status: 'finalised').order(number: :desc).first
+    @event = Event.where(status: "finalised").order(number: :desc).first
     @results = @event.results.by_time
     @volunteers = @event.volunteers.by_role
     render :show

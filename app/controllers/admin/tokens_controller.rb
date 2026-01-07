@@ -8,7 +8,7 @@ class Admin::TokensController < ApplicationController
       {
         position: position,
         token_path: FinishPosition.token_path_for_position(position),
-        full_url: claim_finish_token_url(*FinishPosition.token_path_for_position(position).split('/'))
+        full_url: claim_finish_token_url(*FinishPosition.token_path_for_position(position).split("/"))
       }
     end
   end
@@ -16,7 +16,7 @@ class Admin::TokensController < ApplicationController
   def export
     tokens = (1..200).map do |position|
       token_path = FinishPosition.token_path_for_position(position)
-      prefix, pos = token_path.split('/')
+      prefix, pos = token_path.split("/")
       {
         position: position,
         token_path: token_path,
@@ -25,9 +25,9 @@ class Admin::TokensController < ApplicationController
     end
 
     csv_data = CSV.generate(headers: true) do |csv|
-      csv << ["Position", "Token Path", "Full URL"]
+      csv << [ "Position", "Token Path", "Full URL" ]
       tokens.each do |token|
-        csv << [token[:position], token[:token_path], token[:full_url]]
+        csv << [ token[:position], token[:token_path], token[:full_url] ]
       end
     end
 
@@ -37,7 +37,7 @@ class Admin::TokensController < ApplicationController
   def print
     @tokens = (1..10).map do |position|
       token_path = FinishPosition.token_path_for_position(position)
-      prefix, pos = token_path.split('/')
+      prefix, pos = token_path.split("/")
       {
         position: position,
         token_path: token_path,

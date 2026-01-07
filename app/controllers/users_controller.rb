@@ -16,7 +16,7 @@ class UsersController < ApplicationController
   def show
     @claimed_position = @user.finish_positions
       .joins(:event)
-      .where(events: { status: 'in_progress' })
+      .where(events: { status: "in_progress" })
       .first
   end
 

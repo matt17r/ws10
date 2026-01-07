@@ -31,7 +31,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     user = users(:one)
     sign_in_as(user)
     event = events(:draft_event)
-    event.update!(status: 'in_progress')
+    event.update!(status: "in_progress")
     event.finish_positions.create!(user: user, position: 42)
 
     get user_url
@@ -54,7 +54,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     user = users(:one)
     sign_in_as(user)
     event = events(:draft_event)
-    event.update!(status: 'draft')
+    event.update!(status: "draft")
     event.finish_positions.create!(user: user, position: 42)
 
     get user_url
@@ -67,7 +67,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     user = users(:one)
     sign_in_as(user)
     event = events(:draft_event)
-    event.update!(status: 'finalised')
+    event.update!(status: "finalised")
     event.finish_positions.create!(user: user, position: 42)
 
     get user_url

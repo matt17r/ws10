@@ -54,8 +54,8 @@ class EventTest < ActiveSupport::TestCase
     ready_event = events(:one)
     draft_event = events(:draft_event)
 
-    ready_event.update!(status: 'finalised')
-    draft_event.update!(status: 'draft')
+    ready_event.update!(status: "finalised")
+    draft_event.update!(status: "draft")
 
     not_finalised_events = Event.not_finalised
     assert_includes not_finalised_events, draft_event
@@ -87,19 +87,19 @@ class EventTest < ActiveSupport::TestCase
 
   test "should send emails when status changes to finalised" do
     event = events(:draft_event)
-    event.update!(status: 'draft')
+    event.update!(status: "draft")
 
     result_with_time = event.results.create!(user: users(:one), time: 1600)
     result_without_time = event.results.create!(user: users(:two))
 
     assert_enqueued_jobs 2 do
-      event.update!(status: 'finalised')
+      event.update!(status: "finalised")
     end
   end
 
   test "should not send emails when status stays finalised" do
     event = events(:one)
-    event.update!(status: 'finalised')
+    event.update!(status: "finalised")
 
     assert_no_enqueued_jobs do
       event.update!(description: "Updated description")
@@ -108,22 +108,22 @@ class EventTest < ActiveSupport::TestCase
 
   test "should not send emails when status changes from finalised to draft" do
     event = events(:one)
-    event.update!(status: 'finalised')
+    event.update!(status: "finalised")
 
     assert_no_enqueued_jobs do
-      event.update!(status: 'draft')
+      event.update!(status: "draft")
     end
   end
 
   test "should send different email types based on result time" do
     event = events(:draft_event)
-    event.update!(status: 'draft')
+    event.update!(status: "draft")
 
     result_with_time = event.results.create!(user: users(:one), time: 1800)
     result_without_time = event.results.create!(user: users(:two))
 
     assert_enqueued_jobs 2 do
-      event.update!(status: 'finalised')
+      event.update!(status: "finalised")
     end
   end
 
@@ -132,7 +132,7 @@ class EventTest < ActiveSupport::TestCase
     event.results.destroy_all
 
     assert_no_enqueued_jobs do
-      event.update!(status: 'finalised')
+      event.update!(status: "finalised")
     end
   end
 
@@ -171,25 +171,25 @@ class EventTest < ActiveSupport::TestCase
 
   test "active? returns true when status is in_progress" do
     event = events(:draft_event)
-    event.update!(status: 'in_progress')
+    event.update!(status: "in_progress")
     assert event.active?
   end
 
   test "active? returns false when status is draft" do
     event = events(:draft_event)
-    event.update!(status: 'draft')
+    event.update!(status: "draft")
     assert_not event.active?
   end
 
   test "active? returns false when status is finalised" do
     event = events(:draft_event)
-    event.update!(status: 'finalised')
+    event.update!(status: "finalised")
     assert_not event.active?
   end
 
   test "activate! sets status to in_progress" do
     event = events(:draft_event)
-    event.update!(status: 'draft')
+    event.update!(status: "draft")
     event.activate!
     assert event.reload.in_progress?
     assert event.active?
@@ -199,8 +199,8 @@ class EventTest < ActiveSupport::TestCase
     event1 = events(:one)
     event2 = events(:draft_event)
 
-    event1.update!(status: 'in_progress')
-    event2.update!(status: 'draft')
+    event1.update!(status: "in_progress")
+    event2.update!(status: "draft")
 
     event2.activate!
 
@@ -211,7 +211,7 @@ class EventTest < ActiveSupport::TestCase
 
   test "deactivate! sets status to draft" do
     event = events(:draft_event)
-    event.update!(status: 'in_progress')
+    event.update!(status: "in_progress")
     event.deactivate!
     assert event.reload.draft?
     assert_not event.active?
@@ -219,7 +219,7 @@ class EventTest < ActiveSupport::TestCase
 
   test "enum provides draft? predicate" do
     event = events(:draft_event)
-    event.update!(status: 'draft')
+    event.update!(status: "draft")
     assert event.draft?
     assert_not event.in_progress?
     assert_not event.finalised?
@@ -227,7 +227,7 @@ class EventTest < ActiveSupport::TestCase
 
   test "enum provides in_progress? predicate" do
     event = events(:draft_event)
-    event.update!(status: 'in_progress')
+    event.update!(status: "in_progress")
     assert event.in_progress?
     assert_not event.draft?
     assert_not event.finalised?
@@ -235,10 +235,9 @@ class EventTest < ActiveSupport::TestCase
 
   test "enum provides finalised? predicate" do
     event = events(:draft_event)
-    event.update!(status: 'finalised')
+    event.update!(status: "finalised")
     assert event.finalised?
     assert_not event.draft?
     assert_not event.in_progress?
   end
-
 end

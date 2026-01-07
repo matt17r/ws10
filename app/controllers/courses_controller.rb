@@ -2,7 +2,7 @@ class CoursesController < ApplicationController
   allow_unauthenticated_access
 
   def index
-    next_event = Event.where("date >= ?", Date.today).where.not(status: 'finalised').order(:date).first
+    next_event = Event.where("date >= ?", Date.today).where.not(status: "finalised").order(:date).first
 
     if next_event&.location
       redirect_to course_path(next_event.location.slug)

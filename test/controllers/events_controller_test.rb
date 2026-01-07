@@ -37,7 +37,7 @@ class EventsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should require admin for create" do
-    event_params = { date: Date.current, description: "Test event", location: "Test location", number: 99, status: 'draft' }
+    event_params = { date: Date.current, description: "Test event", location: "Test location", number: 99, status: "draft" }
 
     assert_no_difference("Event.count") do
       post admin_events_url, params: { event: event_params }
@@ -82,7 +82,7 @@ class EventsControllerTest < ActionDispatch::IntegrationTest
 
   test "non-admin users cannot view draft events" do
     event = events(:draft_event)
-    event.update!(status: 'draft')
+    event.update!(status: "draft")
 
     get event_url(event)
     assert_redirected_to results_path
@@ -92,7 +92,7 @@ class EventsControllerTest < ActionDispatch::IntegrationTest
     admin_user = users(:one)
     sign_in_as(admin_user)
     event = events(:draft_event)
-    event.update!(status: 'draft')
+    event.update!(status: "draft")
 
     get event_url(event)
     assert_response :success
@@ -100,7 +100,7 @@ class EventsControllerTest < ActionDispatch::IntegrationTest
 
   test "non-admin users can view in_progress events" do
     event = events(:draft_event)
-    event.update!(status: 'in_progress')
+    event.update!(status: "in_progress")
 
     get event_url(event)
     assert_response :success
@@ -108,7 +108,7 @@ class EventsControllerTest < ActionDispatch::IntegrationTest
 
   test "non-admin users can view finalised events" do
     event = events(:one)
-    event.update!(status: 'finalised')
+    event.update!(status: "finalised")
 
     get event_url(event)
     assert_response :success

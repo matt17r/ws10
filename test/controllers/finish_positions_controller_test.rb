@@ -103,7 +103,7 @@ class FinishPositionsControllerTest < ActionDispatch::IntegrationTest
 
   test "show_claim displays unclaimed position" do
     event = events(:draft_event)
-    event.update!(status: 'in_progress')
+    event.update!(status: "in_progress")
     prefix = FinishPosition.token_prefix_for_position(1)
 
     get claim_finish_token_url(prefix, "001")
@@ -113,7 +113,7 @@ class FinishPositionsControllerTest < ActionDispatch::IntegrationTest
 
   test "show_claim shows claimer name if position already claimed" do
     event = events(:draft_event)
-    event.update!(status: 'in_progress')
+    event.update!(status: "in_progress")
     claimer = users(:three)
     event.finish_positions.create!(user: claimer, position: 1)
     prefix = FinishPosition.token_prefix_for_position(1)
@@ -127,7 +127,7 @@ class FinishPositionsControllerTest < ActionDispatch::IntegrationTest
 
   test "show_claim returns 404 for invalid token" do
     event = events(:draft_event)
-    event.update!(status: 'in_progress')
+    event.update!(status: "in_progress")
 
     get claim_finish_token_url("abcd", "001")
     assert_response :not_found
@@ -135,7 +135,7 @@ class FinishPositionsControllerTest < ActionDispatch::IntegrationTest
 
   test "claim redirects to sign in when not authenticated" do
     event = events(:draft_event)
-    event.update!(status: 'in_progress')
+    event.update!(status: "in_progress")
     prefix = FinishPosition.token_prefix_for_position(1)
 
     post claim_finish_token_url(prefix, "001")
@@ -145,7 +145,7 @@ class FinishPositionsControllerTest < ActionDispatch::IntegrationTest
 
   test "claim creates finish position when authenticated" do
     event = events(:draft_event)
-    event.update!(status: 'in_progress')
+    event.update!(status: "in_progress")
     user = users(:three)
     sign_in_as user
     prefix = FinishPosition.token_prefix_for_position(1)
@@ -163,7 +163,7 @@ class FinishPositionsControllerTest < ActionDispatch::IntegrationTest
 
   test "claim prevents duplicate claims by same user" do
     event = events(:draft_event)
-    event.update!(status: 'in_progress')
+    event.update!(status: "in_progress")
     user = users(:three)
     sign_in_as user
     event.finish_positions.create!(user: user, position: 2)
@@ -177,7 +177,7 @@ class FinishPositionsControllerTest < ActionDispatch::IntegrationTest
 
   test "claim handles race condition when position already claimed" do
     event = events(:draft_event)
-    event.update!(status: 'in_progress')
+    event.update!(status: "in_progress")
     user = users(:three)
     sign_in_as user
     event.finish_positions.create!(user: users(:one), position: 1)
