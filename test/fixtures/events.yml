@@ -3,18 +3,18 @@ one:
   location: bungarribee
   number: 1
   description: "First test event"
-  results_ready: true
+  status: finalised
 
 two:
   date: "2025-05-22"
   location: nepean
   number: 2
   description: "Second test event"
-  results_ready: true
+  status: finalised
 
 draft_event:
   date: "2025-05-29"
   location: parramatta
   number: 3
   description: "Draft event for testing"
-  results_ready: false
+  status: draft

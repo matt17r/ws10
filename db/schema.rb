@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_04_235158) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_07_064848) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -53,15 +53,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_04_235158) do
     t.date "date", null: false
     t.string "description"
     t.string "facebook_url"
-    t.boolean "finish_linking_enabled", default: false, null: false
     t.integer "location_id", null: false
     t.integer "number", null: false
-    t.boolean "results_ready", default: false, null: false
+    t.string "status", default: "draft", null: false
     t.string "strava_url"
     t.datetime "updated_at", null: false
-    t.index ["finish_linking_enabled"], name: "index_events_on_single_active", unique: true, where: "finish_linking_enabled = 1"
     t.index ["location_id"], name: "index_events_on_location_id"
     t.index ["number"], name: "index_events_on_number", unique: true
+    t.index ["status"], name: "index_events_on_status"
   end
 
   create_table "finish_positions", force: :cascade do |t|

@@ -24,10 +24,10 @@ class Location < ApplicationRecord
   end
 
   def next_event
-    events.where("date >= ?", Date.today).where(results_ready: false).order(:date).first
+    events.where("date >= ?", Date.today).where.not(status: 'finalised').order(:date).first
   end
 
   def latest_event
-    events.where(results_ready: true).order(date: :desc).first
+    events.where(status: 'finalised').order(date: :desc).first
   end
 end

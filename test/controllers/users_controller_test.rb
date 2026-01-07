@@ -31,7 +31,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     user = users(:one)
     sign_in_as(user)
     event = events(:draft_event)
-    event.update!(finish_linking_enabled: true)
+    event.update!(status: 'in_progress')
     event.finish_positions.create!(user: user, position: 42)
 
     get user_url
@@ -50,11 +50,24 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     assert_select "div.bg-blue-50", count: 0
   end
 
-  test "show does not display claimed position widget when event has finish linking disabled" do
+  test "show does not display claimed position widget when event is not in progress" do
     user = users(:one)
     sign_in_as(user)
     event = events(:draft_event)
-    event.update!(finish_linking_enabled: false)
+    event.update!(status: 'draft')
+    event.finish_positions.create!(user: user, position: 42)
+
+    get user_url
+
+    assert_response :success
+    assert_select "div.bg-blue-50", count: 0
+  end
+
+  test "show does not display claimed position widget when event is finalised" do
+    user = users(:one)
+    sign_in_as(user)
+    event = events(:draft_event)
+    event.update!(status: 'finalised')
     event.finish_positions.create!(user: user, position: 42)
 
     get user_url

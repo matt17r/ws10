@@ -7,17 +7,27 @@ class EventsController < ApplicationController
   before_action :set_event, only: [ :show, :edit, :update, :destroy, :edit_results, :activate, :deactivate ]
 
   def index
-    @events = Event.where(results_ready: true).order(number: :desc).includes(:results)
+    if Current.user&.admin?
+      @events = Event.order(number: :desc).includes(:results)
+    else
+      @events = Event.where(status: 'finalised').order(number: :desc).includes(:results)
+    end
   end
 
   def show
     return redirect_to results_path unless @event.present?
+
+    if @event.draft? && !Current.user&.admin?
+      redirect_to results_path
+      return
+    end
+
     @results = @event.results.by_time
     @volunteers = @event.volunteers.by_role
   end
 
   def show_latest
-    @event = Event.where(results_ready: true).order(number: :desc).first
+    @event = Event.where(status: 'finalised').order(number: :desc).first
     @results = @event.results.by_time
     @volunteers = @event.volunteers.by_role
     render :show
@@ -74,6 +84,6 @@ class EventsController < ApplicationController
   end
 
   def event_params
-    params.expect(event: [ :number, :date, :location_id, :description, :results_ready, :finish_linking_enabled, :facebook_url, :strava_url ])
+    params.expect(event: [ :number, :date, :location_id, :description, :status, :facebook_url, :strava_url ])
   end
 end

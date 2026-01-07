@@ -92,7 +92,7 @@ class FinishPositionsController < ApplicationController
     end
 
     @position = position
-    @event = Event.where(finish_linking_enabled: true).first
+    @event = Event.where(status: 'in_progress').first
   end
 
   def position_claimed?

@@ -33,11 +33,11 @@
           <%= "Event ##{@event.number} – #{l @event.date} – #{@event.location}" %>
         </h1>
       </div>
-      <% if @event.results_ready? && @event.description.present? %>
+      <% if @event.finalised? && @event.description.present? %>
         <p class="mt-2 text-gray-700"><%= sanitize @event.description %></p>
       <% end %>
       <div class="mt-4 flow-root">
-        <% if @event.results_ready? %>
+        <% if @event.finalised? %>
           <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
             <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
               <table class="table-fixed min-w-full divide-y divide-gray-300">

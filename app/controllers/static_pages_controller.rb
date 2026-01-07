@@ -5,11 +5,11 @@ class StaticPagesController < ApplicationController
   end
 
   def admin_dashboard
-    @event = Event.in_progress.order(date: :asc).includes(:finish_positions, :finish_times, :results, :volunteers, :location).first
+    @event = Event.not_finalised.order(date: :asc).includes(:finish_positions, :finish_times, :results, :volunteers, :location).first
   end
 
   def home
-    @upcoming_events = Event.in_progress.includes(:location).where("date >= ?", Date.today).order(:date).limit(3)
+    @upcoming_events = Event.not_finalised.includes(:location).where("date >= ?", Date.today).order(:date).limit(3)
     @statistics = Event.home_statistics
   end
 

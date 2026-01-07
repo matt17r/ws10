@@ -50,16 +50,16 @@ class EventTest < ActiveSupport::TestCase
     assert_includes event.errors[:number], "must be greater than 0"
   end
 
-  test "in_progress scope should return events not ready" do
+  test "not_finalised scope should return events not finalised" do
     ready_event = events(:one)
     draft_event = events(:draft_event)
 
-    ready_event.update!(results_ready: true)
-    draft_event.update!(results_ready: false)
+    ready_event.update!(status: 'finalised')
+    draft_event.update!(status: 'draft')
 
-    in_progress_events = Event.in_progress
-    assert_includes in_progress_events, draft_event
-    assert_not_includes in_progress_events, ready_event
+    not_finalised_events = Event.not_finalised
+    assert_includes not_finalised_events, draft_event
+    assert_not_includes not_finalised_events, ready_event
   end
 
   test "to_s should format event number and date" do
@@ -85,54 +85,54 @@ class EventTest < ActiveSupport::TestCase
     assert_includes unplaced, user_without_result
   end
 
-  test "should send emails when results_ready changes from false to true" do
+  test "should send emails when status changes to finalised" do
     event = events(:draft_event)
-    event.update!(results_ready: false)
+    event.update!(status: 'draft')
 
     result_with_time = event.results.create!(user: users(:one), time: 1600)
     result_without_time = event.results.create!(user: users(:two))
 
     assert_enqueued_jobs 2 do
-      event.update!(results_ready: true)
+      event.update!(status: 'finalised')
     end
   end
 
-  test "should not send emails when results_ready stays true" do
+  test "should not send emails when status stays finalised" do
     event = events(:one)
-    event.update!(results_ready: true)
+    event.update!(status: 'finalised')
 
     assert_no_enqueued_jobs do
       event.update!(description: "Updated description")
     end
   end
 
-  test "should not send emails when results_ready changes from true to false" do
+  test "should not send emails when status changes from finalised to draft" do
     event = events(:one)
-    event.update!(results_ready: true)
+    event.update!(status: 'finalised')
 
     assert_no_enqueued_jobs do
-      event.update!(results_ready: false)
+      event.update!(status: 'draft')
     end
   end
 
   test "should send different email types based on result time" do
     event = events(:draft_event)
-    event.update!(results_ready: false)
+    event.update!(status: 'draft')
 
     result_with_time = event.results.create!(user: users(:one), time: 1800)
     result_without_time = event.results.create!(user: users(:two))
 
     assert_enqueued_jobs 2 do
-      event.update!(results_ready: true)
+      event.update!(status: 'finalised')
     end
   end
 
-  test "should handle events with no results when marking ready" do
+  test "should handle events with no results when marking finalised" do
     event = events(:draft_event)
     event.results.destroy_all
 
     assert_no_enqueued_jobs do
-      event.update!(results_ready: true)
+      event.update!(status: 'finalised')
     end
   end
 
@@ -169,23 +169,29 @@ class EventTest < ActiveSupport::TestCase
     assert_equal 1, user_count
   end
 
-  test "active? returns true when finish_linking_enabled is true" do
+  test "active? returns true when status is in_progress" do
     event = events(:draft_event)
-    event.update!(finish_linking_enabled: true)
+    event.update!(status: 'in_progress')
     assert event.active?
   end
 
-  test "active? returns false when finish_linking_enabled is false" do
+  test "active? returns false when status is draft" do
     event = events(:draft_event)
-    event.update!(finish_linking_enabled: false)
+    event.update!(status: 'draft')
     assert_not event.active?
   end
 
-  test "activate! sets finish_linking_enabled to true" do
+  test "active? returns false when status is finalised" do
     event = events(:draft_event)
-    event.update!(finish_linking_enabled: false)
+    event.update!(status: 'finalised')
+    assert_not event.active?
+  end
+
+  test "activate! sets status to in_progress" do
+    event = events(:draft_event)
+    event.update!(status: 'draft')
     event.activate!
-    assert event.reload.finish_linking_enabled
+    assert event.reload.in_progress?
     assert event.active?
   end
 
@@ -193,93 +199,46 @@ class EventTest < ActiveSupport::TestCase
     event1 = events(:one)
     event2 = events(:draft_event)
 
-    event1.update!(finish_linking_enabled: true)
-    event2.update!(finish_linking_enabled: false)
+    event1.update!(status: 'in_progress')
+    event2.update!(status: 'draft')
 
     event2.activate!
 
     assert event2.reload.active?
     assert_not event1.reload.active?
+    assert event1.reload.draft?
   end
 
-  test "deactivate! sets finish_linking_enabled to false" do
+  test "deactivate! sets status to draft" do
     event = events(:draft_event)
-    event.update!(finish_linking_enabled: true)
+    event.update!(status: 'in_progress')
     event.deactivate!
-    assert_not event.reload.finish_linking_enabled
+    assert event.reload.draft?
     assert_not event.active?
   end
 
-  test "database constraint prevents multiple active events" do
-    event1 = events(:one)
-    event2 = events(:draft_event)
-
-    event1.update!(finish_linking_enabled: false)
-    event2.update!(finish_linking_enabled: false)
-
-    event1.update!(finish_linking_enabled: true)
-
-    assert_raises ActiveRecord::RecordNotUnique do
-      event2.update_column(:finish_linking_enabled, true)
-    end
-  end
-
-  test "should disable finish_linking_enabled when results_ready changes to true" do
+  test "enum provides draft? predicate" do
     event = events(:draft_event)
-    event.update!(finish_linking_enabled: true, results_ready: false)
-
-    assert event.finish_linking_enabled
-
-    event.update!(results_ready: true)
-
-    assert_not event.reload.finish_linking_enabled
+    event.update!(status: 'draft')
+    assert event.draft?
+    assert_not event.in_progress?
+    assert_not event.finalised?
   end
 
-  test "should not disable finish_linking_enabled when results_ready stays true" do
-    event = events(:one)
-    event.update_columns(finish_linking_enabled: true, results_ready: true)
-
-    event.update!(description: "Updated description")
-
-    assert event.reload.finish_linking_enabled
-  end
-
-  test "should not disable finish_linking_enabled when results_ready changes to false" do
+  test "enum provides in_progress? predicate" do
     event = events(:draft_event)
-    event.update_columns(finish_linking_enabled: true, results_ready: true)
-
-    event.update!(results_ready: false)
-
-    assert event.reload.finish_linking_enabled
+    event.update!(status: 'in_progress')
+    assert event.in_progress?
+    assert_not event.draft?
+    assert_not event.finalised?
   end
 
-  test "should unfinalise results_ready when finish_linking_enabled changes to true" do
+  test "enum provides finalised? predicate" do
     event = events(:draft_event)
-    event.update_columns(finish_linking_enabled: false, results_ready: true)
-
-    assert event.results_ready
-
-    event.update!(finish_linking_enabled: true)
-
-    assert_not event.reload.results_ready
-  end
-
-  test "should not unfinalise results_ready when finish_linking_enabled stays true" do
-    event = events(:draft_event)
-    event.update_columns(finish_linking_enabled: true, results_ready: true)
-
-    event.update!(description: "Updated description")
-
-    assert event.reload.results_ready
-  end
-
-  test "should not unfinalise results_ready when finish_linking_enabled changes to false" do
-    event = events(:draft_event)
-    event.update_columns(finish_linking_enabled: true, results_ready: true)
-
-    event.update!(finish_linking_enabled: false)
-
-    assert event.reload.results_ready
+    event.update!(status: 'finalised')
+    assert event.finalised?
+    assert_not event.draft?
+    assert_not event.in_progress?
   end
 
 end

@@ -1,10 +1,10 @@
 class Event < ApplicationRecord
   include HomeStatistics
 
-  after_update :send_results_emails_if_ready
-  after_update :invalidate_statistics_cache_if_ready
-  after_update :disable_finish_linking_if_ready
-  after_update :unfinalise_results_if_linking_reenabled
+  enum :status, { draft: 'draft', in_progress: 'in_progress', finalised: 'finalised' }
+
+  after_update :send_results_emails_if_finalised
+  after_update :invalidate_statistics_cache_if_finalised
 
   belongs_to :location
   has_many :finish_positions
@@ -13,7 +13,7 @@ class Event < ApplicationRecord
   has_many :results
   has_many :volunteers
 
-  scope :in_progress, -> { where(results_ready: false) }
+  scope :not_finalised, -> { where.not(status: 'finalised') }
 
   validates :date, presence: true
   validates :number, numericality: { only_integer: true, greater_than: 0 }
@@ -41,24 +41,24 @@ class Event < ApplicationRecord
   end
 
   def active?
-    finish_linking_enabled
+    in_progress?
   end
 
   def activate!
     Event.transaction do
-      Event.where(finish_linking_enabled: true).where.not(id: id).update_all(finish_linking_enabled: false)
-      update!(finish_linking_enabled: true)
+      Event.where(status: 'in_progress').where.not(id: id).update_all(status: 'draft')
+      update!(status: 'in_progress')
     end
   end
 
   def deactivate!
-    update!(finish_linking_enabled: false)
+    update!(status: 'draft')
   end
 
   private
 
-  def send_results_emails_if_ready
-    if saved_change_to_results_ready? && results_ready?
+  def send_results_emails_if_finalised
+    if saved_change_to_status? && finalised?
       results.where.not(time: nil).includes(:user).find_each do |result|
         EventMailer.result_notification(result: result).deliver_later
       end
@@ -69,21 +69,9 @@ class Event < ApplicationRecord
     end
   end
 
-  def invalidate_statistics_cache_if_ready
-    if saved_change_to_results_ready? && results_ready?
+  def invalidate_statistics_cache_if_finalised
+    if saved_change_to_status? && finalised?
       Event.invalidate_home_statistics_cache
-    end
-  end
-
-  def disable_finish_linking_if_ready
-    if saved_change_to_results_ready? && results_ready?
-      update_column(:finish_linking_enabled, false)
-    end
-  end
-
-  def unfinalise_results_if_linking_reenabled
-    if saved_change_to_finish_linking_enabled? && finish_linking_enabled?
-      update_column(:results_ready, false)
     end
   end
 end
