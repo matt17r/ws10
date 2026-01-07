@@ -34,12 +34,20 @@ Rails.application.routes.draw do
 
   constraints AdminUser do
     scope :admin, as: :admin do
-      resources :events, param: :number, only: [ :new, :create, :edit, :update, :destroy ] do
+      resources :events, param: :number do
         member do
           get :edit_results
+          post :activate
+          post :deactivate
         end
       end
-      resources :locations, controller: "admin/locations"
+      resources :locations, controller: "admin/locations", param: :slug
+      resources :tokens, controller: "admin/tokens", only: [ :index ] do
+        collection do
+          get :export
+          get :print
+        end
+      end
     end
     scope :admin do
       post :user_import, to: "admin/users#import"
@@ -78,4 +86,7 @@ Rails.application.routes.draw do
       post :finish_time_import, to: "finish_times#import"
     end
   end
+
+  get ":token_prefix/:position", to: "finish_positions#show_claim", as: :claim_finish_token, constraints: { token_prefix: /[a-f0-9]{4}/, position: /\d{3}/ }
+  post ":token_prefix/:position", to: "finish_positions#claim", constraints: { token_prefix: /[a-f0-9]{4}/, position: /\d{3}/ }
 end

@@ -43,7 +43,7 @@ class Admin::LocationsController < ApplicationController
   private
 
   def set_location
-    @location = Location.find_by!(slug: params[:id])
+    @location = Location.find_by!(slug: params[:slug])
   end
 
   def location_params

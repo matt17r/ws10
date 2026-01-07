@@ -1,0 +1,40 @@
+<div class="mt-16 px-6 lg:px-8">
+  <div class="mx-auto max-w-7xl">
+    <div class="mb-8">
+      <h1 class="text-4xl font-bold text-gray-900 mb-2">Finish Position Tokens</h1>
+      <p class="text-gray-600">Generated tokens for positions 1-200. Use these URLs for QR codes or direct links.</p>
+    </div>
+
+    <div class="mb-4 flex gap-3">
+      <%= link_to "Download as CSV", export_admin_tokens_path, class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-[#DB2955] hover:bg-[#c02447]" %>
+      <%= link_to "Print Tokens", print_admin_tokens_path, class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700", target: "_blank" %>
+    </div>
+
+    <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Position</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Token Path</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Full URL</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <% @tokens.each do |token| %>
+            <tr>
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                #<%= token[:position] %>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">
+                /<%= token[:token_path] %>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-blue-600">
+                <%= link_to token[:full_url], token[:full_url], target: "_blank", class: "hover:underline" %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

@@ -99,4 +99,47 @@ class FinishPositionTest < ActiveSupport::TestCase
 
     assert fp.persisted?
   end
+
+  test "token_prefix_for_position generates 4 character hex prefix" do
+    prefix = FinishPosition.token_prefix_for_position(1)
+    assert_equal 4, prefix.length
+    assert_match /^[a-f0-9]{4}$/, prefix
+  end
+
+  test "token_prefix_for_position is deterministic" do
+    prefix1 = FinishPosition.token_prefix_for_position(1)
+    prefix2 = FinishPosition.token_prefix_for_position(1)
+    assert_equal prefix1, prefix2
+  end
+
+  test "token_prefix_for_position varies by position" do
+    prefix1 = FinishPosition.token_prefix_for_position(1)
+    prefix2 = FinishPosition.token_prefix_for_position(2)
+    assert_not_equal prefix1, prefix2
+  end
+
+  test "valid_token? returns true for correct prefix" do
+    prefix = FinishPosition.token_prefix_for_position(42)
+    assert FinishPosition.valid_token?(prefix, 42)
+  end
+
+  test "valid_token? returns false for incorrect prefix" do
+    assert_not FinishPosition.valid_token?("abc", 1)
+  end
+
+  test "token_path_for_position generates correct format" do
+    path = FinishPosition.token_path_for_position(1)
+    assert_match /^[a-f0-9]{4}\/001$/, path
+  end
+
+  test "token_path_for_position formats position with leading zeros" do
+    path = FinishPosition.token_path_for_position(5)
+    assert_match /\/005$/, path
+
+    path = FinishPosition.token_path_for_position(42)
+    assert_match /\/042$/, path
+
+    path = FinishPosition.token_path_for_position(123)
+    assert_match /\/123$/, path
+  end
 end

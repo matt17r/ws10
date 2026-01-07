@@ -6,7 +6,7 @@ class EventsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-  test "index should only show ready events" do
+  test "index should only show finalised events" do
     ready_event = events(:one)
     draft_event = events(:draft_event)
 
@@ -14,7 +14,7 @@ class EventsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
 
     events_shown = assigns(:events)
-    assert events_shown.all?(&:results_ready?)
+    assert events_shown.all?(&:finalised?)
     assert_includes events_shown, ready_event
     assert_not_includes events_shown, draft_event
   end
@@ -37,7 +37,7 @@ class EventsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should require admin for create" do
-    event_params = { date: Date.current, description: "Test event", location: "Test location", number: 99, results_ready: false }
+    event_params = { date: Date.current, description: "Test event", location: "Test location", number: 99, status: "draft" }
 
     assert_no_difference("Event.count") do
       post admin_events_url, params: { event: event_params }
@@ -78,5 +78,39 @@ class EventsControllerTest < ActionDispatch::IntegrationTest
       delete admin_event_url(number: event.number)
     end
     assert_response :not_found
+  end
+
+  test "non-admin users cannot view draft events" do
+    event = events(:draft_event)
+    event.update!(status: "draft")
+
+    get event_url(event)
+    assert_redirected_to results_path
+  end
+
+  test "admin users can view draft events" do
+    admin_user = users(:one)
+    sign_in_as(admin_user)
+    event = events(:draft_event)
+    event.update!(status: "draft")
+
+    get event_url(event)
+    assert_response :success
+  end
+
+  test "non-admin users can view in_progress events" do
+    event = events(:draft_event)
+    event.update!(status: "in_progress")
+
+    get event_url(event)
+    assert_response :success
+  end
+
+  test "non-admin users can view finalised events" do
+    event = events(:one)
+    event.update!(status: "finalised")
+
+    get event_url(event)
+    assert_response :success
   end
 end

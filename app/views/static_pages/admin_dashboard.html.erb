@@ -1,20 +1,28 @@
 <div class="mt-16 px-6 lg:px-8" data: { turbo: false }>
   <div class="mx-auto max-w-2xl lg:max-w-7xl mb-8">
-    <h1 class="text-pretty text-4xl font-medium tracking-tight text-gray-950">Admin dashboard</h1>
+    <h1 class="text-pretty text-4xl font-medium tracking-tight text-gray-950 mb-2">Admin dashboard</h1>
     <% if Current.user.admin? %>
       <div class="flex gap-4 mb-4">
-        <%= link_to "Create new event", new_admin_event_path, class: "justify-center rounded-md border border-transparent bg-[#DB2955] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#DB2955]/[90%] cursor-pointer" %>
         <%= link_to "Manage users", admin_users_path, class: "justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-500 cursor-pointer" %>
+        <%= link_to "Manage events", admin_events_path, class: "justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-500 cursor-pointer" %>
         <%= link_to "Manage locations", admin_locations_path, class: "justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-500 cursor-pointer" %>
+        <%= link_to "Finish Tokens", admin_tokens_path, class: "justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-500 cursor-pointer" %>
         <%= button_to "Clear Stats Cache", invalidate_statistics_cache_path, method: :post, class: "justify-center rounded-md border border-transparent bg-gray-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-500 cursor-pointer" %>
       </div>
     <% end %>
 
     <% if @event %>
-      <h2 class="text-pretty text-3xl font-medium tracking-tight text-gray-950 my-3"><%= "#{@event.location} - #{@event.date}" %></h2>
-      <% if Current.user.admin? %>
-        <%= link_to "Edit this event", edit_admin_event_path(@event.number), class: "justify-center rounded-md border border-transparent bg-[#DB2955] px-4 py-2 my-4 text-sm font-medium text-white shadow-sm hover:bg-[#DB2955]/[90%] cursor-pointer" %>
-      <% end %>
+      <div class="flex gap-4 mb-4">
+        <h2 class="text-pretty text-3xl font-medium tracking-tight text-gray-950 my-3"><%= "#{@event.location} - #{@event.date}" %></h2>
+        <% if Current.user.admin? %>
+          <%= link_to "Edit", edit_admin_event_path(@event.number), class: "justify-center rounded-md border border-transparent bg-[#DB2955] px-4 py-2 my-4 text-sm font-medium text-white shadow-sm hover:bg-[#DB2955]/[90%] cursor-pointer" %>
+          <% if @event.active? %>
+            <%= button_to "Deactivate", deactivate_admin_event_path(@event.number), method: :post, form: { class: "inline-block" }, class: "justify-center rounded-md border border-transparent bg-red-600 px-4 py-2 my-4 text-sm font-medium text-white shadow-sm hover:bg-red-700 cursor-pointer" %>
+          <% else %>
+            <%= button_to "Activate", activate_admin_event_path(@event.number), method: :post, form: { class: "inline-block" }, class: "justify-center rounded-md border border-transparent bg-green-600 px-4 py-2 my-4 text-sm font-medium text-white shadow-sm hover:bg-green-700 cursor-pointer" %>
+          <% end %>
+        <% end %>
+      </div>
       <% if @event.results.any? %>
         <h3 class="text-pretty text-2xl font-medium tracking-tight text-gray-950 mt-2">Results</h3>
         <table class="table-fixed border-separate [border-spacing:0.75rem]">
@@ -37,9 +45,9 @@
             <% end %>
           </tbody>
         </table>
-        <%= button_to "Delete All Results", results_destroy_all_path(event_id: @event.id), method: :delete, form: { data: { turbo_confirm: "Are you sure you want to delete all #{@event.results.count} results? This cannot be undone." } }, class: "my-4 rounded-md border border-transparent bg-red-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-red-700 cursor-pointer" %>
+        <%= button_to "Delete All Results", results_destroy_all_path(event_id: @event.id), method: :delete, form: { data: { turbo_confirm: "Are you sure you want to delete all #{@event.results.count} results? This cannot be undone." }, class: "inline-block" }, class: "my-2 rounded-md border border-transparent bg-red-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-red-700 cursor-pointer" %>
       <% else %>
-        <%= button_to "Link all finish positions and times", result_link_path(event_id: @event.id), method: :post, class: "my-4 rounded-md border border-transparent bg-[#DB2955] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#DB2955]/90 cursor-pointer" %>
+        <%= button_to "Link all finish positions and times", result_link_path(event_id: @event.id), method: :post, form: { class: "inline-block" }, class: "rounded-md border border-transparent bg-[#DB2955] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#DB2955]/90 cursor-pointer" %>
       <% end %>
       <div class="my-3 grid grid-cols-1 font-sm md:grid-cols-2 lg:grid-cols-3">
         <div data-controller="search">

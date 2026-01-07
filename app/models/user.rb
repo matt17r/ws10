@@ -11,6 +11,7 @@ class User < ApplicationRecord
   has_many :roles, through: :assignments, dependent: :destroy
   has_many :results, dependent: :destroy
   has_many :volunteers, dependent: :destroy
+  has_many :finish_positions, dependent: :destroy
 
   generates_token_for :user_confirmation, expires_in: 1.hour
 

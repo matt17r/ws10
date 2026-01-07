@@ -41,9 +41,22 @@
     <%= form.url_field :strava_url, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": event.errors[:strava_url].none?, "border-red-400 focus:outline-red-600": event.errors[:strava_url].any?}], placeholder: "https://www.strava.com/clubs/..." %>
   </div>
 
-  <div class="my-5 flex items-center gap-2">
-    <%= form.label :results_ready %>
-    <%= form.checkbox :results_ready, class: ["block shadow-sm rounded-md border order-first h-5 w-5", {"border-gray-400 focus:outline-blue-600": event.errors[:results_ready].none?, "border-red-400 focus:outline-red-600": event.errors[:results_ready].any?}] %>
+  <div class="my-5">
+    <%= form.label :status, "Event Status" %>
+    <div class="mt-2 space-y-2">
+      <div class="flex items-center gap-2">
+        <%= form.radio_button :status, 'draft', class: "h-4 w-4 border-gray-400 focus:outline-blue-600" %>
+        <%= form.label :status_draft, "Draft", class: "ml-2" %>
+      </div>
+      <div class="flex items-center gap-2">
+        <%= form.radio_button :status, 'in_progress', class: "h-4 w-4 border-gray-400 focus:outline-blue-600" %>
+        <%= form.label :status_in_progress, "In Progress (Finish linking enabled)", class: "ml-2" %>
+      </div>
+      <div class="flex items-center gap-2">
+        <%= form.radio_button :status, 'finalised', class: "h-4 w-4 border-gray-400 focus:outline-blue-600" %>
+        <%= form.label :status_finalised, "Finalised (Results ready)", class: "ml-2" %>
+      </div>
+    </div>
   </div>
 
   <div class="inline">

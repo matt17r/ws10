@@ -1,0 +1,33 @@
+<div class="cut-marks">
+  <%
+    left_margin = 16
+    top_margin = 7.5
+    card_width = 85
+    card_height = 54
+    h_gap = 8
+    v_gap = 3
+
+    col1_left = left_margin
+    col1_right = left_margin + card_width
+    col2_left = left_margin + card_width + h_gap
+    col2_right = left_margin + card_width + h_gap + card_width
+
+    x_positions = [col1_left, col1_right, col2_left, col2_right]
+
+    # Horizontal marks at: top of first row, gaps between rows, bottom of last row
+    first_row_top = top_margin
+    last_row_bottom = top_margin + 5 * card_height + 4 * v_gap
+    gap_y_positions = 4.times.map { |i| top_margin + (i + 1) * card_height + (i + 0.5) * v_gap }
+    y_positions = [first_row_top] + gap_y_positions + [last_row_bottom]
+  %>
+
+  <% x_positions.each do |x| %>
+    <div class="cut-mark v" style="left: <%= x %>mm; top: 0mm;"></div>
+    <div class="cut-mark v" style="left: <%= x %>mm; bottom: 0mm;"></div>
+  <% end %>
+
+  <% y_positions.each do |y| %>
+    <div class="cut-mark h" style="top: <%= y %>mm; left: 0mm;"></div>
+    <div class="cut-mark h" style="top: <%= y %>mm; right: 0mm;"></div>
+  <% end %>
+</div>

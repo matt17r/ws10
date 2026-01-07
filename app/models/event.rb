@@ -1,8 +1,10 @@
 class Event < ApplicationRecord
   include HomeStatistics
 
-  after_update :send_results_emails_if_ready
-  after_update :invalidate_statistics_cache_if_ready
+  enum :status, { draft: "draft", in_progress: "in_progress", finalised: "finalised" }
+
+  after_update :send_results_emails_if_finalised
+  after_update :invalidate_statistics_cache_if_finalised
 
   belongs_to :location
   has_many :finish_positions
@@ -11,7 +13,7 @@ class Event < ApplicationRecord
   has_many :results
   has_many :volunteers
 
-  scope :in_progress, -> { where(results_ready: false) }
+  scope :not_finalised, -> { where.not(status: "finalised") }
 
   validates :date, presence: true
   validates :number, numericality: { only_integer: true, greater_than: 0 }
@@ -38,10 +40,25 @@ class Event < ApplicationRecord
     User.where.not(id: finished_users.select(:id)).order(Arel.sql("LOWER(name) ASC")).left_joins(:results).select("users.*, COUNT(results.id) AS results_count").group("users.id").order("users.name")
   end
 
+  def active?
+    in_progress?
+  end
+
+  def activate!
+    Event.transaction do
+      Event.where(status: "in_progress").where.not(id: id).update_all(status: "draft")
+      update!(status: "in_progress")
+    end
+  end
+
+  def deactivate!
+    update!(status: "draft")
+  end
+
   private
 
-  def send_results_emails_if_ready
-    if saved_change_to_results_ready? && results_ready?
+  def send_results_emails_if_finalised
+    if saved_change_to_status? && finalised?
       results.where.not(time: nil).includes(:user).find_each do |result|
         EventMailer.result_notification(result: result).deliver_later
       end
@@ -52,8 +69,8 @@ class Event < ApplicationRecord
     end
   end
 
-  def invalidate_statistics_cache_if_ready
-    if saved_change_to_results_ready? && results_ready?
+  def invalidate_statistics_cache_if_finalised
+    if saved_change_to_status? && finalised?
       Event.invalidate_home_statistics_cache
     end
   end

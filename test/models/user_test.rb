@@ -52,4 +52,22 @@ class UserTest < ActiveSupport::TestCase
     assert minimum_viable_user.display_name = "Anonymous"
     assert minimum_viable_user.emoji = "👤"
   end
+
+  test "user has many finish positions" do
+    user = users(:one)
+    event = events(:draft_event)
+    finish_position = FinishPosition.create!(user: user, event: event, position: 1)
+
+    assert_includes user.finish_positions, finish_position
+  end
+
+  test "destroying user destroys their finish positions" do
+    user = users(:one)
+    event = events(:draft_event)
+    FinishPosition.create!(user: user, event: event, position: 1)
+
+    assert_difference "FinishPosition.count", -1 do
+      user.destroy
+    end
+  end
 end
