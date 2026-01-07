@@ -4,7 +4,7 @@ class EventsController < ApplicationController
   skip_before_action :require_admin!, only: [ :index, :show, :show_latest ]
   allow_unauthenticated_access(only: [ :index, :show, :show_latest ])
 
-  before_action :set_event, only: [ :show, :edit, :update, :destroy, :edit_results ]
+  before_action :set_event, only: [ :show, :edit, :update, :destroy, :edit_results, :activate, :deactivate ]
 
   def index
     @events = Event.where(results_ready: true).order(number: :desc).includes(:results)
@@ -57,6 +57,16 @@ class EventsController < ApplicationController
     @volunteers = @event.volunteers.by_role
   end
 
+  def activate
+    @event.activate!
+    redirect_to dashboard_path, notice: "Event #{@event} activated! Finish position claiming is now enabled."
+  end
+
+  def deactivate
+    @event.deactivate!
+    redirect_to dashboard_path, notice: "Event #{@event} deactivated! Finish position claiming is now disabled."
+  end
+
   private
 
   def set_event
@@ -64,6 +74,6 @@ class EventsController < ApplicationController
   end
 
   def event_params
-    params.expect(event: [ :number, :date, :location_id, :description, :results_ready, :facebook_url, :strava_url ])
+    params.expect(event: [ :number, :date, :location_id, :description, :results_ready, :finish_linking_enabled, :facebook_url, :strava_url ])
   end
 end

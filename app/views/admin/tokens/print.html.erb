@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>WS10 Finish Tokens - Printable</title>
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: white;
+      margin: 0;
+      padding: 0;
+    }
+
+    .page {
+      width: 210mm;
+      height: 297mm;
+      margin: 0;
+      background: white;
+      padding: 0;
+      position: relative;
+      overflow: hidden;
+      box-sizing: border-box;
+      display: block;
+    }
+
+    .cards-container {
+      padding: 7.5mm 16mm;
+      box-sizing: border-box;
+      height: 100%;
+    }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 85mm);
+      grid-template-rows: repeat(5, 54mm);
+      column-gap: 8mm;
+      row-gap: 3mm;
+      height: fit-content;
+    }
+
+    .card {
+      width: 85mm;
+      height: 54mm;
+      border: none;
+      border-radius: 0;
+      overflow: hidden;
+      position: relative;
+      page-break-inside: avoid;
+    }
+
+    .cut-marks {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1000;
+    }
+
+    .cut-mark {
+      position: absolute;
+      background: black;
+      print-color-adjust: exact;
+      -webkit-print-color-adjust: exact;
+    }
+
+    .cut-mark.h {
+      width: 5mm;
+      height: 0.5mm;
+    }
+
+    .cut-mark.v {
+      width: 0.5mm;
+      height: 5mm;
+    }
+
+    .card-front {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      padding: 5mm 8mm;
+      background: white;
+    }
+
+    .card-logo {
+      width: 20mm;
+      height: 20mm;
+      flex-shrink: 0;
+    }
+
+    .card-logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      transform: rotate(270deg);
+    }
+
+    .card-qr {
+      width: 35mm;
+      height: 35mm;
+      flex-shrink: 0;
+    }
+
+    .card-qr img {
+      width: 100%;
+      height: 100%;
+    }
+
+    .card-position {
+      font-size: 18px;
+      font-weight: bold;
+      color: #1f2937;
+      writing-mode: vertical-rl;
+      transform: rotate(180deg);
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+
+    .card-back {
+      width: 54mm;
+      height: 85mm;
+      padding: 5mm;
+      background: white;
+      font-size: 10pt;
+      line-height: 1.3;
+      display: flex;
+      flex-direction: column;
+      transform: rotate(270deg);
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      margin-top: -42.5mm;
+      margin-left: -27mm;
+    }
+
+    .card-back h2 {
+      font-size: 13pt;
+      margin-bottom: 2mm;
+      color: #1f2937;
+      font-weight: bold;
+    }
+
+    .card-back ol {
+      margin-left: 1em;
+      margin-bottom: 2mm;
+    }
+
+    .card-back li {
+      margin-bottom: 1.5mm;
+    }
+
+    .card-back .url-example {
+      font-size: 9pt;
+      font-weight: 600;
+      display: block;
+      margin-top: 0.5mm;
+    }
+
+    .card-back .footer {
+      font-size: 9pt;
+      font-weight: 300;
+      margin-top: auto;
+      padding-top: 2mm;
+      border-top: 1px solid #e5e7eb;
+    }
+
+    @media print {
+      html, body {
+        background: white;
+        margin: 0;
+        padding: 0;
+        height: auto;
+      }
+
+      .page {
+        width: 210mm;
+        height: 297mm;
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        overflow: hidden;
+        break-after: page;
+        break-inside: avoid;
+      }
+
+      .page:last-child {
+        break-after: avoid;
+      }
+
+      .card {
+        overflow: hidden;
+      }
+
+      @page {
+        size: A4;
+        margin: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <% @tokens.each_slice(10).with_index do |page_tokens, page_index| %>
+    <!-- Front side -->
+    <div class="page">
+      <%= render partial: 'cut_marks' %>
+      <div class="cards-container">
+        <div class="cards-grid">
+          <% page_tokens.each do |token| %>
+            <div class="card">
+              <div class="card-front">
+                <div class="card-logo">
+                  <img src="/icon.png" alt="WS10">
+                </div>
+                <div class="card-qr">
+                  <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=<%= u(token[:full_url]) %>"
+                       alt="QR Code for position <%= token[:position] %>">
+                </div>
+                <div class="card-position">
+                  Position #<%= token[:position] %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <% @tokens.each_slice(10).with_index do |page_tokens, page_index| %>
+    <!-- Back side (reversed for duplex printing) -->
+    <div class="page">
+      <%= render partial: 'cut_marks' %>
+      <div class="cards-container">
+        <div class="cards-grid">
+          <% page_tokens.reverse.each do |token| %>
+            <div class="card">
+              <div class="card-back">
+                <h2>Instructions</h2>
+                <ol>
+                  <li>Sign in to <span class="url-example">https://ws10.run</span></li>
+                  <li>Scan the QR code with your phone... or visit: <span class="url-example"><%= token[:full_url].gsub("https://", "") %></span></li>
+                  <li>Claim your finish position</li>
+                </ol>
+                <p>Later today, once the times have been uploaded and linked, you'll receive an email with your result.</p>
+                <div class="footer">
+                  If you have any problems, see an organiser.
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</body>
+</html>

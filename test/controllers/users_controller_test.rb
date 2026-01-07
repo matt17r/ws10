@@ -26,4 +26,40 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
 
     assert_redirected_to my_results_url
   end
+
+  test "show displays claimed position widget when user has claimed a position" do
+    user = users(:one)
+    sign_in_as(user)
+    event = events(:draft_event)
+    event.update!(finish_linking_enabled: true)
+    event.finish_positions.create!(user: user, position: 42)
+
+    get user_url
+
+    assert_response :success
+    assert_select "div.bg-blue-50", text: /position #42/
+  end
+
+  test "show does not display claimed position widget when user has no claimed position" do
+    user = users(:one)
+    sign_in_as(user)
+
+    get user_url
+
+    assert_response :success
+    assert_select "div.bg-blue-50", count: 0
+  end
+
+  test "show does not display claimed position widget when event has finish linking disabled" do
+    user = users(:one)
+    sign_in_as(user)
+    event = events(:draft_event)
+    event.update!(finish_linking_enabled: false)
+    event.finish_positions.create!(user: user, position: 42)
+
+    get user_url
+
+    assert_response :success
+    assert_select "div.bg-blue-50", count: 0
+  end
 end

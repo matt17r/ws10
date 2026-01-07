@@ -12,6 +12,6 @@ class StaticPagesControllerTest < ActionDispatch::IntegrationTest
 
     get dashboard_url
     assert_response :success
-    assert_select "a[href=?]", new_admin_event_path, text: "Create new event"
+    assert_select "a[href=?]", admin_events_path, text: "Manage events"
   end
 end

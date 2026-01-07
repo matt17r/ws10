@@ -14,6 +14,10 @@ class UsersController < ApplicationController
   end
 
   def show
+    @claimed_position = @user.finish_positions
+      .joins(:event)
+      .where(events: { finish_linking_enabled: true })
+      .first
   end
 
   def edit

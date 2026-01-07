@@ -168,4 +168,118 @@ class EventTest < ActiveSupport::TestCase
     user_count = unplaced.select { |u| u.id == user.id }.count
     assert_equal 1, user_count
   end
+
+  test "active? returns true when finish_linking_enabled is true" do
+    event = events(:draft_event)
+    event.update!(finish_linking_enabled: true)
+    assert event.active?
+  end
+
+  test "active? returns false when finish_linking_enabled is false" do
+    event = events(:draft_event)
+    event.update!(finish_linking_enabled: false)
+    assert_not event.active?
+  end
+
+  test "activate! sets finish_linking_enabled to true" do
+    event = events(:draft_event)
+    event.update!(finish_linking_enabled: false)
+    event.activate!
+    assert event.reload.finish_linking_enabled
+    assert event.active?
+  end
+
+  test "activate! deactivates other active events" do
+    event1 = events(:one)
+    event2 = events(:draft_event)
+
+    event1.update!(finish_linking_enabled: true)
+    event2.update!(finish_linking_enabled: false)
+
+    event2.activate!
+
+    assert event2.reload.active?
+    assert_not event1.reload.active?
+  end
+
+  test "deactivate! sets finish_linking_enabled to false" do
+    event = events(:draft_event)
+    event.update!(finish_linking_enabled: true)
+    event.deactivate!
+    assert_not event.reload.finish_linking_enabled
+    assert_not event.active?
+  end
+
+  test "database constraint prevents multiple active events" do
+    event1 = events(:one)
+    event2 = events(:draft_event)
+
+    event1.update!(finish_linking_enabled: false)
+    event2.update!(finish_linking_enabled: false)
+
+    event1.update!(finish_linking_enabled: true)
+
+    assert_raises ActiveRecord::RecordNotUnique do
+      event2.update_column(:finish_linking_enabled, true)
+    end
+  end
+
+  test "should disable finish_linking_enabled when results_ready changes to true" do
+    event = events(:draft_event)
+    event.update!(finish_linking_enabled: true, results_ready: false)
+
+    assert event.finish_linking_enabled
+
+    event.update!(results_ready: true)
+
+    assert_not event.reload.finish_linking_enabled
+  end
+
+  test "should not disable finish_linking_enabled when results_ready stays true" do
+    event = events(:one)
+    event.update_columns(finish_linking_enabled: true, results_ready: true)
+
+    event.update!(description: "Updated description")
+
+    assert event.reload.finish_linking_enabled
+  end
+
+  test "should not disable finish_linking_enabled when results_ready changes to false" do
+    event = events(:draft_event)
+    event.update_columns(finish_linking_enabled: true, results_ready: true)
+
+    event.update!(results_ready: false)
+
+    assert event.reload.finish_linking_enabled
+  end
+
+  test "should unfinalise results_ready when finish_linking_enabled changes to true" do
+    event = events(:draft_event)
+    event.update_columns(finish_linking_enabled: false, results_ready: true)
+
+    assert event.results_ready
+
+    event.update!(finish_linking_enabled: true)
+
+    assert_not event.reload.results_ready
+  end
+
+  test "should not unfinalise results_ready when finish_linking_enabled stays true" do
+    event = events(:draft_event)
+    event.update_columns(finish_linking_enabled: true, results_ready: true)
+
+    event.update!(description: "Updated description")
+
+    assert event.reload.results_ready
+  end
+
+  test "should not unfinalise results_ready when finish_linking_enabled changes to false" do
+    event = events(:draft_event)
+    event.update_columns(finish_linking_enabled: true, results_ready: true)
+
+    event.update!(finish_linking_enabled: false)
+
+    assert event.reload.results_ready
+  end
+
 end

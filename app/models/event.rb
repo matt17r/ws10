@@ -3,6 +3,8 @@ class Event < ApplicationRecord
 
   after_update :send_results_emails_if_ready
   after_update :invalidate_statistics_cache_if_ready
+  after_update :disable_finish_linking_if_ready
+  after_update :unfinalise_results_if_linking_reenabled
 
   belongs_to :location
   has_many :finish_positions
@@ -38,6 +40,21 @@ class Event < ApplicationRecord
     User.where.not(id: finished_users.select(:id)).order(Arel.sql("LOWER(name) ASC")).left_joins(:results).select("users.*, COUNT(results.id) AS results_count").group("users.id").order("users.name")
   end
 
+  def active?
+    finish_linking_enabled
+  end
+
+  def activate!
+    Event.transaction do
+      Event.where(finish_linking_enabled: true).where.not(id: id).update_all(finish_linking_enabled: false)
+      update!(finish_linking_enabled: true)
+    end
+  end
+
+  def deactivate!
+    update!(finish_linking_enabled: false)
+  end
+
   private
 
   def send_results_emails_if_ready
@@ -55,6 +72,18 @@ class Event < ApplicationRecord
   def invalidate_statistics_cache_if_ready
     if saved_change_to_results_ready? && results_ready?
       Event.invalidate_home_statistics_cache
+    end
+  end
+
+  def disable_finish_linking_if_ready
+    if saved_change_to_results_ready? && results_ready?
+      update_column(:finish_linking_enabled, false)
+    end
+  end
+
+  def unfinalise_results_if_linking_reenabled
+    if saved_change_to_finish_linking_enabled? && finish_linking_enabled?
+      update_column(:results_ready, false)
     end
   end
 end
