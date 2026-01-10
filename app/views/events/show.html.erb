@@ -1,6 +1,6 @@
-<div class="my-16 px-6 lg:px-8">
+<div class="my-16 px-1 sm:px-6 lg:px-8">
   <div class="mx-auto max-w-2xl lg:max-w-7xl">
-    <div class="px-4 sm:px-6 lg:px-8">
+    <div class="px-1 sm:px-4 lg:px-8">
       <nav class="mb-4" aria-label="Breadcrumb">
         <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
           <li class="inline-flex items-center">
@@ -39,9 +39,9 @@
       <div class="mt-4 flow-root">
         <% if @event.finalised? %>
           <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-            <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+            <div class="inline-block min-w-full py-2 align-middle px-0 sm:px-6 lg:px-8">
               <table class="table-fixed min-w-full divide-y divide-gray-300">
-                <thead>
+                <thead class="hidden sm:table-header-group">
                   <tr>
                     <th scope="col" class="py-3.5 pl-4 pr-3 text-left font-semibold text-gray-900 w-32">Position</th>
                     <th scope="col" class="px-3 py-3.5 text-left font-semibold text-gray-900">Name</th>
@@ -51,14 +51,14 @@
                 <tbody class="divide-y divide-gray-200 bg-white">
                   <% @results.each do |result| %>
                     <tr class="hover:bg-[#9DA39A]/50">
-                      <td class="whitespace-nowrap pl-4 pr-3 py-5 text-2xl text-gray-700">
+                      <td class="py-3 sm:py-5 pl-1 sm:pl-4 pr-1 sm:pr-3 text-lg sm:text-2xl text-gray-700 text-right sm:text-left w-10 sm:w-32">
                         <% if result.user %>
                           <%= link_to result.place, user_results_path(result.user.barcode_string) %>
                         <% else %>
                           <%= result.place %>
                         <% end %>
                       </td>
-                      <td class="whitespace-nowrap px-3 py-5 text-2xl text-gray-700">
+                      <td class="py-3 sm:py-5 px-1 sm:px-3 text-lg sm:text-2xl text-gray-700 break-words">
                         <% if result.user %>
                           <%= link_to user_results_path(result.user.barcode_string) do %>
                             <%= result.user.emoji %> <%= result.user.display_name %>
@@ -67,7 +67,7 @@
                           <% if event_badges.any? %>
                             <% event_badges.group_by { |ub| ub.badge.badge_family }.sort_by { |family, _| family }.each do |family, user_badges| %>
                               <% user_badges.sort_by { |ub| ub.badge.level_order }.each_with_index do |user_badge, index| %>
-                                <%= link_to badge_path(user_badge.badge), class: "relative inline-flex items-center justify-center w-8 h-8 text-badge-#{user_badge.badge.level} bg-badge rounded-full border-2 #{badge_border_class(user_badge.badge)} transition-transform hover:scale-110 #{index > 0 ? '-ml-4' : 'ml-2'}", style: "z-index: #{index};", title: user_badge.display_name do %>
+                                <%= link_to badge_path(user_badge.badge), class: "relative inline-flex items-center justify-center w-5 h-5 sm:w-8 sm:h-8 text-badge-#{user_badge.badge.level} bg-badge rounded-full border sm:border-2 #{badge_border_class(user_badge.badge)} transition-transform hover:scale-110 #{index > 0 ? '-ml-2 sm:-ml-4' : 'ml-1 sm:ml-2'}", style: "z-index: #{index};", title: user_badge.display_name do %>
                                   <%= render inline: Rails.root.join("app/assets/images/badges/#{user_badge.badge.badge_family}.svg").read %>
                                 <% end %>
                               <% end %>
@@ -91,7 +91,7 @@
                           </span>
                         <% end %>
                       </td>
-                      <td class="whitespace-nowrap pl-3 pr-4 py-5 text-2xl text-gray-700">
+                      <td class="py-3 sm:py-5 pl-1 sm:pl-3 pr-3 sm:pr-4 text-lg sm:text-2xl text-gray-700 text-right whitespace-nowrap w-20 sm:w-32">
                         <% if result.user %>
                           <%= link_to result.time_string, user_results_path(result.user.barcode_string) %>
                         <% else %>
@@ -102,14 +102,14 @@
                   <% end %>
                   <% @volunteers.each do |volunteer| %>
                     <tr class="hover:bg-[#9DA39A]/50">
-                      <td class="whitespace-nowrap py-5 pl-4 pr-3 text-2xl text-gray-700">
+                      <td class="py-3 sm:py-5 pl-1 sm:pl-4 pr-1 sm:pr-3 text-lg sm:text-2xl text-gray-700 text-right sm:text-left w-10 sm:w-32">
                         <% if volunteer.user %>
                           <%= link_to "V", user_results_path(volunteer.user.barcode_string) %>
                         <% else %>
                           V
                         <% end %>
                       </td>
-                      <td class="whitespace-nowrap px-3 py-5 text-2xl text-gray-700">
+                      <td class="py-3 sm:py-5 px-1 sm:px-3 text-lg sm:text-2xl text-gray-700 break-words">
                         <% if volunteer.user %>
                           <%= link_to user_results_path(volunteer.user.barcode_string) do %>
                             <%= volunteer.user.emoji %> <%= volunteer.user.display_name %>
@@ -118,7 +118,7 @@
                           <% if event_badges.any? %>
                             <% event_badges.group_by { |ub| ub.badge.badge_family }.sort_by { |family, _| family }.each do |family, user_badges| %>
                               <% user_badges.sort_by { |ub| ub.badge.level_order }.each_with_index do |user_badge, index| %>
-                                <%= link_to badge_path(user_badge.badge), class: "relative inline-flex items-center justify-center w-8 h-8 text-badge-#{user_badge.badge.level} bg-badge rounded-full border-2 #{badge_border_class(user_badge.badge)} transition-transform hover:scale-110 #{index > 0 ? '-ml-4' : 'ml-2'}", style: "z-index: #{index};", title: user_badge.display_name do %>
+                                <%= link_to badge_path(user_badge.badge), class: "relative inline-flex items-center justify-center w-5 h-5 sm:w-8 sm:h-8 text-badge-#{user_badge.badge.level} bg-badge rounded-full border sm:border-2 #{badge_border_class(user_badge.badge)} transition-transform hover:scale-110 #{index > 0 ? '-ml-2 sm:-ml-4' : 'ml-1 sm:ml-2'}", style: "z-index: #{index};", title: user_badge.display_name do %>
                                   <%= render inline: Rails.root.join("app/assets/images/badges/#{user_badge.badge.badge_family}.svg").read %>
                                 <% end %>
                               <% end %>
@@ -132,7 +132,7 @@
                           <span class="sr-only">Volunteer</span>
                         </span>
                       </td>
-                      <td class="whitespace-nowrap px-3 py-5 text-2xl text-gray-700">
+                      <td class="py-3 sm:py-5 pl-1 sm:pl-3 pr-3 sm:pr-4 text-lg sm:text-2xl text-gray-700 text-right whitespace-nowrap w-20 sm:w-32">
                         <% if volunteer.user %>
                           <%= link_to volunteer.role, user_results_path(volunteer.user.barcode_string) %>
                         <% else %>

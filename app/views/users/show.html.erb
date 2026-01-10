@@ -56,7 +56,7 @@
       <% if all_badges.any? %>
         <div class="mt-6">
           <h3 class="font-semibold text-gray-700 text-lg mb-2 text-center">Badges</h3>
-          <div class="grid grid-cols-2 md:grid-cols-1 gap-2">
+          <div class="grid grid-cols-1 gap-2">
             <% all_badges.each do |user_badge| %>
               <%= link_to badge_path(user_badge.badge), class: "flex items-center p-2 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors border-l-4 #{badge_border_class(user_badge.badge, left: true)}", title: user_badge.badge.description do %>
                 <div class="inline-flex items-center justify-center w-8 h-8 text-sm font-semibold text-primary bg-primary/5 rounded-full mr-2 flex-shrink-0">
