@@ -9,6 +9,8 @@ Rails.application.routes.draw do
   get "about", to: "static_pages#about"
   get "results", to: "events#show_latest"
 
+  resources :badges, only: [ :index, :show ], param: :family
+
   get "sign_in", to: "sessions#new"
   post "sign_in", to: "sessions#create"
   delete "sign_out", to: "sessions#destroy"

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_07_064848) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_10_015258) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -46,6 +46,20 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_07_064848) do
     t.integer "user_id", null: false
     t.index ["role_id"], name: "index_assignments_on_role_id"
     t.index ["user_id"], name: "index_assignments_on_user_id"
+  end
+
+  create_table "badges", force: :cascade do |t|
+    t.string "badge_family", null: false
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.string "level", null: false
+    t.integer "level_order", null: false
+    t.string "name", null: false
+    t.boolean "repeatable", default: false, null: false
+    t.string "slug", null: false
+    t.datetime "updated_at", null: false
+    t.index ["badge_family", "level_order"], name: "index_badges_on_badge_family_and_level_order", unique: true
+    t.index ["slug"], name: "index_badges_on_slug", unique: true
   end
 
   create_table "events", force: :cascade do |t|
@@ -138,6 +152,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_07_064848) do
     t.index ["user_id"], name: "index_sessions_on_user_id"
   end
 
+  create_table "user_badges", force: :cascade do |t|
+    t.integer "badge_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "earned_at", null: false
+    t.integer "event_id", null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["badge_id"], name: "index_user_badges_on_badge_id"
+    t.index ["earned_at"], name: "index_user_badges_on_earned_at"
+    t.index ["event_id"], name: "index_user_badges_on_event_id"
+    t.index ["user_id", "badge_id"], name: "index_user_badges_on_user_id_and_badge_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.datetime "confirmed_at"
     t.datetime "created_at", null: false
@@ -176,6 +203,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_07_064848) do
   add_foreign_key "results", "events"
   add_foreign_key "results", "users"
   add_foreign_key "sessions", "users"
+  add_foreign_key "user_badges", "badges"
+  add_foreign_key "user_badges", "events"
+  add_foreign_key "user_badges", "users"
   add_foreign_key "volunteers", "events"
   add_foreign_key "volunteers", "users"
 end

@@ -1,4 +1,14 @@
 Congratulations <%= @user.name %> on completing your <%= @result_count.ordinalize %> Western Sydney 10 <% if @result_count > 1 %>and your <%= @location_count.ordinalize %> <% end %>at <%= @event.location %> this morning (<%= @event.date.strftime("%A, %-d %B %Y") %>). Your time was <%= @result.time_string %> and you finished in <%= @result.place.ordinalize %> place out of <%= @event.results.count %> participants.
+<% if @newly_earned_badges.any? %>
+
+NEW BADGES!
+You've earned <%= @newly_earned_badges.size %> new <%= "badge".pluralize(@newly_earned_badges.size) %>:
+<% @newly_earned_badges.each do |user_badge| %>
+ - <%= user_badge.badge.name %>: <%= user_badge.badge.description %>
+<% end %>
+
+View all badges at <%= badges_url %>.
+<% end %>
 
 You can view all of this week's results at <%= event_url(@event) %>.
 

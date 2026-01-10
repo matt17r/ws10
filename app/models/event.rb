@@ -59,6 +59,10 @@ class Event < ApplicationRecord
 
   def send_results_emails_if_finalised
     if saved_change_to_status? && finalised?
+      # Award badges FIRST (background job)
+      AwardBadgesJob.perform_later(id)
+
+      # Then queue emails
       results.where.not(time: nil).includes(:user).find_each do |result|
         EventMailer.result_notification(result: result).deliver_later
       end

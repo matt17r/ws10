@@ -92,7 +92,7 @@ class EventTest < ActiveSupport::TestCase
     result_with_time = event.results.create!(user: users(:one), time: 1600)
     result_without_time = event.results.create!(user: users(:two))
 
-    assert_enqueued_jobs 2 do
+    assert_enqueued_jobs 3 do  # AwardBadgesJob + 2 email jobs
       event.update!(status: "finalised")
     end
   end
@@ -122,7 +122,7 @@ class EventTest < ActiveSupport::TestCase
     result_with_time = event.results.create!(user: users(:one), time: 1800)
     result_without_time = event.results.create!(user: users(:two))
 
-    assert_enqueued_jobs 2 do
+    assert_enqueued_jobs 3 do  # AwardBadgesJob + 2 email jobs
       event.update!(status: "finalised")
     end
   end
@@ -131,7 +131,7 @@ class EventTest < ActiveSupport::TestCase
     event = events(:draft_event)
     event.results.destroy_all
 
-    assert_no_enqueued_jobs do
+    assert_enqueued_jobs 1 do  # Only AwardBadgesJob, no email jobs
       event.update!(status: "finalised")
     end
   end

@@ -32,6 +32,20 @@
         <h1 class="text-4xl font-bold text-gray-900">
           <%= @user.emoji %> <%= @user.display_name %>
         </h1>
+        <% badges_by_family = @user.user_badges.joins(:badge).includes(:badge).group_by { |ub| ub.badge.badge_family } %>
+        <% if badges_by_family.any? %>
+          <div class="flex justify-center items-center gap-4 mt-4">
+            <% badges_by_family.sort_by { |family, _| family }.each do |family, user_badges| %>
+              <div class="flex items-center">
+                <% user_badges.sort_by { |ub| ub.event.date }.each_with_index do |user_badge, index| %>
+                  <%= link_to badge_path(user_badge.badge), class: "relative inline-flex items-center justify-center w-12 h-12 text-badge-#{user_badge.badge.level} bg-badge rounded-full border-4 #{badge_border_class(user_badge.badge)} transition-transform hover:scale-110 #{index > 0 ? '-ml-7' : ''}", style: "z-index: #{index};", title: user_badge.display_name do %>
+                    <%= render inline: Rails.root.join("app/assets/images/badges/#{user_badge.badge.badge_family}.svg").read %>
+                  <% end %>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
       </div>
 
       <% if @results.any? %>
@@ -53,13 +67,23 @@
                     <tr class="hover:bg-[#9DA39A]/50">
                       <td class="whitespace-nowrap pl-4 pr-3 py-5 text-xl text-gray-700">
                         <%= link_to "##{result.event.number} – #{result.event.location}", event_path(result.event) %>
+                        <% event_badges = @user.user_badges.select { |ub| ub.event_id == result.event_id } %>
+                        <% if event_badges.any? %>
+                          <% event_badges.group_by { |ub| ub.badge.badge_family }.sort_by { |family, _| family }.each do |family, user_badges| %>
+                            <% user_badges.sort_by { |ub| ub.event.date }.each_with_index do |user_badge, index| %>
+                              <%= link_to badge_path(user_badge.badge), class: "relative inline-flex items-center justify-center w-8 h-8 text-badge-#{user_badge.badge.level} bg-badge rounded-full border-2 #{badge_border_class(user_badge.badge)} transition-transform hover:scale-110 #{index > 0 ? '-ml-4' : 'ml-2'}", style: "z-index: #{index};", title: user_badge.display_name do %>
+                                <%= render inline: Rails.root.join("app/assets/images/badges/#{user_badge.badge.badge_family}.svg").read %>
+                              <% end %>
+                            <% end %>
+                          <% end %>
+                        <% end %>
                       </td>
                       <td class="whitespace-nowrap px-3 py-5 text-xl text-gray-700"><%= link_to l(result.event.date), event_path(result.event) %></td>
                       <td class="whitespace-nowrap px-3 py-5 text-xl text-gray-700"><%= link_to result.place, event_path(result.event) %></td>
                       <td class="whitespace-nowrap px-3 py-5 text-xl text-gray-700">
                         <%= link_to result.time_string, event_path(result.event) %>
                         <div class="float-right flex gap-2">
-                          <% if result.first_timer? %>
+                          <% if result.id == @first_timer_result_id %>
                             <span class="hidden sm:inline-flex items-center justify-center w-8 h-8 text-sm font-semibold text-[#DB2955] bg-[#DB2955]/5 rounded-full">
                               <svg class="size-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15.59 14.37a6 6 0 0 1-5.84 7.38v-4.8m5.84-2.58a14.98 14.98 0 0 0 6.16-12.12A14.98 14.98 0 0 0 9.631 8.41m5.96 5.96a14.926 14.926 0 0 1-5.841 2.58m-.119-8.54a6 6 0 0 0-7.381 5.84h4.8m2.581-5.84a14.927 14.927 0 0 0-2.58 5.84m2.699 2.7c-.103.021-.207.041-.311.06a15.09 15.09 0 0 1-2.448-2.448 14.9 14.9 0 0 1 .06-.312m-2.24 2.39a4.493 4.493 0 0 0-1.757 4.306 4.493 4.493 0 0 0 4.306-1.758M16.5 9a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z" />
@@ -67,7 +91,7 @@
                               <span class="sr-only">First Timer</span>
                             </span>
                           <% end %>
-                          <% if result.pb? %>
+                          <% if @pb_result_ids.include?(result.id) %>
                             <span class="hidden sm:inline-flex items-center justify-center w-8 h-8 text-sm font-semibold text-[#DB2955] bg-[#DB2955]/5 rounded-full">
                               <svg class="size-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0M3.124 7.5A8.969 8.969 0 0 1 5.292 3m13.416 0a8.969 8.969 0 0 1 2.168 4.5" />
@@ -106,6 +130,16 @@
                     <tr class="hover:bg-[#9DA39A]/50">
                       <td class="whitespace-nowrap pl-4 pr-3 py-5 text-xl text-gray-700">
                         <%= link_to "##{volunteer.event.number} – #{volunteer.event.location}", event_path(volunteer.event) %>
+                        <% event_badges = @user.user_badges.select { |ub| ub.event_id == volunteer.event_id } %>
+                        <% if event_badges.any? %>
+                          <% event_badges.group_by { |ub| ub.badge.badge_family }.sort_by { |family, _| family }.each do |family, user_badges| %>
+                            <% user_badges.sort_by { |ub| ub.event.date }.each_with_index do |user_badge, index| %>
+                              <%= link_to badge_path(user_badge.badge), class: "relative inline-flex items-center justify-center w-8 h-8 text-badge-#{user_badge.badge.level} bg-badge rounded-full border-2 #{badge_border_class(user_badge.badge)} transition-transform hover:scale-110 #{index > 0 ? '-ml-4' : 'ml-2'}", style: "z-index: #{index};", title: user_badge.display_name do %>
+                                <%= render inline: Rails.root.join("app/assets/images/badges/#{user_badge.badge.badge_family}.svg").read %>
+                              <% end %>
+                            <% end %>
+                          <% end %>
+                        <% end %>
                       </td>
                       <td class="whitespace-nowrap px-3 py-5 text-xl text-gray-700"><%= link_to l(volunteer.event.date), event_path(volunteer.event) %></td>
                       <td class="whitespace-nowrap px-3 py-5 text-xl text-gray-700">

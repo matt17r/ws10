@@ -1,0 +1,67 @@
+<div class="mx-auto w-full max-w-2xl p-8">
+  <%= link_to badges_path, class: "inline-flex items-center text-primary hover:text-primary/80 mb-4" do %>
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-1">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+    </svg>
+    Back to all badges
+  <% end %>
+
+  <% family_badges = @badge.family_badges %>
+  <% has_multiple_levels = family_badges.count > 1 %>
+
+  <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center flex items-center justify-center gap-2">
+    <%= @badge.name.gsub(/\s*\((Bronze|Silver|Gold)\)/, "") %>
+    <% if @badge.repeatable? %>
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-primary/60">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 12c0-1.232-.046-2.453-.138-3.662a4.006 4.006 0 0 0-3.7-3.7 48.678 48.678 0 0 0-7.324 0 4.006 4.006 0 0 0-3.7 3.7c-.017.22-.032.441-.046.662M19.5 12l3-3m-3 3-3-3m-12 3c0 1.232.046 2.453.138 3.662a4.006 4.006 0 0 0 3.7 3.7 48.656 48.656 0 0 0 7.324 0 4.006 4.006 0 0 0 3.7-3.7c.017-.22.032-.441.046-.662M4.5 12l3 3m-3-3-3 3" />
+      </svg>
+    <% end %>
+  </h1>
+
+  <div class="space-y-4">
+    <% if has_multiple_levels %>
+      <% family_badges.each do |level_badge| %>
+        <% badge_count = level_badge.user_badges.count %>
+        <div class="bg-white rounded-lg shadow-lg p-6 border-4 <%= badge_border_class(level_badge) %>">
+          <div class="flex items-start">
+            <div class="inline-flex items-center justify-center w-16 h-16 text-sm font-semibold text-primary bg-primary/5 rounded-full mr-4 flex-shrink-0">
+              <%= render inline: Rails.root.join("app/assets/images/badges/#{level_badge.badge_family}.svg").read %>
+            </div>
+            <div class="flex-1">
+              <h2 class="text-2xl font-bold text-gray-800 mb-2"><%= level_badge.level.capitalize %></h2>
+              <p class="text-lg text-gray-600 mb-2"><%= level_badge.description %></p>
+              <p class="text-sm text-gray-500">Awarded <%= pluralize(badge_count, "time") %></p>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    <% else %>
+      <% badge_count = @badge.user_badges.count %>
+      <div class="bg-white rounded-lg shadow-lg p-6 border-4 <%= badge_border_class(@badge) %>">
+        <div class="flex items-start">
+          <div class="inline-flex items-center justify-center w-16 h-16 text-sm font-semibold text-primary bg-primary/5 rounded-full mr-4 flex-shrink-0">
+            <%= render inline: Rails.root.join("app/assets/images/badges/#{@badge.badge_family}.svg").read %>
+          </div>
+          <div class="flex-1">
+            <p class="text-lg text-gray-600 mb-2"><%= @badge.description %></p>
+            <p class="text-sm text-gray-500">Awarded <%= pluralize(badge_count, "time") %></p>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <% if @badge.repeatable? %>
+    <div class="mt-8 pt-6 border-t border-gray-200">
+      <div class="flex items-center gap-4 text-sm text-gray-600 justify-center">
+        <div class="flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-primary/60">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 12c0-1.232-.046-2.453-.138-3.662a4.006 4.006 0 0 0-3.7-3.7 48.678 48.678 0 0 0-7.324 0 4.006 4.006 0 0 0-3.7 3.7c-.017.22-.032.441-.046.662M19.5 12l3-3m-3 3-3-3m-12 3c0 1.232.046 2.453.138 3.662a4.006 4.006 0 0 0 3.7 3.7 48.656 48.656 0 0 0 7.324 0 4.006 4.006 0 0 0 3.7-3.7c.017-.22.032-.441.046-.662M4.5 12l3 3m-3-3-3 3" />
+          </svg>
+          <span>Repeatable - this badge can be earned more than once<% if has_multiple_levels %> (once gold is awarded, you can start working through bronze → silver → gold again)<% end %></span>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>
+

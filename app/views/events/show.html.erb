@@ -63,6 +63,16 @@
                           <%= link_to user_results_path(result.user.barcode_string) do %>
                             <%= result.user.emoji %> <%= result.user.display_name %>
                           <% end %>
+                          <% event_badges = result.user.user_badges.select { |ub| ub.event_id == @event.id } %>
+                          <% if event_badges.any? %>
+                            <% event_badges.group_by { |ub| ub.badge.badge_family }.sort_by { |family, _| family }.each do |family, user_badges| %>
+                              <% user_badges.sort_by { |ub| ub.badge.level_order }.each_with_index do |user_badge, index| %>
+                                <%= link_to badge_path(user_badge.badge), class: "relative inline-flex items-center justify-center w-8 h-8 text-badge-#{user_badge.badge.level} bg-badge rounded-full border-2 #{badge_border_class(user_badge.badge)} transition-transform hover:scale-110 #{index > 0 ? '-ml-4' : 'ml-2'}", style: "z-index: #{index};", title: user_badge.display_name do %>
+                                  <%= raw user_badge.badge.icon %>
+                                <% end %>
+                              <% end %>
+                            <% end %>
+                          <% end %>
                         <% end %>
                         <% if result.first_timer? %>
                           <span href="#legend" class="hidden float-right sm:inline-flex items-center justify-center w-8 h-8 me-2 text-sm font-semibold text-[#DB2955] bg-[#DB2955]/5 rounded-full">
@@ -103,6 +113,16 @@
                         <% if volunteer.user %>
                           <%= link_to user_results_path(volunteer.user.barcode_string) do %>
                             <%= volunteer.user.emoji %> <%= volunteer.user.display_name %>
+                          <% end %>
+                          <% event_badges = volunteer.user.user_badges.select { |ub| ub.event_id == @event.id } %>
+                          <% if event_badges.any? %>
+                            <% event_badges.group_by { |ub| ub.badge.badge_family }.sort_by { |family, _| family }.each do |family, user_badges| %>
+                              <% user_badges.sort_by { |ub| ub.badge.level_order }.each_with_index do |user_badge, index| %>
+                                <%= link_to badge_path(user_badge.badge), class: "relative inline-flex items-center justify-center w-8 h-8 text-badge-#{user_badge.badge.level} bg-badge rounded-full border-2 #{badge_border_class(user_badge.badge)} transition-transform hover:scale-110 #{index > 0 ? '-ml-4' : 'ml-2'}", style: "z-index: #{index};", title: user_badge.display_name do %>
+                                  <%= raw user_badge.badge.icon %>
+                                <% end %>
+                              <% end %>
+                            <% end %>
                           <% end %>
                         <% end %>
                         <span href="#legend" class="hidden float-right sm:inline-flex items-center justify-center w-8 h-8 me-2 text-sm font-semibold text-[#DB2955] bg-[#DB2955]/5 rounded-full">
