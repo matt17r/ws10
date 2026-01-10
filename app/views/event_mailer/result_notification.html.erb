@@ -265,7 +265,7 @@
                                         New Badges!
                                     </h2>
                                     <p style="margin: 0 0 15px 0;">
-                                        You've earned <%= @newly_earned_badges.size %> new <%= "badge".pluralize(@newly_earned_badges.size) %>:
+                                        You've earned <%= @newly_earned_badges.size %> new <a href="<%= badges_url %>" style="color: #DB2955;"><%= "badge".pluralize(@newly_earned_badges.size) %></a>:
                                     </p>
                                     <% @newly_earned_badges.each do |user_badge| %>
                                         <div style="margin: 10px 0; padding: 15px; background: #f5f5f5; border-radius: 8px;">

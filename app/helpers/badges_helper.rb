@@ -22,6 +22,6 @@ module BadgesHelper
   end
 
   def badge_icon_url(badge)
-    "#{root_url}badges/#{badge.badge_family}.png"
+    "#{root_url}badges/#{badge.badge_family}-#{badge.level}.png"
   end
 end

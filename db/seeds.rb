@@ -30,9 +30,9 @@ badge_families = [
     family: "simply-the-best",
     repeatable: true,
     levels: [
-      { level: "bronze", name: "Simply the Best (Bronze)", slug: "simply-the-best-bronze", description: "Set a personal best" },
-      { level: "silver", name: "Simply the Best (Silver)", slug: "simply-the-best-silver", description: "Set 3 personal bests" },
-      { level: "gold", name: "Simply the Best (Gold)", slug: "simply-the-best-gold", description: "Set 6 personal bests" }
+      { level: "bronze", name: "Simply the Best (Bronze)", slug: "simply-the-best-bronze", description: "Achieved a personal best (doesn't include your first event)" },
+      { level: "silver", name: "Simply the Best (Silver)", slug: "simply-the-best-silver", description: "Achieved 3 personal bests (doesn't include your first event)" },
+      { level: "gold", name: "Simply the Best (Gold)", slug: "simply-the-best-gold", description: "Achieved 6 personal bests (doesn't include your first event)" }
     ]
   },
   {

@@ -6,6 +6,8 @@ You've earned <%= @newly_earned_badges.size %> new <%= "badge".pluralize(@newly_
 <% @newly_earned_badges.each do |user_badge| %>
  - <%= user_badge.badge.name %>: <%= user_badge.badge.description %>
 <% end %>
+
+View all badges at <%= badges_url %>.
 <% end %>
 
 You can view all of this week's results at <%= event_url(@event) %>.
