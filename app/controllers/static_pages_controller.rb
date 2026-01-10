@@ -1,7 +1,10 @@
 class StaticPagesController < ApplicationController
-  allow_unauthenticated_access(only: [ :about, :home, :results ])
+  allow_unauthenticated_access(only: [ :about, :home, :results, :support ])
 
   def about
+  end
+
+  def support
   end
 
   def admin_dashboard

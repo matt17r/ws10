@@ -8,6 +8,7 @@ Rails.application.routes.draw do
 
   get "about", to: "static_pages#about"
   get "results", to: "events#show_latest"
+  get "support", to: "static_pages#support"
 
   resources :badges, only: [ :index, :show ], param: :family
 

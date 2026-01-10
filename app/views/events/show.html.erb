@@ -36,6 +36,12 @@
       <% if @event.finalised? && @event.description.present? %>
         <p class="mt-2 text-gray-700"><%= sanitize @event.description %></p>
       <% end %>
+
+      <div class="text-center my-4">
+        <span class="text-base text-gray-600 mr-3">Enjoyed the event?</span>
+        <%= link_to "Support WS10", support_path, class: "inline-flex items-center justify-center px-4 py-2 rounded-full border border-transparent bg-[#DB2955] shadow-md whitespace-nowrap text-base font-medium text-white hover:bg-[#B91E47]" %>
+      </div>
+
       <div class="mt-4 flow-root">
         <% if @event.finalised? %>
           <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
