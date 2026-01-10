@@ -105,7 +105,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     assert_select "a[href=?]", badge_path(gold)
     assert_select "a[href=?]", badge_path(silver)
     assert_select "a[href=?]", badge_path(bronze)
-    assert_select "a.-ml-6", minimum: 1
+    assert_select "a.-ml-7", minimum: 1
   end
 
   test "results page does not display badges section when user has no badges" do

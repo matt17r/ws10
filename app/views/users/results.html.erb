@@ -39,7 +39,7 @@
               <div class="flex items-center">
                 <% user_badges.sort_by { |ub| ub.event.date }.each_with_index do |user_badge, index| %>
                   <%= link_to badge_path(user_badge.badge), class: "relative inline-flex items-center justify-center w-12 h-12 text-badge-#{user_badge.badge.level} bg-badge rounded-full border-4 #{badge_border_class(user_badge.badge)} transition-transform hover:scale-110 #{index > 0 ? '-ml-7' : ''}", style: "z-index: #{index};", title: user_badge.display_name do %>
-                    <%= raw user_badge.badge.icon %>
+                    <%= render inline: Rails.root.join("app/assets/images/badges/#{user_badge.badge.badge_family}.svg").read %>
                   <% end %>
                 <% end %>
               </div>
@@ -72,7 +72,7 @@
                           <% event_badges.group_by { |ub| ub.badge.badge_family }.sort_by { |family, _| family }.each do |family, user_badges| %>
                             <% user_badges.sort_by { |ub| ub.event.date }.each_with_index do |user_badge, index| %>
                               <%= link_to badge_path(user_badge.badge), class: "relative inline-flex items-center justify-center w-8 h-8 text-badge-#{user_badge.badge.level} bg-badge rounded-full border-2 #{badge_border_class(user_badge.badge)} transition-transform hover:scale-110 #{index > 0 ? '-ml-4' : 'ml-2'}", style: "z-index: #{index};", title: user_badge.display_name do %>
-                                <%= raw user_badge.badge.icon %>
+                                <%= render inline: Rails.root.join("app/assets/images/badges/#{user_badge.badge.badge_family}.svg").read %>
                               <% end %>
                             <% end %>
                           <% end %>
@@ -135,7 +135,7 @@
                           <% event_badges.group_by { |ub| ub.badge.badge_family }.sort_by { |family, _| family }.each do |family, user_badges| %>
                             <% user_badges.sort_by { |ub| ub.event.date }.each_with_index do |user_badge, index| %>
                               <%= link_to badge_path(user_badge.badge), class: "relative inline-flex items-center justify-center w-8 h-8 text-badge-#{user_badge.badge.level} bg-badge rounded-full border-2 #{badge_border_class(user_badge.badge)} transition-transform hover:scale-110 #{index > 0 ? '-ml-4' : 'ml-2'}", style: "z-index: #{index};", title: user_badge.display_name do %>
-                                <%= raw user_badge.badge.icon %>
+                                <%= render inline: Rails.root.join("app/assets/images/badges/#{user_badge.badge.badge_family}.svg").read %>
                               <% end %>
                             <% end %>
                           <% end %>

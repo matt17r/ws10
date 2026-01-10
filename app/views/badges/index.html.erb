@@ -13,7 +13,7 @@
         <%= link_to badge_path(representative_badge), class: "block p-4 bg-white rounded-lg shadow hover:shadow-lg transition-shadow border-2 border-gray-200" do %>
           <div class="flex items-center">
             <div class="inline-flex items-center justify-center w-16 h-16 text-sm font-semibold text-primary bg-primary/5 rounded-full mr-4 flex-shrink-0">
-              <%= raw representative_badge.icon %>
+              <%= render inline: Rails.root.join("app/assets/images/badges/#{representative_badge.badge_family}.svg").read %>
             </div>
             <div class="flex-1">
               <h3 class="text-xl font-semibold text-gray-800 mb-1 flex items-center gap-2">

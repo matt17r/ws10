@@ -42,9 +42,4 @@ class Badge < ApplicationRecord
   def previous_level
     family_badges.where("level_order < ?", level_order).last
   end
-
-  def icon
-    svg_path = Rails.root.join("app", "assets", "images", "badges", "#{badge_family}.svg")
-    File.read(svg_path).html_safe
-  end
 end
