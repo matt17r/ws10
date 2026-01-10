@@ -60,7 +60,7 @@
             <% all_badges.each do |user_badge| %>
               <%= link_to badge_path(user_badge.badge), class: "flex items-center p-2 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors border-l-4 #{badge_border_class(user_badge.badge, left: true)}", title: user_badge.badge.description do %>
                 <div class="inline-flex items-center justify-center w-8 h-8 text-sm font-semibold text-primary bg-primary/5 rounded-full mr-2 flex-shrink-0">
-                  <%= raw user_badge.badge.icon %>
+                  <%= render inline: Rails.root.join("app/assets/images/badges/#{user_badge.badge.badge_family}.svg").read %>
                 </div>
                 <span class="text-sm text-gray-700 truncate"><%= user_badge.display_name %></span>
               <% end %>
