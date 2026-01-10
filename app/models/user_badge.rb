@@ -1,15 +1,15 @@
 class UserBadge < ApplicationRecord
   belongs_to :user
   belongs_to :badge
+  belongs_to :event
 
   validates :earned_at, presence: true
+  validates :event_id, presence: true
 
   before_validation :set_earned_at, on: :create
 
   scope :recent, -> { where("earned_at > ?", 1.hour.ago) }
-  scope :for_event, ->(event) {
-    where("earned_at BETWEEN ? AND ?", event.updated_at - 1.hour, event.updated_at + 1.hour)
-  }
+  scope :for_event, ->(event) { where(event_id: event.id) }
 
   def display_name
     if badge.badge_family == "all-seasons"

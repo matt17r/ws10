@@ -1,6 +1,7 @@
 class BadgeEligibilityChecker
-  def initialize(user)
+  def initialize(user, event_id: nil)
     @user = user
+    @event_id = event_id
   end
 
   def check_and_award_all
@@ -34,7 +35,8 @@ class BadgeEligibilityChecker
 
           unaward_years.each do |year|
             last_event_date = all_dates.select { |date| date.year == year }.max
-            @user.user_badges.create!(badge: first_badge, earned_at: last_event_date)
+            qualifying_event_id = qualifying_event_for_all_seasons(year)
+            @user.user_badges.create!(badge: first_badge, earned_at: last_event_date, event_id: qualifying_event_id)
             newly_earned << first_badge
           end
         else
@@ -45,8 +47,17 @@ class BadgeEligibilityChecker
             .count
 
           badges_to_award = total_eligible - already_earned
-          badges_to_award.times do
-            @user.user_badges.create!(badge: first_badge)
+          badges_to_award.times do |i|
+            nth_instance = already_earned + i + 1
+            qualifying_event_id = case family
+            when "monthly"
+              qualifying_event_for_monthly(nth_instance)
+            when "palindrome"
+              qualifying_event_for_palindrome(nth_instance)
+            when "perfect-10"
+              qualifying_event_for_perfect_10
+            end
+            @user.user_badges.create!(badge: first_badge, event_id: qualifying_event_id)
             newly_earned << first_badge
           end
         end
@@ -62,7 +73,24 @@ class BadgeEligibilityChecker
             .where("badges.level_order < ?", badge.level_order)
             .destroy_all
 
-          @user.user_badges.create!(badge: badge)
+          qualifying_event_id = case badge.badge_family
+          when "centurion"
+            qualifying_event_for_centurion(badge)
+          when "traveller"
+            qualifying_event_for_traveller(badge)
+          when "consistent"
+            qualifying_event_for_consistent(badge)
+          when "simply-the-best"
+            qualifying_event_for_simply_the_best(badge)
+          when "heart-of-gold"
+            qualifying_event_for_heart_of_gold(badge)
+          when "founding-member"
+            qualifying_event_for_founding_member
+          else
+            fallback_event_id
+          end
+
+          @user.user_badges.create!(badge: badge, event_id: qualifying_event_id)
           newly_earned << badge
 
           # Reload association to ensure fresh data for next iteration
@@ -345,5 +373,194 @@ class BadgeEligibilityChecker
 
     digits_only = time_string.chars
     digits_only == digits_only.reverse
+  end
+
+  def qualifying_event_for_centurion(badge)
+    completed_cycles = @user.user_badges.joins(:badge)
+      .where(badges: { badge_family: "centurion", level: "gold" })
+      .count
+
+    threshold = case badge.level
+    when "bronze" then 10
+    when "silver" then 20
+    when "gold" then 40
+    end
+
+    threshold += (completed_cycles * 40)
+
+    result = @user.results.joins(:event).order("events.number").offset(threshold - 1).first
+    result&.event_id || fallback_event_id
+  end
+
+  def qualifying_event_for_traveller(badge)
+    completed_cycles = @user.user_badges.joins(:badge)
+      .where(badges: { badge_family: "traveller", level: "gold" })
+      .count
+
+    required_count = case badge.level
+    when "bronze" then 1
+    when "silver" then 2
+    when "gold" then 4
+    end
+
+    required_count += (completed_cycles * 4)
+    total_locations = Event.select(:location_id).distinct.count
+
+    all_participation = @user.results.joins(:event).select("events.*").to_a +
+                        @user.volunteers.joins(:event).select("events.*").to_a
+    events = all_participation.map(&:itself).uniq.sort_by(&:number)
+
+    location_counts = Hash.new(0)
+
+    events.each do |event|
+      location_counts[event.location_id] += 1
+
+      if location_counts.keys.count >= total_locations &&
+         location_counts.values.all? { |count| count >= required_count }
+        return event.id
+      end
+    end
+
+    fallback_event_id
+  end
+
+  def qualifying_event_for_consistent(badge)
+    completed_cycles = @user.user_badges.joins(:badge)
+      .where(badges: { badge_family: "consistent", level: "gold" })
+      .count
+
+    required_consecutive = case badge.level
+    when "bronze" then 3
+    when "silver" then 5
+    when "gold" then 8
+    end
+
+    required_consecutive += (completed_cycles * 8)
+
+    result_event_numbers = @user.results.joins(:event).pluck("events.number")
+    volunteer_event_numbers = @user.volunteers.joins(:event).pluck("events.number")
+    event_numbers = (result_event_numbers + volunteer_event_numbers).uniq.sort
+
+    event_numbers.each_cons(required_consecutive) do |sequence|
+      if sequence.each_cons(2).all? { |a, b| b == a + 1 }
+        last_event_number = sequence.last
+        event = Event.find_by(number: last_event_number)
+        return event.id if event
+      end
+    end
+
+    fallback_event_id
+  end
+
+  def qualifying_event_for_simply_the_best(badge)
+    completed_cycles = @user.user_badges.joins(:badge)
+      .where(badges: { badge_family: "simply-the-best", level: "gold" })
+      .count
+
+    threshold = case badge.level
+    when "bronze" then 1
+    when "silver" then 3
+    when "gold" then 6
+    end
+
+    threshold += (completed_cycles * 6)
+
+    pb_count = 0
+    @user.results.where.not(time: nil).joins(:event).order("events.number").each do |result|
+      if result.pb?
+        pb_count += 1
+        return result.event_id if pb_count == threshold
+      end
+    end
+
+    fallback_event_id
+  end
+
+  def qualifying_event_for_heart_of_gold(badge)
+    completed_cycles = @user.user_badges.joins(:badge)
+      .where(badges: { badge_family: "heart-of-gold", level: "gold" })
+      .count
+
+    threshold = case badge.level
+    when "bronze" then 1
+    when "silver" then 3
+    when "gold" then 6
+    end
+
+    threshold += (completed_cycles * 6)
+
+    volunteer = @user.volunteers.joins(:event).order("events.date", "events.number").offset(threshold - 1).first
+    volunteer&.event_id || fallback_event_id
+  end
+
+  def qualifying_event_for_founding_member
+    first_event = Event.order(:number).first
+    first_event&.id || fallback_event_id
+  end
+
+  def qualifying_event_for_monthly(nth_instance)
+    events_with_results = @user.results.joins(:event).pluck("events.id", "events.date", "events.number")
+    events_with_volunteers = @user.volunteers.joins(:event).pluck("events.id", "events.date", "events.number")
+
+    all_events = (events_with_results + events_with_volunteers)
+      .uniq
+      .sort_by { |_id, date, number| [ date, number ] }
+
+    month_counts = Hash.new(0)
+
+    all_events.each do |event_id, date, _number|
+      month = date.month
+      month_counts[month] += 1
+
+      current_min = (1..12).map { |m| month_counts[m] }.min
+
+      return event_id if current_min == nth_instance
+    end
+
+    fallback_event_id
+  end
+
+  def qualifying_event_for_all_seasons(year)
+    result_dates = @user.results.joins(:event).pluck("events.date", "events.id")
+    volunteer_dates = @user.volunteers.joins(:event).pluck("events.date", "events.id")
+    all_dates = result_dates + volunteer_dates
+
+    year_events = all_dates.select { |date, _id| date.year == year }
+    last_event = year_events.max_by { |date, _id| date }
+
+    last_event&.last || fallback_event_id
+  end
+
+  def qualifying_event_for_palindrome(nth_instance)
+    palindrome_results = @user.results.where.not(time: nil)
+      .joins(:event)
+      .order("events.number")
+      .select { |result| palindrome_time?(result.time) }
+
+    result = palindrome_results[nth_instance - 1]
+    result&.event_id || fallback_event_id
+  end
+
+  def qualifying_event_for_perfect_10
+    positions_with_events = @user.finish_positions
+      .where.not(position: nil)
+      .joins(:event)
+      .order("events.date", "events.number")
+      .pluck(:position, "events.id")
+
+    seen_digits = Set.new
+
+    positions_with_events.each do |position, event_id|
+      last_digit = position % 10
+      seen_digits.add(last_digit)
+
+      return event_id if seen_digits.size == 10
+    end
+
+    fallback_event_id
+  end
+
+  def fallback_event_id
+    @event_id || Event.order(date: :desc).first&.id
   end
 end

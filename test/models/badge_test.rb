@@ -70,7 +70,8 @@ class BadgeTest < ActiveSupport::TestCase
   test "destroying badge destroys associated user_badges" do
     user = users(:one)
     badge = Badge.create!(valid_badge_attrs(slug: "destroyable", level_order: 99))
-    user_badge = UserBadge.create!(user: user, badge: badge)
+    event = events(:one)
+    user_badge = UserBadge.create!(user: user, badge: badge, event: event)
 
     assert_difference "UserBadge.count", -1 do
       badge.destroy

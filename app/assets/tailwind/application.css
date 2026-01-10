@@ -9,6 +9,10 @@
 }
 
 @layer utilities {
+  .bg-badge {
+    background-color: var(--color-badge-bg);
+  }
+
   .border-badge-bronze {
     border-color: var(--color-badge-bronze);
   }
@@ -41,7 +45,19 @@
     border-left-color: var(--color-primary);
   }
 
-  .bg-badge {
-    background-color: var(--color-badge-bg);
+  .text-badge-bronze {
+    color: var(--color-badge-bronze);
+  }
+
+  .text-badge-silver {
+    color: var(--color-badge-silver);
+  }
+
+  .text-badge-gold {
+    color: var(--color-badge-gold);
+  }
+
+  .text-badge-singular {
+    color: var(--color-primary);
   }
 }

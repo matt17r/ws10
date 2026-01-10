@@ -4,7 +4,11 @@ module BadgesHelper
     "#{prefix}#{badge.level}"
   end
 
-  def badge_border_color(badge)
+  def badge_text_class(badge)
+    "text-badge-#{badge.level}"
+  end
+
+  def badge_border_colour(badge)
     case badge.level
     when "singular"
       "#DB2955"

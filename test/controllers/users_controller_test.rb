@@ -79,7 +79,8 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
   test "results page displays user badges" do
     user = users(:one)
     badge = badges(:centurion_bronze)
-    user.user_badges.create!(badge: badge)
+    event = events(:one)
+    user.user_badges.create!(badge: badge, event: event)
 
     get user_results_path(barcode: user.barcode_string)
 
@@ -92,10 +93,11 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     bronze = badges(:centurion_bronze)
     silver = badges(:centurion_silver)
     gold = badges(:centurion_gold)
+    event = events(:one)
 
-    user.user_badges.create!(badge: bronze)
-    user.user_badges.create!(badge: silver)
-    user.user_badges.create!(badge: gold)
+    user.user_badges.create!(badge: bronze, event: event)
+    user.user_badges.create!(badge: silver, event: event)
+    user.user_badges.create!(badge: gold, event: event)
 
     get user_results_path(barcode: user.barcode_string)
 

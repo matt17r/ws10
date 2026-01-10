@@ -156,10 +156,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_10_015258) do
     t.integer "badge_id", null: false
     t.datetime "created_at", null: false
     t.datetime "earned_at", null: false
+    t.integer "event_id", null: false
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
     t.index ["badge_id"], name: "index_user_badges_on_badge_id"
     t.index ["earned_at"], name: "index_user_badges_on_earned_at"
+    t.index ["event_id"], name: "index_user_badges_on_event_id"
     t.index ["user_id", "badge_id"], name: "index_user_badges_on_user_id_and_badge_id"
   end
 
@@ -202,6 +204,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_10_015258) do
   add_foreign_key "results", "users"
   add_foreign_key "sessions", "users"
   add_foreign_key "user_badges", "badges"
+  add_foreign_key "user_badges", "events"
   add_foreign_key "user_badges", "users"
   add_foreign_key "volunteers", "events"
   add_foreign_key "volunteers", "users"

@@ -18,6 +18,7 @@ class CreateBadgesAndUserBadges < ActiveRecord::Migration[8.1]
     create_table :user_badges do |t|
       t.references :user, null: false, foreign_key: true, index: false
       t.references :badge, null: false, foreign_key: true
+      t.references :event, null: false, foreign_key: true
       t.datetime :earned_at, null: false
 
       t.timestamps

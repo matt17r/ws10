@@ -10,7 +10,7 @@ class AwardBadgesJob < ApplicationJob
     user_ids.uniq!
 
     User.where(id: user_ids).find_each do |user|
-      BadgeEligibilityChecker.new(user).check_and_award_all
+      BadgeEligibilityChecker.new(user, event_id: event_id).check_and_award_all
     end
   end
 end

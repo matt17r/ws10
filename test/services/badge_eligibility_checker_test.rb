@@ -16,7 +16,7 @@ class BadgeEligibilityCheckerTest < ActiveSupport::TestCase
       Result.create!(user: user, event: event)
     end
 
-    checker = BadgeEligibilityChecker.new(user)
+    checker = BadgeEligibilityChecker.new(user, event_id: events(:one).id)
     assert checker.eligible_for?(badge)
   end
 
@@ -31,7 +31,7 @@ class BadgeEligibilityCheckerTest < ActiveSupport::TestCase
       Result.create!(user: user, event: event)
     end
 
-    checker = BadgeEligibilityChecker.new(user)
+    checker = BadgeEligibilityChecker.new(user, event_id: events(:one).id)
     assert_not checker.eligible_for?(badge)
   end
 
@@ -46,7 +46,7 @@ class BadgeEligibilityCheckerTest < ActiveSupport::TestCase
       Result.create!(user: user, event: event)
     end
 
-    checker = BadgeEligibilityChecker.new(user)
+    checker = BadgeEligibilityChecker.new(user, event_id: events(:one).id)
     assert checker.eligible_for?(badge)
   end
 
@@ -59,7 +59,7 @@ class BadgeEligibilityCheckerTest < ActiveSupport::TestCase
     event = Event.create!(date: Date.today, location: locations(:bungarribee), number: 100, status: "finalised")
     Result.create!(user: user, event: event)
 
-    checker = BadgeEligibilityChecker.new(user)
+    checker = BadgeEligibilityChecker.new(user, event_id: events(:one).id)
     assert_not checker.eligible_for?(badge)
   end
 
@@ -76,7 +76,7 @@ class BadgeEligibilityCheckerTest < ActiveSupport::TestCase
     Result.create!(user: user, event: event2)
     Result.create!(user: user, event: event3)
 
-    checker = BadgeEligibilityChecker.new(user)
+    checker = BadgeEligibilityChecker.new(user, event_id: events(:one).id)
     assert checker.eligible_for?(badge)
   end
 
@@ -92,7 +92,7 @@ class BadgeEligibilityCheckerTest < ActiveSupport::TestCase
     Result.create!(user: user, event: event2)
     Result.create!(user: user, event: event3)
 
-    checker = BadgeEligibilityChecker.new(user)
+    checker = BadgeEligibilityChecker.new(user, event_id: events(:one).id)
     assert_not checker.eligible_for?(badge)
   end
 
@@ -110,7 +110,7 @@ class BadgeEligibilityCheckerTest < ActiveSupport::TestCase
     event2 = Event.create!(date: Date.today + 1.day, location: locations(:bungarribee), number: 101, status: "finalised")
     Result.create!(user: user, event: event2, time: 1990)
 
-    checker = BadgeEligibilityChecker.new(user)
+    checker = BadgeEligibilityChecker.new(user, event_id: events(:one).id)
     assert checker.eligible_for?(badge)
   end
 
@@ -123,7 +123,7 @@ class BadgeEligibilityCheckerTest < ActiveSupport::TestCase
     event1 = Event.create!(date: Date.today, location: locations(:bungarribee), number: 100, status: "finalised")
     Result.create!(user: user, event: event1, time: 2000)
 
-    checker = BadgeEligibilityChecker.new(user)
+    checker = BadgeEligibilityChecker.new(user, event_id: events(:one).id)
     assert_not checker.eligible_for?(badge)
   end
 
@@ -135,7 +135,7 @@ class BadgeEligibilityCheckerTest < ActiveSupport::TestCase
     event = Event.create!(date: Date.today, location: locations(:bungarribee), number: 100, status: "finalised")
     Volunteer.create!(user: user, event: event, role: "Marshal")
 
-    checker = BadgeEligibilityChecker.new(user)
+    checker = BadgeEligibilityChecker.new(user, event_id: events(:one).id)
     assert checker.eligible_for?(badge)
   end
 
@@ -144,25 +144,34 @@ class BadgeEligibilityCheckerTest < ActiveSupport::TestCase
     user.volunteers.destroy_all
     badge = badges(:heart_of_gold_bronze)
 
-    checker = BadgeEligibilityChecker.new(user)
+    checker = BadgeEligibilityChecker.new(user, event_id: events(:one).id)
     assert_not checker.eligible_for?(badge)
   end
 
   # check_and_award_all tests
   test "check_and_award_all awards eligible badges" do
     user = users(:one)
+    user.results.destroy_all # Clear any existing fixture results
 
     # Set up data for centurion badge (10 results)
+    created_events = []
     10.times do |i|
       event = Event.create!(date: Date.today + i.days, location: locations(:bungarribee), number: i + 100, status: "finalised")
       Result.create!(user: user, event: event)
+      created_events << event
     end
 
-    checker = BadgeEligibilityChecker.new(user)
+    triggering_event = events(:one)
+    checker = BadgeEligibilityChecker.new(user, event_id: triggering_event.id)
     newly_earned = checker.check_and_award_all
 
     assert_includes newly_earned.map(&:slug), "centurion-bronze"
     assert user.badges.exists?(slug: "centurion-bronze")
+
+    # Verify event_id is set correctly to the 10th result's event (the qualifying event)
+    user_badge = user.user_badges.joins(:badge).find_by(badges: { slug: "centurion-bronze" })
+    qualifying_event = created_events[9] # 10th event (0-indexed)
+    assert_equal qualifying_event.id, user_badge.event_id
   end
 
   test "check_and_award_all does not award already earned badges" do
@@ -171,10 +180,11 @@ class BadgeEligibilityCheckerTest < ActiveSupport::TestCase
     user.volunteers.destroy_all
     centurion_badge = badges(:centurion_bronze)
     traveller_badge = badges(:traveller_bronze)
+    event = events(:one)
 
     # Already earned these badges
-    UserBadge.create!(user: user, badge: centurion_badge)
-    UserBadge.create!(user: user, badge: traveller_badge)
+    UserBadge.create!(user: user, badge: centurion_badge, event: event)
+    UserBadge.create!(user: user, badge: traveller_badge, event: event)
 
     # Still eligible for centurion and traveller, but not for other badges (use non-consecutive event numbers)
     10.times do |i|
@@ -182,7 +192,7 @@ class BadgeEligibilityCheckerTest < ActiveSupport::TestCase
       Result.create!(user: user, event: event)
     end
 
-    checker = BadgeEligibilityChecker.new(user)
+    checker = BadgeEligibilityChecker.new(user, event_id: events(:one).id)
 
     assert_no_difference "UserBadge.count" do
       newly_earned = checker.check_and_award_all
@@ -200,7 +210,7 @@ class BadgeEligibilityCheckerTest < ActiveSupport::TestCase
       Volunteer.create!(user: user, event: event, role: "Marshal")
     end
 
-    checker = BadgeEligibilityChecker.new(user)
+    checker = BadgeEligibilityChecker.new(user, event_id: events(:one).id)
     newly_earned = checker.check_and_award_all
 
     assert newly_earned.length > 0
@@ -221,7 +231,7 @@ class BadgeEligibilityCheckerTest < ActiveSupport::TestCase
       Result.create!(user: user, event: event)
     end
 
-    checker = BadgeEligibilityChecker.new(user)
+    checker = BadgeEligibilityChecker.new(user, event_id: events(:one).id)
     checker.check_and_award_all
 
     assert user.badges.exists?(slug: "centurion-bronze")
@@ -233,7 +243,7 @@ class BadgeEligibilityCheckerTest < ActiveSupport::TestCase
       Result.create!(user: user, event: event)
     end
 
-    checker = BadgeEligibilityChecker.new(user)
+    checker = BadgeEligibilityChecker.new(user, event_id: events(:one).id)
     checker.check_and_award_all
 
     # Silver should replace bronze
@@ -252,7 +262,7 @@ class BadgeEligibilityCheckerTest < ActiveSupport::TestCase
       Result.create!(user: user, event: event)
     end
 
-    checker = BadgeEligibilityChecker.new(user)
+    checker = BadgeEligibilityChecker.new(user, event_id: events(:one).id)
     checker.check_and_award_all
 
     assert user.badges.exists?(slug: "centurion-silver")
@@ -263,7 +273,7 @@ class BadgeEligibilityCheckerTest < ActiveSupport::TestCase
       Result.create!(user: user, event: event)
     end
 
-    checker = BadgeEligibilityChecker.new(user)
+    checker = BadgeEligibilityChecker.new(user, event_id: events(:one).id)
     checker.check_and_award_all
 
     # Gold should replace silver (and bronze should already be gone)
@@ -284,7 +294,7 @@ class BadgeEligibilityCheckerTest < ActiveSupport::TestCase
       Result.create!(user: user, event: event)
     end
 
-    checker = BadgeEligibilityChecker.new(user)
+    checker = BadgeEligibilityChecker.new(user, event_id: events(:one).id)
     checker.check_and_award_all
 
     assert user.badges.exists?(slug: "centurion-gold")
@@ -298,7 +308,7 @@ class BadgeEligibilityCheckerTest < ActiveSupport::TestCase
         Result.create!(user: user, event: event)
       end
 
-      checker = BadgeEligibilityChecker.new(user)
+      checker = BadgeEligibilityChecker.new(user, event_id: events(:one).id)
       checker.check_and_award_all
 
       # Should have gold and bronze
@@ -325,7 +335,7 @@ class BadgeEligibilityCheckerTest < ActiveSupport::TestCase
     Result.create!(user: user, event: event_winter)
     Result.create!(user: user, event: event_spring)
 
-    checker = BadgeEligibilityChecker.new(user)
+    checker = BadgeEligibilityChecker.new(user, event_id: events(:one).id)
     checker.check_and_award_all
 
     assert user.badges.exists?(slug: "all-seasons")
@@ -355,7 +365,7 @@ class BadgeEligibilityCheckerTest < ActiveSupport::TestCase
     Result.create!(user: user, event: event_winter)
     Result.create!(user: user, event: event_spring)
 
-    checker = BadgeEligibilityChecker.new(user)
+    checker = BadgeEligibilityChecker.new(user, event_id: events(:one).id)
     checker.check_and_award_all
 
     # Should earn the badge once (all 4 seasons covered in 2026)
@@ -380,7 +390,7 @@ class BadgeEligibilityCheckerTest < ActiveSupport::TestCase
     Result.create!(user: user, event: event_winter)
     Result.create!(user: user, event: event_spring)
 
-    checker = BadgeEligibilityChecker.new(user)
+    checker = BadgeEligibilityChecker.new(user, event_id: events(:one).id)
     checker.check_and_award_all
 
     assert user.badges.exists?(slug: "all-seasons")
@@ -397,7 +407,7 @@ class BadgeEligibilityCheckerTest < ActiveSupport::TestCase
     Result.create!(user: user, event: event_winter_2)
     Result.create!(user: user, event: event_spring_2)
 
-    checker = BadgeEligibilityChecker.new(user)
+    checker = BadgeEligibilityChecker.new(user, event_id: events(:one).id)
     newly_earned = checker.check_and_award_all
 
     # Should NOT earn the badge again in 2025
@@ -422,7 +432,7 @@ class BadgeEligibilityCheckerTest < ActiveSupport::TestCase
     Result.create!(user: user, event: event_winter)
     Result.create!(user: user, event: event_spring)
 
-    checker = BadgeEligibilityChecker.new(user)
+    checker = BadgeEligibilityChecker.new(user, event_id: events(:one).id)
     checker.check_and_award_all
 
     assert user.badges.exists?(slug: "all-seasons")
@@ -439,7 +449,7 @@ class BadgeEligibilityCheckerTest < ActiveSupport::TestCase
     Result.create!(user: user, event: event_winter_2)
     Result.create!(user: user, event: event_spring_2)
 
-    checker = BadgeEligibilityChecker.new(user)
+    checker = BadgeEligibilityChecker.new(user, event_id: events(:one).id)
     newly_earned = checker.check_and_award_all
 
     # Should have earned the badge a second time in 2026
@@ -460,7 +470,7 @@ class BadgeEligibilityCheckerTest < ActiveSupport::TestCase
       Result.create!(user: user, event: event)
     end
 
-    checker = BadgeEligibilityChecker.new(user)
+    checker = BadgeEligibilityChecker.new(user, event_id: events(:one).id)
     checker.check_and_award_all
 
     assert user.badges.exists?(slug: "monthly")
@@ -479,7 +489,7 @@ class BadgeEligibilityCheckerTest < ActiveSupport::TestCase
       Result.create!(user: user, event: event)
     end
 
-    checker = BadgeEligibilityChecker.new(user)
+    checker = BadgeEligibilityChecker.new(user, event_id: events(:one).id)
     checker.check_and_award_all
 
     assert_not user.badges.exists?(slug: "monthly")
@@ -502,7 +512,7 @@ class BadgeEligibilityCheckerTest < ActiveSupport::TestCase
       Result.create!(user: user, event: event)
     end
 
-    checker = BadgeEligibilityChecker.new(user)
+    checker = BadgeEligibilityChecker.new(user, event_id: events(:one).id)
     checker.check_and_award_all
 
     assert user.badges.exists?(slug: "monthly")
@@ -523,7 +533,7 @@ class BadgeEligibilityCheckerTest < ActiveSupport::TestCase
       Result.create!(user: user, event: event2)
     end
 
-    checker = BadgeEligibilityChecker.new(user)
+    checker = BadgeEligibilityChecker.new(user, event_id: events(:one).id)
     checker.check_and_award_all
 
     assert user.badges.exists?(slug: "monthly")
@@ -547,7 +557,7 @@ class BadgeEligibilityCheckerTest < ActiveSupport::TestCase
       end
     end
 
-    checker = BadgeEligibilityChecker.new(user)
+    checker = BadgeEligibilityChecker.new(user, event_id: events(:one).id)
     checker.check_and_award_all
 
     # Should earn first badge but not second
@@ -572,7 +582,7 @@ class BadgeEligibilityCheckerTest < ActiveSupport::TestCase
       Volunteer.create!(user: user, event: event, role: "Marshal")
     end
 
-    checker = BadgeEligibilityChecker.new(user)
+    checker = BadgeEligibilityChecker.new(user, event_id: events(:one).id)
     checker.check_and_award_all
 
     assert user.badges.exists?(slug: "monthly")
@@ -598,7 +608,7 @@ class BadgeEligibilityCheckerTest < ActiveSupport::TestCase
     end
 
     # No badge yet
-    checker = BadgeEligibilityChecker.new(user)
+    checker = BadgeEligibilityChecker.new(user, event_id: events(:one).id)
     checker.check_and_award_all
     assert_not user.badges.exists?(slug: "monthly")
 
@@ -606,7 +616,7 @@ class BadgeEligibilityCheckerTest < ActiveSupport::TestCase
     event_dec_2026 = Event.create!(date: Date.new(2026, 12, 15), location: locations(:bungarribee), number: 300, status: "finalised")
     Result.create!(user: user, event: event_dec_2026)
 
-    checker = BadgeEligibilityChecker.new(user)
+    checker = BadgeEligibilityChecker.new(user, event_id: events(:one).id)
     checker.check_and_award_all
     assert_equal 1, user.user_badges.where(badge: monthly_badge).count
 
@@ -614,7 +624,7 @@ class BadgeEligibilityCheckerTest < ActiveSupport::TestCase
     event_dec_2027 = Event.create!(date: Date.new(2027, 12, 15), location: locations(:bungarribee), number: 400, status: "finalised")
     Result.create!(user: user, event: event_dec_2027)
 
-    checker = BadgeEligibilityChecker.new(user)
+    checker = BadgeEligibilityChecker.new(user, event_id: events(:one).id)
     checker.check_and_award_all
     assert_equal 2, user.user_badges.where(badge: monthly_badge).count
   end
@@ -629,7 +639,7 @@ class BadgeEligibilityCheckerTest < ActiveSupport::TestCase
     event = Event.create!(date: Date.new(2025, 1, 15), location: locations(:bungarribee), number: 100, status: "finalised")
     Result.create!(user: user, event: event, time: 3145)
 
-    checker = BadgeEligibilityChecker.new(user)
+    checker = BadgeEligibilityChecker.new(user, event_id: events(:one).id)
     checker.check_and_award_all
 
     assert user.badges.exists?(slug: "palindrome")
@@ -644,7 +654,7 @@ class BadgeEligibilityCheckerTest < ActiveSupport::TestCase
     event = Event.create!(date: Date.new(2025, 1, 15), location: locations(:bungarribee), number: 100, status: "finalised")
     Result.create!(user: user, event: event, time: 3000)
 
-    checker = BadgeEligibilityChecker.new(user)
+    checker = BadgeEligibilityChecker.new(user, event_id: events(:one).id)
     checker.check_and_award_all
 
     assert_not user.badges.exists?(slug: "palindrome")
@@ -663,7 +673,7 @@ class BadgeEligibilityCheckerTest < ActiveSupport::TestCase
     event2 = Event.create!(date: Date.new(2025, 2, 15), location: locations(:bungarribee), number: 101, status: "finalised")
     Result.create!(user: user, event: event2, time: 4021)
 
-    checker = BadgeEligibilityChecker.new(user)
+    checker = BadgeEligibilityChecker.new(user, event_id: events(:one).id)
     checker.check_and_award_all
 
     assert user.badges.exists?(slug: "palindrome")
@@ -680,10 +690,10 @@ class BadgeEligibilityCheckerTest < ActiveSupport::TestCase
     Result.create!(user: user, event: event, time: 3145)
 
     # Run checker twice
-    checker = BadgeEligibilityChecker.new(user)
+    checker = BadgeEligibilityChecker.new(user, event_id: events(:one).id)
     checker.check_and_award_all
 
-    checker = BadgeEligibilityChecker.new(user)
+    checker = BadgeEligibilityChecker.new(user, event_id: events(:one).id)
     newly_earned = checker.check_and_award_all
 
     # Should have only one badge, not award it again
