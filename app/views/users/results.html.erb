@@ -67,6 +67,16 @@
                     <tr class="hover:bg-[#9DA39A]/50">
                       <td class="whitespace-nowrap pl-4 pr-3 py-5 text-xl text-gray-700">
                         <%= link_to "##{result.event.number} – #{result.event.location}", event_path(result.event) %>
+                        <% event_badges = @user.user_badges.select { |ub| ub.event_id == result.event_id } %>
+                        <% if event_badges.any? %>
+                          <% event_badges.group_by { |ub| ub.badge.badge_family }.sort_by { |family, _| family }.each do |family, user_badges| %>
+                            <% user_badges.sort_by { |ub| ub.badge.level_order }.each_with_index do |user_badge, index| %>
+                              <%= link_to badge_path(user_badge.badge), class: "relative inline-flex items-center justify-center w-8 h-8 text-badge-#{user_badge.badge.level} bg-badge rounded-full border-2 #{badge_border_class(user_badge.badge)} transition-transform hover:scale-110 #{index > 0 ? '-ml-4' : 'ml-2'}", style: "z-index: #{index};", title: user_badge.display_name do %>
+                                <%= raw user_badge.badge.icon %>
+                              <% end %>
+                            <% end %>
+                          <% end %>
+                        <% end %>
                       </td>
                       <td class="whitespace-nowrap px-3 py-5 text-xl text-gray-700"><%= link_to l(result.event.date), event_path(result.event) %></td>
                       <td class="whitespace-nowrap px-3 py-5 text-xl text-gray-700"><%= link_to result.place, event_path(result.event) %></td>
@@ -120,6 +130,16 @@
                     <tr class="hover:bg-[#9DA39A]/50">
                       <td class="whitespace-nowrap pl-4 pr-3 py-5 text-xl text-gray-700">
                         <%= link_to "##{volunteer.event.number} – #{volunteer.event.location}", event_path(volunteer.event) %>
+                        <% event_badges = @user.user_badges.select { |ub| ub.event_id == volunteer.event_id } %>
+                        <% if event_badges.any? %>
+                          <% event_badges.group_by { |ub| ub.badge.badge_family }.sort_by { |family, _| family }.each do |family, user_badges| %>
+                            <% user_badges.sort_by { |ub| ub.badge.level_order }.each_with_index do |user_badge, index| %>
+                              <%= link_to badge_path(user_badge.badge), class: "relative inline-flex items-center justify-center w-8 h-8 text-badge-#{user_badge.badge.level} bg-badge rounded-full border-2 #{badge_border_class(user_badge.badge)} transition-transform hover:scale-110 #{index > 0 ? '-ml-4' : 'ml-2'}", style: "z-index: #{index};", title: user_badge.display_name do %>
+                                <%= raw user_badge.badge.icon %>
+                              <% end %>
+                            <% end %>
+                          <% end %>
+                        <% end %>
                       </td>
                       <td class="whitespace-nowrap px-3 py-5 text-xl text-gray-700"><%= link_to l(volunteer.event.date), event_path(volunteer.event) %></td>
                       <td class="whitespace-nowrap px-3 py-5 text-xl text-gray-700">
