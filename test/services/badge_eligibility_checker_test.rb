@@ -457,6 +457,38 @@ class BadgeEligibilityCheckerTest < ActiveSupport::TestCase
     assert_equal 2, user.user_badges.where(badge: all_seasons_badge).count
   end
 
+  test "all seasons badge links to event where all 4 seasons were first completed" do
+    user = users(:one)
+    user.results.destroy_all
+    user.volunteers.destroy_all
+    all_seasons_badge = badges(:all_seasons)
+
+    # Attend events in Jan (summer), Feb (summer), March (autumn), July (winter), Oct (spring), Dec (summer)
+    event1 = Event.create!(date: Date.new(2025, 1, 15), location: locations(:bungarribee), number: 201, status: "finalised")
+    event2 = Event.create!(date: Date.new(2025, 2, 15), location: locations(:bungarribee), number: 202, status: "finalised")
+    event3 = Event.create!(date: Date.new(2025, 3, 15), location: locations(:bungarribee), number: 203, status: "finalised")
+    event7 = Event.create!(date: Date.new(2025, 7, 15), location: locations(:bungarribee), number: 207, status: "finalised")
+    event10 = Event.create!(date: Date.new(2025, 10, 15), location: locations(:bungarribee), number: 210, status: "finalised")
+    event12 = Event.create!(date: Date.new(2025, 12, 15), location: locations(:bungarribee), number: 212, status: "finalised")
+
+    Result.create!(user: user, event: event1)
+    Result.create!(user: user, event: event2)
+    Result.create!(user: user, event: event3)
+    Result.create!(user: user, event: event7)
+    Result.create!(user: user, event: event10)
+    Result.create!(user: user, event: event12)
+
+    checker = BadgeEligibilityChecker.new(user, event_id: events(:one).id)
+    checker.check_and_award_all
+
+    # User completed all 4 seasons at event #210 (Oct - spring)
+    # Jan/Feb = summer, March = autumn, July = winter, Oct = spring
+    # Even though they attended Dec (summer again), the badge should link to Oct #210
+    user_badge = user.user_badges.joins(:badge).find_by(badges: { slug: "all-seasons" })
+    assert_equal event10.id, user_badge.event_id, "Badge should be linked to event #210 where all 4 seasons were first completed"
+    assert_equal event10.date, user_badge.earned_at.to_date, "Badge earned_at should be the date of event #210"
+  end
+
   # Monthly badge tests
   test "monthly badge awarded when user attends all 12 months" do
     user = users(:one)

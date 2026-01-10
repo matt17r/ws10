@@ -34,9 +34,9 @@ class BadgeEligibilityChecker
           unaward_years = eligible_years - earned_years
 
           unaward_years.each do |year|
-            last_event_date = all_dates.select { |date| date.year == year }.max
             qualifying_event_id = qualifying_event_for_all_seasons(year)
-            @user.user_badges.create!(badge: first_badge, earned_at: last_event_date, event_id: qualifying_event_id)
+            qualifying_event = Event.find(qualifying_event_id)
+            @user.user_badges.create!(badge: first_badge, earned_at: qualifying_event.date, event_id: qualifying_event_id)
             newly_earned << first_badge
           end
         else
@@ -521,14 +521,24 @@ class BadgeEligibilityChecker
   end
 
   def qualifying_event_for_all_seasons(year)
-    result_dates = @user.results.joins(:event).pluck("events.date", "events.id")
-    volunteer_dates = @user.volunteers.joins(:event).pluck("events.date", "events.id")
-    all_dates = result_dates + volunteer_dates
+    result_events = @user.results.joins(:event).pluck("events.date", "events.number", "events.id")
+    volunteer_events = @user.volunteers.joins(:event).pluck("events.date", "events.number", "events.id")
+    all_events = result_events + volunteer_events
 
-    year_events = all_dates.select { |date, _id| date.year == year }
-    last_event = year_events.max_by { |date, _id| date }
+    year_events = all_events
+      .select { |date, _number, _id| date.year == year }
+      .sort_by { |date, number, _id| [ date, number ] }
 
-    last_event&.last || fallback_event_id
+    seen_seasons = Set.new
+
+    year_events.each do |date, _number, event_id|
+      season = month_to_season(date.month)
+      seen_seasons.add(season)
+
+      return event_id if seen_seasons.size == 4
+    end
+
+    fallback_event_id
   end
 
   def qualifying_event_for_palindrome(nth_instance)

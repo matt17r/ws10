@@ -22,14 +22,14 @@ class EventsController < ApplicationController
       return
     end
 
-    @results = @event.results.by_time
-    @volunteers = @event.volunteers.by_role
+    @results = @event.results.includes(user: { user_badges: :badge }).by_time
+    @volunteers = @event.volunteers.includes(user: { user_badges: :badge }).by_role
   end
 
   def show_latest
     @event = Event.where(status: "finalised").order(number: :desc).first
-    @results = @event.results.by_time
-    @volunteers = @event.volunteers.by_role
+    @results = @event.results.includes(user: { user_badges: :badge }).by_time
+    @volunteers = @event.volunteers.includes(user: { user_badges: :badge }).by_role
     render :show
   end
 
