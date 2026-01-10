@@ -1,1 +1,47 @@
 @import "tailwindcss";
+
+@theme {
+  --color-primary: #DB2955;
+  --color-badge-bronze: #CD7F32;
+  --color-badge-silver: #C0C0C0;
+  --color-badge-gold: #FFD700;
+  --color-badge-bg: #FDF4F7;
+}
+
+@layer utilities {
+  .border-badge-bronze {
+    border-color: var(--color-badge-bronze);
+  }
+
+  .border-badge-silver {
+    border-color: var(--color-badge-silver);
+  }
+
+  .border-badge-gold {
+    border-color: var(--color-badge-gold);
+  }
+
+  .border-badge-singular {
+    border-color: var(--color-primary);
+  }
+
+  .border-l-badge-bronze {
+    border-left-color: var(--color-badge-bronze);
+  }
+
+  .border-l-badge-silver {
+    border-left-color: var(--color-badge-silver);
+  }
+
+  .border-l-badge-gold {
+    border-left-color: var(--color-badge-gold);
+  }
+
+  .border-l-badge-singular {
+    border-left-color: var(--color-primary);
+  }
+
+  .bg-badge {
+    background-color: var(--color-badge-bg);
+  }
+}

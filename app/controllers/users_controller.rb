@@ -14,6 +14,7 @@ class UsersController < ApplicationController
   end
 
   def show
+    @user = User.includes(:badges).find(@user.id)
     @claimed_position = @user.finish_positions
       .joins(:event)
       .where(events: { status: "in_progress" })
@@ -24,8 +25,25 @@ class UsersController < ApplicationController
   end
 
   def results
+    @user = User.includes(user_badges: :badge).find(@user.id)
     @results = @user.results.includes(:event).order(created_at: :desc)
     @volunteers = @user.volunteers.includes(:event).order(created_at: :desc)
+
+    # Precompute first_timer and pb status to avoid N+1 queries
+    first_result = @user.results.joins(:event).order("events.number": :asc).first
+    @first_timer_result_id = first_result&.id
+
+    # Get all timed results ordered by event number for PB calculation
+    timed_results = @user.results.joins(:event).where.not(time: nil).order("events.number": :asc).to_a
+    @pb_result_ids = Set.new
+    best_time = nil
+
+    timed_results.each do |result|
+      if best_time.nil? || result.time < best_time
+        @pb_result_ids << result.id
+        best_time = result.time
+      end
+    end
   end
 
   def my_results

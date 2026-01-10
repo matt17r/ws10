@@ -75,4 +75,43 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select "div.bg-blue-50", count: 0
   end
+
+  test "results page displays user badges" do
+    user = users(:one)
+    badge = badges(:centurion_bronze)
+    user.user_badges.create!(badge: badge)
+
+    get user_results_path(barcode: user.barcode_string)
+
+    assert_response :success
+    assert_select "a[href=?]", badge_path(badge), title: badge.name
+  end
+
+  test "results page displays multiple badges from same family overlapping" do
+    user = users(:one)
+    bronze = badges(:centurion_bronze)
+    silver = badges(:centurion_silver)
+    gold = badges(:centurion_gold)
+
+    user.user_badges.create!(badge: bronze)
+    user.user_badges.create!(badge: silver)
+    user.user_badges.create!(badge: gold)
+
+    get user_results_path(barcode: user.barcode_string)
+
+    assert_response :success
+    assert_select "a[href=?]", badge_path(gold)
+    assert_select "a[href=?]", badge_path(silver)
+    assert_select "a[href=?]", badge_path(bronze)
+    assert_select "a.-ml-6", minimum: 1
+  end
+
+  test "results page does not display badges section when user has no badges" do
+    user = users(:one)
+
+    get user_results_path(barcode: user.barcode_string)
+
+    assert_response :success
+    assert_select "a[href^=?]", badges_path, count: 0
+  end
 end
