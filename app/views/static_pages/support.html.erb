@@ -7,9 +7,10 @@
         <p class="text-xl/7 text-gray-600 mb-4">
           For those who are able, please consider chipping in $5 per race or $25 for the whole year. Or maybe you're feeling generous and you'd like to fully cover one of the bigger ticket items I mention below?
         </p>
-        <div class="bg-gray-50 border border-gray-300 rounded-lg p-6 text-center">
+        <div class="bg-gray-50 border border-gray-300 rounded-lg p-6 text-center" data-controller="clipboard" data-clipboard-success-text-value="Copied! You can paste this into your banking app">
           <%= image_tag "payid.png", alt: "PayID", class: "h-12 mx-auto mb-2" %>
-          <p class="text-3xl font-semibold text-[#DB2955]">matt@ws10.run</p>
+          <p class="text-3xl font-semibold text-black mb-4" data-clipboard-target="source">matt@ws10.run</p>
+          <button type="button" data-clipboard-target="button" data-action="click->clipboard#copy" class="rounded-md px-4 py-2.5 bg-primary hover:bg-primary/90 text-white font-medium">Copy PayID</button>
         </div>
         <p class="text-xl/7 text-gray-600 mt-4">
           Contributions are optional and non tax deductible but extremely welcome!
