@@ -39,7 +39,9 @@ class UsersController < ApplicationController
     best_time = nil
 
     timed_results.each do |result|
-      if best_time.nil? || result.time < best_time
+      if best_time.nil?
+        best_time = result.time # First result, do not include in `@pb_result_ids` even though technically it's a PB
+      elsif result.time < best_time
         @pb_result_ids << result.id
         best_time = result.time
       end

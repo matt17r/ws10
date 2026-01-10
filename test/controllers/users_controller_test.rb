@@ -116,4 +116,24 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select "a[href^=?]", badges_path, count: 0
   end
+
+  test "results page does not show PB icon for first-timer" do
+    user = User.create!(
+      email_address: "firsttimer@example.com",
+      password: "password",
+      name: "First Timer",
+      display_name: "First Timer",
+      confirmed_at: Time.current
+    )
+    event = events(:one)
+    result = user.results.create!(event: event, time: 1800)
+
+    get user_results_path(barcode: user.barcode_string)
+
+    assert_response :success
+    # Should show first timer icon in the results table (not in legend)
+    assert_select "tbody svg path[d*='M15.59 14.37']", minimum: 1, message: "Should show first timer rocket icon"
+    # Should NOT show PB icon in the results table (legend is ok)
+    assert_select "tbody svg path[d*='M14.857 17.082']", count: 0, message: "Should not show PB bell icon for first-timer"
+  end
 end
