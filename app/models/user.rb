@@ -12,6 +12,7 @@ class User < ApplicationRecord
   has_many :results, dependent: :destroy
   has_many :volunteers, dependent: :destroy
   has_many :finish_positions, dependent: :destroy
+  has_many :check_ins, dependent: :destroy
   has_many :user_badges, dependent: :destroy
   has_many :badges, through: :user_badges
 

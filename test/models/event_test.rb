@@ -20,6 +20,8 @@ class EventTest < ActiveSupport::TestCase
     assert_respond_to event, :finish_positions
     assert_respond_to event, :finish_times
     assert_respond_to event, :finished_users
+    assert_respond_to event, :check_ins
+    assert_respond_to event, :checked_in_users
   end
 
   test "should require date" do
@@ -239,5 +241,60 @@ class EventTest < ActiveSupport::TestCase
     assert event.finalised?
     assert_not event.draft?
     assert_not event.in_progress?
+  end
+
+  test "has many check_ins" do
+    event = events(:draft_event)
+    user = users(:one)
+
+    check_in = event.check_ins.create!(user: user, checked_in_at: Time.current)
+
+    assert_includes event.check_ins, check_in
+  end
+
+  test "has many checked_in_users through check_ins" do
+    event = events(:draft_event)
+    user = users(:one)
+
+    event.check_ins.create!(user: user, checked_in_at: Time.current)
+
+    assert_includes event.checked_in_users, user
+  end
+
+  test "checked_in_unplaced_users returns only users who checked in" do
+    event = events(:draft_event)
+    checked_in_user = users(:one)
+    not_checked_in_user = users(:two)
+
+    event.check_ins.create!(user: checked_in_user, checked_in_at: Time.current)
+
+    checked_in_unplaced = event.checked_in_unplaced_users
+
+    assert_includes checked_in_unplaced, checked_in_user
+    assert_not_includes checked_in_unplaced, not_checked_in_user
+  end
+
+  test "checked_in_unplaced_users excludes users who already have finish positions" do
+    event = events(:draft_event)
+    checked_in_user = users(:one)
+    checked_in_placed_user = users(:two)
+
+    event.check_ins.create!(user: checked_in_user, checked_in_at: Time.current)
+    event.check_ins.create!(user: checked_in_placed_user, checked_in_at: Time.current)
+
+    event.finish_positions.create!(user: checked_in_placed_user, position: 1)
+
+    checked_in_unplaced = event.checked_in_unplaced_users
+
+    assert_includes checked_in_unplaced, checked_in_user
+    assert_not_includes checked_in_unplaced, checked_in_placed_user
+  end
+
+  test "checked_in_unplaced_users returns empty when no check-ins" do
+    event = events(:draft_event)
+
+    checked_in_unplaced = event.checked_in_unplaced_users
+
+    assert_empty checked_in_unplaced
   end
 end

@@ -1,0 +1,70 @@
+<div class="my-16 px-6 lg:px-8">
+  <div class="mx-auto max-w-2xl">
+    <div class="px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-8">
+        <h1 class="text-4xl font-bold text-gray-900 mb-4">
+          Event Check-In
+        </h1>
+        <p class="text-xl text-gray-600">
+          <%= @event.location.name %>
+        </p>
+        <p class="text-lg text-gray-500 mt-2">
+          <%= "Event ##{@event.number} – #{l @event.date}" %>
+        </p>
+      </div>
+
+      <div class="bg-white shadow sm:rounded-lg">
+        <div class="px-4 py-5 sm:p-6">
+          <div class="text-center">
+            <% if @already_checked_in %>
+              <div class="mb-8">
+                <div class="inline-flex items-center justify-center w-24 h-24 rounded-full bg-green-100 mb-4">
+                  <svg class="w-16 h-16 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                  </svg>
+                </div>
+                <h3 class="text-2xl font-semibold text-gray-900 mb-2">
+                  Already Checked In
+                </h3>
+                <p class="text-gray-600">
+                  You've already checked in to this event. See you at the start line!
+                </p>
+              </div>
+            <% else %>
+              <div class="mb-6">
+                <div class="inline-flex items-center justify-center w-24 h-24 rounded-full bg-[#DB2955] text-white text-4xl">
+                  ✓
+                </div>
+              </div>
+
+              <h3 class="text-2xl font-semibold text-gray-900 mb-2">
+                Check In to Event
+              </h3>
+
+              <p class="text-gray-600 mb-8">
+                Click below to confirm your attendance at this event.
+              </p>
+
+              <%= form_with url: check_in_path(params[:token]), method: :post, class: "space-y-4" do %>
+                <%= button_tag type: "submit", class: "inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-[#DB2955] hover:bg-[#c02447] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#DB2955]" do %>
+                  Check In Now
+                <% end %>
+              <% end %>
+
+              <% unless authenticated? %>
+                <p class="mt-4 text-sm text-gray-500">
+                  You'll be asked to sign in before checking in.
+                  <%= link_to "Don't have an account? Sign up here", sign_up_path, class: "text-[#DB2955] hover:text-[#c02447]" %>
+                </p>
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-6 text-center">
+        <%= link_to "← Back to Event", event_path(@event.number), class: "text-[#DB2955] hover:text-[#c02447]" %>
+      </div>
+    </div>
+  </div>
+</div>

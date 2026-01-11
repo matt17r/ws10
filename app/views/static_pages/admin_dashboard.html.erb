@@ -49,12 +49,34 @@
       <% else %>
         <%= button_to "Link all finish positions and times", result_link_path(event_id: @event.id), method: :post, form: { class: "inline-block" }, class: "rounded-md border border-transparent bg-[#DB2955] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#DB2955]/90 cursor-pointer" %>
       <% end %>
+
+      <div class="my-6 p-6 bg-blue-50 rounded-lg">
+        <h3 class="text-2xl font-medium text-gray-950 mb-4">Event Check-In</h3>
+        <div class="mb-4">
+          <p class="text-sm text-gray-700 mb-2">Share this link for participants to check in:</p>
+          <div class="bg-white p-4 rounded border inline-block">
+            <% token = CheckIn.token_for_event(@event.number) %>
+            <% check_in_url = check_in_url(token) %>
+            <%= link_to check_in_url, check_in_url, target: "_blank", class: "text-[#DB2955] font-mono text-sm hover:underline" %>
+          </div>
+        </div>
+        <div class="text-sm text-gray-700">
+          <strong><%= @event.check_ins.count %></strong> participants checked in
+          <% if @event.check_ins.any? %>
+            <span class="ml-2 text-gray-500">
+              (Most recent: <%= @event.check_ins.order(checked_in_at: :desc).first.user.display_name %>)
+            </span>
+          <% end %>
+        </div>
+      </div>
+
       <div class="my-3 grid grid-cols-1 font-sm md:grid-cols-2 lg:grid-cols-3">
         <div data-controller="search">
           <h3 class="text-pretty text-2xl font-medium tracking-tight text-gray-950 mt-2">Unplaced runners</h3>
           <div class="my-2">
-            <input id="runner-search" type="search" placeholder="Search by name or barcode" data-search-target="input" data-action="input->search#filter" class="w-full rounded-md border px-3 py-1.5 shadow-sm focus:outline-[#DB2955]" autofocus />
+            <input id="runner-search" type="search" placeholder="Search by name or barcode (searches all users)" data-search-target="input" data-action="input->search#filter" class="w-full rounded-md border px-3 py-1.5 shadow-sm focus:outline-[#DB2955]" autofocus />
           </div>
+          <p class="text-sm text-gray-600 mb-2">Showing only checked-in runners. Use search to find anyone.</p>
           <table class="table-fixed border-separate [border-spacing:0.75rem]">
             <thead>
               <tr>
@@ -64,9 +86,11 @@
               </tr>
             </thead>
             <tbody>
+              <% checked_in_ids = @event.checked_in_users.pluck(:id).to_set %>
               <% @event.unplaced_users.order(:name).each do |user| %>
                 <% form_id = "#{dom_id(@event)}_#{dom_id(user, :finish_position_form)}" %>
-                <tr data-search-target="row" data-search-text="<%= "#{user.name} #{user.display_name} #{user.id} #{user.barcode_string}" %>">
+                <% is_checked_in = checked_in_ids.include?(user.id) %>
+                <tr data-search-target="row" data-search-text="<%= "#{user.name} #{user.display_name} #{user.id} #{user.barcode_string}" %>" <%= 'hidden' unless is_checked_in %>>
                   <td>
                     <%= form_with model: FinishPosition.new(user: user, event: @event), url: finish_positions_path, html: { id: form_id } do |f| %>
                       <%= f.hidden_field :user_id, value: user.id %>
