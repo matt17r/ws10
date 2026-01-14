@@ -22,6 +22,6 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
 
     get course_url(locations(:bungarribee))
     assert_response :success
-    assert_select ".bg-\\[\\#DB2955\\]", text: /Next Event/
+    assert_select ".bg-primary", text: /Next Event/
   end
 end

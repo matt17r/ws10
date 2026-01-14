@@ -27,7 +27,6 @@ class CheckInFlowTest < ActionDispatch::IntegrationTest
 
     assert_redirected_to user_path
     follow_redirect!
-    assert_match(/Successfully checked in/, flash[:notice])
   end
 
   test "complete check-in flow for authenticated user" do
@@ -46,7 +45,6 @@ class CheckInFlowTest < ActionDispatch::IntegrationTest
 
     assert_redirected_to user_path
     follow_redirect!
-    assert_match(/Successfully checked in/, flash[:notice])
 
     get check_in_url(token)
     assert_response :success
@@ -90,7 +88,6 @@ class CheckInFlowTest < ActionDispatch::IntegrationTest
     end
 
     assert_redirected_to user_path
-    assert_match(/Successfully checked in/, flash[:notice])
   end
 
   test "multiple users can check in to same event" do
@@ -111,7 +108,6 @@ class CheckInFlowTest < ActionDispatch::IntegrationTest
     end
 
     assert_redirected_to user_path
-    assert_match(/Successfully checked in/, flash[:notice])
 
     assert_equal 2, event.check_ins.count
   end

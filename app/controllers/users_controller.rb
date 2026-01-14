@@ -19,6 +19,9 @@ class UsersController < ApplicationController
       .joins(:event)
       .where(events: { status: "in_progress" })
       .first
+
+    @event = Event.find_by(status: "in_progress")
+    @check_in = @user.check_ins.find_by(event: @event) if @event
   end
 
   def edit

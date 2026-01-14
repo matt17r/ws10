@@ -13,10 +13,16 @@
 
     <% if @event %>
       <div class="flex gap-4 mb-4">
-        <h2 class="text-pretty text-3xl font-medium tracking-tight text-gray-950 my-3"><%= "#{@event.location} - #{@event.date}" %></h2>
+        <h2 class="text-pretty text-3xl font-medium tracking-tight text-gray-950 my-3"><%= link_to "#{@event.location} - #{@event.date}", event_path(@event.number), class: "text-gray-950 hover:text-primary" %></h2>
         <% if Current.user.admin? %>
-          <%= link_to "Edit", edit_admin_event_path(@event.number), class: "justify-center rounded-md border border-transparent bg-[#DB2955] px-4 py-2 my-4 text-sm font-medium text-white shadow-sm hover:bg-[#DB2955]/[90%] cursor-pointer" %>
+          <%= link_to "Edit", edit_admin_event_path(@event.number), class: "justify-center rounded-md border border-transparent bg-primary px-4 py-2 my-4 text-sm font-medium text-white shadow-sm hover:bg-primary-hover cursor-pointer" %>
           <% if @event.active? %>
+            <div data-controller="clipboard" class="inline-block">
+              <span data-clipboard-target="source" class="hidden"><%= check_in_url(CheckIn.token_for_event(@event.number)) %></span>
+              <button data-clipboard-target="button" data-action="click->clipboard#copy" class="justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 my-4 text-sm font-medium text-white shadow-sm hover:bg-blue-700 cursor-pointer">
+                Copy Check-In URL
+              </button>
+            </div>
             <%= button_to "Deactivate", deactivate_admin_event_path(@event.number), method: :post, form: { class: "inline-block" }, class: "justify-center rounded-md border border-transparent bg-red-600 px-4 py-2 my-4 text-sm font-medium text-white shadow-sm hover:bg-red-700 cursor-pointer" %>
           <% else %>
             <%= button_to "Activate", activate_admin_event_path(@event.number), method: :post, form: { class: "inline-block" }, class: "justify-center rounded-md border border-transparent bg-green-600 px-4 py-2 my-4 text-sm font-medium text-white shadow-sm hover:bg-green-700 cursor-pointer" %>
@@ -40,41 +46,20 @@
                 <td><%= result.place %></td>
                 <td><%= result.user_name %></td>
                 <td><%= result.time_string %></td>
-                <td><%= button_to "Delete", result_path(result), method: :delete, class: "text-base font-semibold text-[#DB2955] cursor-pointer" %></td>
+                <td><%= button_to "Delete", result_path(result), method: :delete, class: "text-base font-semibold text-primary cursor-pointer" %></td>
               </tr>
             <% end %>
           </tbody>
         </table>
         <%= button_to "Delete All Results", results_destroy_all_path(event_id: @event.id), method: :delete, form: { data: { turbo_confirm: "Are you sure you want to delete all #{@event.results.count} results? This cannot be undone." }, class: "inline-block" }, class: "my-2 rounded-md border border-transparent bg-red-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-red-700 cursor-pointer" %>
       <% else %>
-        <%= button_to "Link all finish positions and times", result_link_path(event_id: @event.id), method: :post, form: { class: "inline-block" }, class: "rounded-md border border-transparent bg-[#DB2955] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#DB2955]/90 cursor-pointer" %>
+        <%= button_to "Link all finish positions and times", result_link_path(event_id: @event.id), method: :post, form: { class: "inline-block" }, class: "rounded-md border border-transparent bg-primary px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary/90 cursor-pointer" %>
       <% end %>
-
-      <div class="my-6 p-6 bg-blue-50 rounded-lg">
-        <h3 class="text-2xl font-medium text-gray-950 mb-4">Event Check-In</h3>
-        <div class="mb-4">
-          <p class="text-sm text-gray-700 mb-2">Share this link for participants to check in:</p>
-          <div class="bg-white p-4 rounded border inline-block">
-            <% token = CheckIn.token_for_event(@event.number) %>
-            <% check_in_url = check_in_url(token) %>
-            <%= link_to check_in_url, check_in_url, target: "_blank", class: "text-[#DB2955] font-mono text-sm hover:underline" %>
-          </div>
-        </div>
-        <div class="text-sm text-gray-700">
-          <strong><%= @event.check_ins.count %></strong> participants checked in
-          <% if @event.check_ins.any? %>
-            <span class="ml-2 text-gray-500">
-              (Most recent: <%= @event.check_ins.order(checked_in_at: :desc).first.user.display_name %>)
-            </span>
-          <% end %>
-        </div>
-      </div>
-
       <div class="my-3 grid grid-cols-1 font-sm md:grid-cols-2 lg:grid-cols-3">
         <div data-controller="search">
-          <h3 class="text-pretty text-2xl font-medium tracking-tight text-gray-950 mt-2">Unplaced runners</h3>
+          <h3 class="text-pretty text-2xl font-medium tracking-tight text-gray-950 mt-2">Unplaced Runners (<%= @event.check_ins.count %> checked in)</h3>
           <div class="my-2">
-            <input id="runner-search" type="search" placeholder="Search by name or barcode (searches all users)" data-search-target="input" data-action="input->search#filter" class="w-full rounded-md border px-3 py-1.5 shadow-sm focus:outline-[#DB2955]" autofocus />
+            <input id="runner-search" type="search" placeholder="Search by name or barcode (searches all users)" data-search-target="input" data-action="input->search#filter" class="w-full rounded-md border px-3 py-1.5 shadow-sm focus:outline-primary" autofocus />
           </div>
           <p class="text-sm text-gray-600 mb-2">Showing only checked-in runners. Use search to find anyone.</p>
           <table class="table-fixed border-separate [border-spacing:0.75rem]">
@@ -90,7 +75,7 @@
               <% @event.unplaced_users.order(:name).each do |user| %>
                 <% form_id = "#{dom_id(@event)}_#{dom_id(user, :finish_position_form)}" %>
                 <% is_checked_in = checked_in_ids.include?(user.id) %>
-                <tr data-search-target="row" data-search-text="<%= "#{user.name} #{user.display_name} #{user.id} #{user.barcode_string}" %>" <%= 'hidden' unless is_checked_in %>>
+                <tr data-search-target="row" data-search-text="<%= "#{user.name} #{user.display_name} #{user.id} #{user.barcode_string}" %>" data-checked-in="<%= is_checked_in %>" <%= 'hidden' unless is_checked_in %>>
                   <td>
                     <%= form_with model: FinishPosition.new(user: user, event: @event), url: finish_positions_path, html: { id: form_id } do |f| %>
                       <%= f.hidden_field :user_id, value: user.id %>
@@ -101,10 +86,10 @@
                     <%= "⚠️" if user.confirmed_at.nil? %>
                   </td>
                   <td>
-                    <input form="<%= form_id %>" type="number" name="finish_position[position]" id="<%= "#{dom_id(@event)}_#{dom_id(user, :position)}" %>"  min="1" class="block w-24 rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-[#DB2955] sm:text-sm/6" />
+                    <input form="<%= form_id %>" type="number" name="finish_position[position]" id="<%= "#{dom_id(@event)}_#{dom_id(user, :position)}" %>"  min="1" class="block w-24 rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-primary sm:text-sm/6" />
                   </td>
                   <td>
-                    <input form="<%= form_id %>" type="submit" value="Add" class="justify-center rounded-md border border-transparent bg-[#DB2955] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#DB2955]/[90%] cursor-pointer" />
+                    <input form="<%= form_id %>" type="submit" value="Add" class="justify-center rounded-md border border-transparent bg-primary px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary/[90%] cursor-pointer" />
                   </td>
                 </tr>
               <% end %>
@@ -131,10 +116,10 @@
                     <% elsif fp.known_user? %>
                       <%= fp.user_name %>
                     <% else %>
-                      <%= link_to fp.user_name, new_user_finish_position_path(fp), class: "text-[#DB2955] hover:text-[#DB2955]/80 font-medium underline" %>
+                      <%= link_to fp.user_name, new_user_finish_position_path(fp), class: "text-primary hover:text-primary/80 font-medium underline" %>
                     <% end %>
                   </td>
-                  <td><%= button_to "Delete", finish_position_path(fp), method: :delete, class: "text-base font-semibold text-[#DB2955] cursor-pointer" %></td>
+                  <td><%= button_to "Delete", finish_position_path(fp), method: :delete, class: "text-base font-semibold text-primary cursor-pointer" %></td>
                 </tr>
               <% end %>
             </tbody>
@@ -145,11 +130,11 @@
             <div class="my-4 flex items-center space-x-4">
               <div>
                 <%= f.label :position, "Position", class: "block text-sm font-medium text-gray-700" %>
-                <%= f.number_field :position, min: 1, required: true, class: "w-24 rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:outline-[#DB2955] sm:text-sm" %>
+                <%= f.number_field :position, min: 1, required: true, class: "w-24 rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:outline-primary sm:text-sm" %>
               </div>
 
               <div class="self-end">
-                <%= f.submit "Unknown", class: "rounded-md border border-transparent bg-[#DB2955] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#DB2955]/90 cursor-pointer" %>
+                <%= f.submit "Unknown", class: "rounded-md border border-transparent bg-primary px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary/90 cursor-pointer" %>
               </div>
 
               <div class="self-end">
@@ -175,7 +160,7 @@
                   <tr>
                     <td><%= ft.position %></td>
                     <td><%= ft.time_string %></td>
-                    <td><%= button_to "Delete", finish_time_path(ft), method: :delete, class: "text-base font-semibold text-[#DB2955] cursor-pointer" %></td>
+                    <td><%= button_to "Delete", finish_time_path(ft), method: :delete, class: "text-base font-semibold text-primary cursor-pointer" %></td>
                   </tr>
                 <% end %>
               </tbody>
@@ -185,16 +170,16 @@
 
               <div class="my-2">
                 <%= f.label :position, "Position" %>
-                <%= f.number_field :position, min: 1, class: "block rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-[#DB2955] sm:text-sm/6" %>
+                <%= f.number_field :position, min: 1, class: "block rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-primary sm:text-sm/6" %>
               </div>
 
               <div class="my-2">
                 <%= f.label :time_string, "Time" %>
-                <%= f.text_field :time_string, class: "block rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-[#DB2955] sm:text-sm/6", placeholder: "HH:MM:SS or MM:SS or 'P'", value: f.object.time.nil? ? "" : f.object.time_string %>
+                <%= f.text_field :time_string, class: "block rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-primary sm:text-sm/6", placeholder: "HH:MM:SS or MM:SS or 'P'", value: f.object.time.nil? ? "" : f.object.time_string %>
               </div>
 
               <div class="my-4">
-                <%= f.submit "Add Finish Time", class: "justify-center rounded-md border border-transparent bg-[#DB2955] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#DB2955]/[90%] cursor-pointer" %>
+                <%= f.submit "Add Finish Time", class: "justify-center rounded-md border border-transparent bg-primary px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary/[90%] cursor-pointer" %>
               </div>
             <% end %>
             <%= button_to "Delete All Finish Times", finish_times_destroy_all_path(event_id: @event.id), method: :delete, form: { data: { turbo_confirm: "Are you sure you want to delete all #{@event.finish_times.count} finish times? This cannot be undone." } }, class: "my-4 rounded-md border border-transparent bg-red-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-red-700 cursor-pointer" %>
@@ -207,7 +192,7 @@
                   <%= f.file_field :file, accept: ".csv", class: "block rounded-md border border-gray-300 shadow-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-gray-50 file:text-gray-700 hover:file:bg-gray-100 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" %>
                 </div>
                 <div class="my-5">
-                  <%= f.submit "Upload times", class: "justify-center rounded-md border border-transparent bg-[#DB2955] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#DB2955]/[90%] cursor-pointer" %>
+                  <%= f.submit "Upload times", class: "justify-center rounded-md border border-transparent bg-primary px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary/[90%] cursor-pointer" %>
                 </div>
               <% end %>
 
@@ -217,16 +202,16 @@
 
                 <div class="my-2">
                   <%= f.label :position, "Position" %>
-                  <%= f.number_field :position, min: 1, class: "block rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-[#DB2955] sm:text-sm/6" %>
+                  <%= f.number_field :position, min: 1, class: "block rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-primary sm:text-sm/6" %>
                 </div>
 
                 <div class="my-2">
                   <%= f.label :time_string, "Time" %>
-                  <%= f.text_field :time_string, class: "block rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-[#DB2955] sm:text-sm/6", placeholder: "HH:MM:SS or MM:SS or 'P'", value: f.object.time.nil? ? "" : f.object.time_string %>
+                  <%= f.text_field :time_string, class: "block rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-primary sm:text-sm/6", placeholder: "HH:MM:SS or MM:SS or 'P'", value: f.object.time.nil? ? "" : f.object.time_string %>
                 </div>
 
                 <div class="my-4">
-                  <%= f.submit "Add Finish Time", class: "justify-center rounded-md border border-transparent bg-[#DB2955] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#DB2955]/[90%] cursor-pointer" %>
+                  <%= f.submit "Add Finish Time", class: "justify-center rounded-md border border-transparent bg-primary px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary/[90%] cursor-pointer" %>
                 </div>
               <% end %>
             </div>

@@ -32,21 +32,17 @@
               </div>
             <% else %>
               <div class="mb-6">
-                <div class="inline-flex items-center justify-center w-24 h-24 rounded-full bg-[#DB2955] text-white text-4xl">
+                <div class="inline-flex items-center justify-center w-24 h-24 rounded-full bg-primary text-white text-4xl">
                   ✓
                 </div>
               </div>
 
-              <h3 class="text-2xl font-semibold text-gray-900 mb-2">
-                Check In to Event
+              <h3 class="text-2xl font-semibold text-gray-900 mb-4">
+                Check In Now<br><span class="text-lg">(only if you're at the event)</span>
               </h3>
 
-              <p class="text-gray-600 mb-8">
-                Click below to confirm your attendance at this event.
-              </p>
-
               <%= form_with url: check_in_path(params[:token]), method: :post, class: "space-y-4" do %>
-                <%= button_tag type: "submit", class: "inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-[#DB2955] hover:bg-[#c02447] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#DB2955]" do %>
+                <%= button_tag type: "submit", class: "inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary" do %>
                   Check In Now
                 <% end %>
               <% end %>
@@ -54,7 +50,7 @@
               <% unless authenticated? %>
                 <p class="mt-4 text-sm text-gray-500">
                   You'll be asked to sign in before checking in.
-                  <%= link_to "Don't have an account? Sign up here", sign_up_path, class: "text-[#DB2955] hover:text-[#c02447]" %>
+                  <%= link_to "Don't have an account? Sign up here", sign_up_path, class: "text-primary hover:text-primary-hover" %>
                 </p>
               <% end %>
             <% end %>
@@ -63,7 +59,7 @@
       </div>
 
       <div class="mt-6 text-center">
-        <%= link_to "← Back to Event", event_path(@event.number), class: "text-[#DB2955] hover:text-[#c02447]" %>
+        <%= link_to "← Back to Event", event_path(@event.number), class: "text-primary hover:text-primary-hover" %>
       </div>
     </div>
   </div>

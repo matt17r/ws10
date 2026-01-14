@@ -14,7 +14,7 @@ module UsersHelper
       end
     end
 
-    css_class = "text-left font-semibold text-gray-900 hover:text-[#DB2955] cursor-pointer"
+    css_class = "text-left font-semibold text-gray-900 hover:text-primary cursor-pointer"
 
     link_to users_path(sort: column, direction: direction), class: css_class do
       content = title.dup

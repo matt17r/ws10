@@ -1,4 +1,7 @@
 class CheckInsController < ApplicationController
+  include AdminAuthentication
+
+  skip_before_action :require_admin!, only: [:show, :create, :destroy]
   allow_unauthenticated_access only: [:show, :create]
 
   def show
@@ -29,9 +32,34 @@ class CheckInsController < ApplicationController
     end
 
     perform_check_in!(Current.session.user)
-    redirect_to user_path, notice: "Successfully checked in to #{@event.location.name} ##{@event.number}!"
+    redirect_to user_path
   rescue ActiveRecord::RecordInvalid => e
     redirect_to user_path, alert: "Could not check in: #{e.message}"
+  end
+
+  def destroy
+    check_in = CheckIn.find(params[:id])
+
+    unless admin_signed_in? || check_in.user == Current.session.user
+      redirect_to user_path, alert: "You can only cancel your own check-in."
+      return
+    end
+
+    event = check_in.event
+
+    check_in.destroy!
+
+    if admin_signed_in?
+      redirect_to event_path(event.number), notice: "Check-in removed for #{check_in.user.name}."
+    else
+      redirect_to courses_path, notice: "Check-in cancelled."
+    end
+  rescue ActiveRecord::RecordNotFound
+    if admin_signed_in?
+      redirect_to dashboard_path, alert: "Check-in not found."
+    else
+      redirect_to user_path, alert: "Check-in not found."
+    end
   end
 
   private

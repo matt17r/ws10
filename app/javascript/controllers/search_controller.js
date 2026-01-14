@@ -8,7 +8,13 @@ export default class extends Controller {
 
     this.rowTargets.forEach(row => {
       const text = row.dataset.searchText.toLowerCase()
-      row.hidden = !text.includes(query)
+      const isCheckedIn = row.dataset.checkedIn === "true"
+
+      if (query === "") {
+        row.hidden = !isCheckedIn
+      } else {
+        row.hidden = !text.includes(query)
+      }
     })
   }
 }

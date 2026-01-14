@@ -91,7 +91,6 @@ class CheckInsControllerTest < ActionDispatch::IntegrationTest
     end
 
     assert_redirected_to user_path
-    assert_match(/Successfully checked in/, flash[:notice])
 
     check_in = event.check_ins.find_by(user: user)
     assert_not_nil check_in
@@ -168,7 +167,6 @@ class CheckInsControllerTest < ActionDispatch::IntegrationTest
     end
 
     assert_redirected_to user_path
-    assert_match(/Successfully checked in/, flash[:notice])
   end
 
   test "create works when user already has a finish position" do
@@ -184,6 +182,111 @@ class CheckInsControllerTest < ActionDispatch::IntegrationTest
     end
 
     assert_redirected_to user_path
-    assert_match(/Successfully checked in/, flash[:notice])
+  end
+
+  test "destroy removes check-in when admin" do
+    event = events(:draft_event)
+    user = users(:three)
+    admin = users(:one)
+    check_in = CheckIn.create!(user: user, event: event, checked_in_at: Time.current)
+    sign_in_as admin
+
+    assert_difference "CheckIn.count", -1 do
+      delete admin_check_in_url(check_in)
+    end
+
+    assert_redirected_to event_path(event.number)
+    assert_match(/Check-in removed for #{user.name}/, flash[:notice])
+  end
+
+  test "destroy requires admin authentication" do
+    event = events(:draft_event)
+    user = users(:three)
+    check_in = CheckIn.create!(user: user, event: event, checked_in_at: Time.current)
+    sign_in_as user
+
+    assert_no_difference "CheckIn.count" do
+      delete admin_check_in_url(check_in)
+    end
+
+    assert_response :not_found
+  end
+
+  test "destroy redirects for non-existent check-in" do
+    admin = users(:one)
+    sign_in_as admin
+
+    delete admin_check_in_url(id: 99999)
+
+    assert_redirected_to dashboard_path
+    assert_equal "Check-in not found.", flash[:alert]
+  end
+
+  test "user can delete their own check-in via user route" do
+    event = events(:draft_event)
+    event.update!(status: "in_progress")
+    user = users(:three)
+    sign_in_as user
+    check_in = CheckIn.create!(user: user, event: event, checked_in_at: Time.current)
+
+    assert_difference "CheckIn.count", -1 do
+      delete user_check_in_url(check_in)
+    end
+
+    assert_redirected_to courses_path
+    assert_equal "Check-in cancelled.", flash[:notice]
+  end
+
+  test "user cannot delete another user's check-in" do
+    event = events(:draft_event)
+    event.update!(status: "in_progress")
+    user1 = users(:three)
+    user2 = users(:two)
+    check_in = CheckIn.create!(user: user1, event: event, checked_in_at: Time.current)
+    sign_in_as user2
+
+    assert_no_difference "CheckIn.count" do
+      delete user_check_in_url(check_in)
+    end
+
+    assert_redirected_to user_path
+    assert_equal "You can only cancel your own check-in.", flash[:alert]
+  end
+
+  test "unauthenticated user cannot delete check-in via user route" do
+    event = events(:draft_event)
+    user = users(:three)
+    check_in = CheckIn.create!(user: user, event: event, checked_in_at: Time.current)
+
+    assert_no_difference "CheckIn.count" do
+      delete user_check_in_url(check_in)
+    end
+
+    assert_redirected_to sign_in_path
+  end
+
+  test "admin can delete any check-in via user route" do
+    event = events(:draft_event)
+    user = users(:three)
+    admin = users(:one)
+    check_in = CheckIn.create!(user: user, event: event, checked_in_at: Time.current)
+    sign_in_as admin
+
+    assert_difference "CheckIn.count", -1 do
+      delete user_check_in_url(check_in)
+    end
+
+    assert_redirected_to event_path(event.number)
+    assert_match(/Check-in removed for #{user.name}/, flash[:notice])
+  end
+
+  test "user route redirects to user_path for non-existent check-in" do
+    user = users(:three)
+    sign_in_as user
+
+    delete user_check_in_url(id: 99999)
+
+    assert_redirected_to user_path
+    assert_equal "Check-in not found.", flash[:alert]
   end
 end

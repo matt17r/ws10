@@ -2,10 +2,12 @@
 
 @theme {
   --color-primary: #DB2955;
+  --color-primary-hover: #B91E47;
+  --color-primary-bg: #FDF4F7;
   --color-badge-bronze: #CD7F32;
   --color-badge-silver: #C0C0C0;
   --color-badge-gold: #FFD700;
-  --color-badge-bg: #FDF4F7;
+  --color-badge-bg: var(--colour-primary-bg);
 }
 
 @layer utilities {
