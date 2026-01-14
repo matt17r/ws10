@@ -35,7 +35,7 @@ class Admin::TokensController < ApplicationController
   end
 
   def print
-    @tokens = (1..10).map do |position|
+    @tokens = (1..200).map do |position|
       token_path = FinishPosition.token_path_for_position(position)
       prefix, pos = token_path.split("/")
       {
