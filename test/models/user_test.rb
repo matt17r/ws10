@@ -166,4 +166,23 @@ class UserTest < ActiveSupport::TestCase
 
     assert_equal "John Doe (Johnny)", user.name_with_display_name
   end
+
+  test "has many check_ins" do
+    user = users(:one)
+    event = events(:draft_event)
+
+    check_in = user.check_ins.create!(event: event, checked_in_at: Time.current)
+
+    assert_includes user.check_ins, check_in
+  end
+
+  test "destroys dependent check_ins when user is destroyed" do
+    user = users(:one)
+    event = events(:draft_event)
+    user.check_ins.create!(event: event, checked_in_at: Time.current)
+
+    assert_difference "CheckIn.count", -1 do
+      user.destroy
+    end
+  end
 end

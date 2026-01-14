@@ -11,7 +11,7 @@
 
 <div class="mx-auto max-w-2xl lg:max-w-screen-2xl my-16 px-6 lg:px-8">
   <div class="grid grid-cols-1 sm:hidden">
-    <select onchange="location = this.value;" aria-label="Select a course" class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-2 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-[#DB2955]">
+    <select onchange="location = this.value;" aria-label="Select a course" class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-2 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-primary">
       <% @locations.each do |location| %>
         <option value="<%= course_path(location) %>" <%= 'selected' if location == @location %>><%= location.name %></option>
       <% end %>
@@ -24,7 +24,7 @@
     <div class="border-b border-gray-200">
       <nav class="-mb-px flex" aria-label="Courses">
         <% @locations.each do |location| %>
-          <%= link_to location.name, course_path(location), class: "w-1/3 border-b-2 #{location == @location ? 'border-[#DB2955] text-[#DB2955]' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'} px-1 py-4 text-center text-sm font-medium", aria_current: (location == @location ? 'page' : nil) %>
+          <%= link_to location.name, course_path(location), class: "w-1/3 border-b-2 #{location == @location ? 'border-primary text-primary' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'} px-1 py-4 text-center text-sm font-medium", aria_current: (location == @location ? 'page' : nil) %>
         <% end %>
       </nav>
     </div>
@@ -40,11 +40,11 @@
             <div class="relative overflow-hidden rounded-lg bg-white px-4 py-5 shadow-sm sm:p-6">
               <% if event == @next_event %>
                 <div class="absolute top-0 right-0 w-16 h-16">
-                  <div class="bg-[#DB2955] absolute transform rotate-45 text-center text-white font-semibold py-1 right-[-60px] top-[20px] w-[190px]">
+                  <div class="bg-primary absolute transform rotate-45 text-center text-white font-semibold py-1 right-[-60px] top-[20px] w-[190px]">
                     Next Event
                   </div>
                 </div>
-                <div class="mt-1 text-3xl font-semibold tracking-tight text-[#DB2955]"><%= event.date.strftime("%-d %B") %></div>
+                <div class="mt-1 text-3xl font-semibold tracking-tight text-primary"><%= event.date.strftime("%-d %B") %></div>
               <% else %>
                 <div class="mt-1 text-3xl font-semibold tracking-tight <%= event.finalised? ? 'text-gray-500 line-through' : 'text-gray-900' %>"><%= event.date.strftime("%-d %B") %></div>
               <% end %>
@@ -52,6 +52,12 @@
           <% end %>
         </div>
       </div>
+
+      <% if active_event = Event.find_by(status: "in_progress", location: @location) %>
+        <div class="mt-8 text-center">
+          <%= link_to "Event Open: Check In Now!", check_in_path(CheckIn.token_for_event(active_event.number)), class: "inline-flex items-center justify-center px-6 py-3 rounded-full border border-transparent bg-primary shadow-md whitespace-nowrap text-base font-medium text-white hover:bg-primary/90" %>
+        </div>
+      <% end %>
 
       <section class="mt-8 lg:mt-16 grid grid-cols-1 lg:grid-cols-2 lg:gap-x-12">
         <div class="max-w-lg">

@@ -12,6 +12,8 @@ class Event < ApplicationRecord
   has_many :finished_users, through: :finish_positions, source: :user
   has_many :results
   has_many :volunteers
+  has_many :check_ins
+  has_many :checked_in_users, through: :check_ins, source: :user
 
   scope :not_finalised, -> { where.not(status: "finalised") }
 
@@ -38,6 +40,10 @@ class Event < ApplicationRecord
 
   def unplaced_users
     User.where.not(id: finished_users.select(:id)).order(Arel.sql("LOWER(name) ASC")).left_joins(:results).select("users.*, COUNT(results.id) AS results_count").group("users.id").order("users.name")
+  end
+
+  def checked_in_unplaced_users
+    checked_in_users.where.not(id: finished_users.select(:id)).order(Arel.sql("LOWER(name) ASC")).left_joins(:results).select("users.*, COUNT(results.id) AS results_count").group("users.id").order("users.name")
   end
 
   def active?

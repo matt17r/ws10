@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_10_015258) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_10_220532) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -60,6 +60,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_10_015258) do
     t.datetime "updated_at", null: false
     t.index ["badge_family", "level_order"], name: "index_badges_on_badge_family_and_level_order", unique: true
     t.index ["slug"], name: "index_badges_on_slug", unique: true
+  end
+
+  create_table "check_ins", force: :cascade do |t|
+    t.datetime "checked_in_at", null: false
+    t.datetime "created_at", null: false
+    t.integer "event_id", null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["event_id"], name: "index_check_ins_on_event_id"
+    t.index ["user_id", "event_id"], name: "index_check_ins_on_user_and_event", unique: true
+    t.index ["user_id"], name: "index_check_ins_on_user_id"
   end
 
   create_table "events", force: :cascade do |t|
@@ -196,6 +207,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_10_015258) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "assignments", "roles"
   add_foreign_key "assignments", "users"
+  add_foreign_key "check_ins", "events"
+  add_foreign_key "check_ins", "users"
   add_foreign_key "events", "locations"
   add_foreign_key "finish_positions", "events"
   add_foreign_key "finish_positions", "users"
