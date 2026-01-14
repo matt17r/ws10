@@ -6,7 +6,7 @@ class CreateCheckIns < ActiveRecord::Migration[8.1]
       t.datetime :checked_in_at, null: false
       t.timestamps
 
-      t.index [:user_id, :event_id], unique: true, name: "index_check_ins_on_user_and_event"
+      t.index [ :user_id, :event_id ], unique: true, name: "index_check_ins_on_user_and_event"
     end
   end
 end

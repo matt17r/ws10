@@ -1,8 +1,8 @@
 class CheckInsController < ApplicationController
   include AdminAuthentication
 
-  skip_before_action :require_admin!, only: [:show, :create, :destroy]
-  allow_unauthenticated_access only: [:show, :create]
+  skip_before_action :require_admin!, only: [ :show, :create, :destroy ]
+  allow_unauthenticated_access only: [ :show, :create ]
 
   def show
     @event = find_active_event
