@@ -82,13 +82,17 @@
     }
 
     .cut-mark.h {
-      width: 5mm;
-      height: 0.5mm;
+      width: 17mm;
+      height: 0.2mm;
     }
 
     .cut-mark.v {
-      width: 0.5mm;
-      height: 5mm;
+      width: 0.2mm;
+      height: 8.5mm;
+    }
+
+    .cut-mark.v.short {
+      height: 2mm;
     }
 
     .card-front {
@@ -247,7 +251,6 @@
 
     <!-- Back side -->
     <div class="page back">
-      <%= render partial: 'cut_marks' %>
       <div class="cards-container">
         <div class="cards-grid">
           <% page_tokens.each do |token| %>
