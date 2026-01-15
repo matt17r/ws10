@@ -137,6 +137,7 @@ Deployed using Kamal to a custom server with Cloudflare proxy:
 - SSH access via public key to hostname specified in `config/deploy.yml` (under `servers` -> `web`)
 - Set `KAMAL_REGISTRY_PASSWORD` environment variable (`set -Ux KAMAL_REGISTRY_PASSWORD your_password` in fish shell)
 - Cloudflare tunnel setup pointing to hostname specified in `config/deploy.yml` (under `proxy` -> `host`)
+- GitHub CLI (`gh`) installed and authenticated for CI status checks
 
 ### Deploy Commands
 
@@ -145,6 +146,24 @@ Deployed using Kamal to a custom server with Cloudflare proxy:
 - `kamal console` - Access production Rails console
 - `kamal shell` - SSH into production container
 - `kamal logs` - View production logs
+
+### Deployment Safety Checks
+
+A `pre-build` hook runs before (production) builds to prevent accidental deployments:
+
+- **Branch Check**: Must deploy from `main` branch
+- **Push Check**: All commits must be pushed to origin
+- **CI Check**: GitHub Actions must pass for the commit being deployed
+
+The CI check will:
+- Wait up to 2.5 minutes for in-progress checks to complete
+- Fail if any checks fail or don't complete in time
+- Show which checks failed and provide a link to view details
+
+To bypass all safety checks (branch, push, and CI), use:
+```bash
+FORCE_DEPLOY=unsafe_force kamal deploy
+```
 
 ### Production Environment
 

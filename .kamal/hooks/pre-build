@@ -1,0 +1,88 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [[ "${KAMAL_DESTINATION:-production}" != "production" ]] || [[ "${FORCE_DEPLOY:-}" == "unsafe_force" ]]; then
+  exit 0
+fi
+
+RED="\033[0;31m"
+GREEN="\033[0;32m"
+YELLOW="\033[0;33m"
+NC="\033[0m"
+
+EXPECTED_BRANCH="main"
+REMOTE="origin"
+
+git fetch "$REMOTE"
+
+current_branch="$(git branch --show-current)"
+if [[ -z "$current_branch" ]]; then
+  echo -e "${RED}ERROR: Not on a git branch (detached HEAD state)${NC}" >&2
+  exit 1
+fi
+
+if [[ "$current_branch" != "$EXPECTED_BRANCH" ]]; then
+  echo -e "${RED}ERROR: Must deploy from branch $EXPECTED_BRANCH (currently on $current_branch)${NC}" >&2
+  exit 1
+fi
+
+if [[ -n "$(git rev-list "$REMOTE/$EXPECTED_BRANCH"..HEAD)" ]]; then
+  echo -e "${RED}ERROR: HEAD contains commits not pushed to $REMOTE/$EXPECTED_BRANCH${NC}" >&2
+  echo "Unpushed commits:" >&2
+  git log --oneline "$REMOTE/$EXPECTED_BRANCH"..HEAD >&2
+  exit 1
+fi
+
+# Check CI status
+sha=$(git rev-parse HEAD)
+remote_url=$(git remote get-url "$REMOTE")
+repo=$(echo "$remote_url" | sed -E 's/.*[:/]([^/]+\/[^/]+)(\.git)?$/\1/' | sed 's/\.git$//')
+
+echo "Checking CI status for commit ${sha:0:7}..." >&2
+
+max_attempts=10
+wait_seconds=15
+
+for ((attempt=1; attempt<=max_attempts; attempt++)); do
+  result=$(gh api "/repos/$repo/commits/$sha/check-runs" 2>&1)
+
+  if [[ $? -ne 0 ]]; then
+    echo -e "${RED}ERROR: Failed to check CI status${NC}" >&2
+    echo "$result" >&2
+    exit 1
+  fi
+
+  check_runs=$(echo "$result" | jq -r '.check_runs')
+  total_checks=$(echo "$check_runs" | jq 'length')
+
+  if [[ "$total_checks" -eq 0 ]]; then
+    echo -e "${RED}ERROR: No CI checks found for ${sha:0:7}${NC}" >&2
+    echo "Deploy aborted: No CI checks configured" >&2
+    exit 1
+  fi
+
+  completed=$(echo "$check_runs" | jq '[.[] | select(.status == "completed")] | length')
+  failed=$(echo "$check_runs" | jq '[.[] | select(.conclusion == "failure" or .conclusion == "timed_out" or .conclusion == "cancelled" or .conclusion == "action_required" or .conclusion == "stale")] | length')
+
+  if [[ "$completed" -eq "$total_checks" ]] && [[ "$failed" -eq 0 ]]; then
+    echo -e "${GREEN}✓ CI passed for ${sha:0:7} ($total_checks check(s))${NC}" >&2
+    break
+  elif [[ "$failed" -gt 0 ]]; then
+    echo -e "${RED}✗ CI failed for commit ${sha:0:7}${NC}" >&2
+    echo "$check_runs" | jq -r '.[] | select(.conclusion == "failure" or .conclusion == "timed_out" or .conclusion == "cancelled" or .conclusion == "action_required" or .conclusion == "stale") | "  - \(.name): \(.conclusion)"' >&2
+    echo "View details: https://github.com/$repo/commit/$sha/checks" >&2
+    echo "Deploy aborted: CI checks failed" >&2
+    exit 1
+  elif [[ "$attempt" -lt "$max_attempts" ]]; then
+    in_progress=$((total_checks - completed))
+    echo -e "${YELLOW}CI running ($in_progress pending). Will retry in ${wait_seconds}s (attempt $attempt/$max_attempts)${NC}" >&2
+    sleep "$wait_seconds"
+  else
+    echo -e "${RED}ERROR: CI did not complete after $max_attempts attempts${NC}" >&2
+    echo "View details: https://github.com/$repo/commit/$sha/checks" >&2
+    echo "Deploy aborted: CI checks did not complete in time" >&2
+    exit 1
+  fi
+done
+
+echo -e "${GREEN}Preflight checks passed — safe to deploy${NC}" >&2
