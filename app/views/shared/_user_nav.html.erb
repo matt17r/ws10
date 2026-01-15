@@ -4,7 +4,7 @@
   <% if Current.user.admin? || Current.user.organiser? %>
     <%= link_to "Admin", dashboard_path, class: "text-base font-semibold text-grey-950 bg-blend-multiply hover:bg-black/[2.5%]" %>
   <% end %>
-  <%= button_to "Sign out", sign_out_path, method: :delete, class: "text-base font-semibold text-[#DB2955] cursor-pointer bg-blend-multiply hover:bg-black/[2.5%]" %>
+  <%= button_to "Sign out", sign_out_path, method: :delete, class: "text-base font-semibold text-primary cursor-pointer bg-blend-multiply hover:bg-black/[2.5%]" %>
 <% else %>
-  <%= link_to "Sign in/up", sign_in_path, class: "text-base font-semibold text-[#DB2955] bg-blend-multiply hover:bg-black/[2.5%]" %>
+  <%= link_to "Sign in/up", sign_in_path, class: "text-base font-semibold text-primary bg-blend-multiply hover:bg-black/[2.5%]" %>
 <% end %>

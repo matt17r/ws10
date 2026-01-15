@@ -16,17 +16,17 @@
 
   <div class="mb-4">
     <%= f.label :user_id, "Athlete", class: "block text-sm font-medium text-gray-700 mb-1" %>
-    <%= f.collection_select :user_id, User.order(:name), :id, :name_with_display_name, { include_blank: "Unknown" }, class: "block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 outline-gray-300 focus:outline-2 focus:outline-[#DB2955] sm:text-sm" %>
+    <%= f.collection_select :user_id, User.order(:name), :id, :name_with_display_name, { include_blank: "Unknown" }, class: "block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 outline-gray-300 focus:outline-2 focus:outline-primary sm:text-sm" %>
   </div>
 
   <div class="mb-4">
     <%= f.label :time_string, "Time", class: "block text-sm font-medium text-gray-700 mb-1" %>
-    <%= f.text_field :time_string, value: (result.time ? result.time_string : ""), placeholder: "MM:SS or HH:MM:SS or leave blank for participant only", class: "block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 outline-gray-300 focus:outline-2 focus:outline-[#DB2955] sm:text-sm" %>
+    <%= f.text_field :time_string, value: (result.time ? result.time_string : ""), placeholder: "MM:SS or HH:MM:SS or leave blank for participant only", class: "block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 outline-gray-300 focus:outline-2 focus:outline-primary sm:text-sm" %>
     <p class="mt-1 text-xs text-gray-500">Leave blank for known participant who didn't finish</p>
   </div>
 
   <div class="flex gap-2">
-    <%= f.submit result.persisted? ? "Update Result" : "Create Result", class: "rounded-md border border-transparent bg-[#DB2955] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#DB2955]/90 cursor-pointer" %>
+    <%= f.submit result.persisted? ? "Update Result" : "Create Result", class: "rounded-md border border-transparent bg-primary px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-hover cursor-pointer" %>
     <% if result.persisted? %>
       <%= link_to "Cancel", edit_results_admin_event_path(event.number), class: "rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 cursor-pointer" %>
     <% end %>

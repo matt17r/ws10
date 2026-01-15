@@ -1,6 +1,6 @@
-<div class="mx-auto max-w-2xl lg:max-w-screen-2xl my-16 px-6 lg:px-8" data-controller="tabs" data-tabs-active-class="border-[#DB2955] text-[#DB2955]" data-tabs-inactive-class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700" data-tabs-default-tab-value="<%= @default_tab %>">
+<div class="mx-auto max-w-2xl lg:max-w-screen-2xl my-16 px-6 lg:px-8" data-controller="tabs" data-tabs-active-class="border-primary text-primary" data-tabs-inactive-class="border-transparent text-brand-brown hover:border-brand-grey hover:text-brand-grey" data-tabs-default-tab-value="<%= @default_tab %>">
   <div class="grid grid-cols-1 sm:hidden">
-    <select data-tabs-target="select" data-action="change->tabs#select" aria-label="Select a tab" class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-2 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-[#DB2955]">
+    <select data-tabs-target="select" data-action="change->tabs#select" aria-label="Select a tab" class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-2 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-primary">
       <option value="tab-bungarribee">Bungarribee</option>
       <option value="tab-nepean">Nepean River</option>
       <option value="tab-parramatta">Parramatta</option>
@@ -12,9 +12,9 @@
   <div class="hidden sm:block">
     <div class="border-b border-gray-200">
       <nav class="-mb-px flex" aria-label="Tabs">
-        <button class="w-1/3 border-b-2 border-[#DB2955] px-1 py-4 text-center text-sm font-medium text-[#DB2955]" aria-current="page" id="tab-bungarribee" data-tabs-target="btn" data-action="click->tabs#select">Bungarribee</a>
-        <button class="w-1/3 border-b-2 border-transparent px-1 py-4 text-center text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700" id="tab-nepean" data-tabs-target="btn" data-action="click->tabs#select">Nepean River</a>
-        <button class="w-1/3 border-b-2 border-transparent px-1 py-4 text-center text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700" id="tab-parramatta" data-tabs-target="btn" data-action="click->tabs#select">Parramatta</a>
+        <button class="w-1/3 border-b-2 border-primary px-1 py-4 text-center text-sm font-medium text-primary" aria-current="page" id="tab-bungarribee" data-tabs-target="btn" data-action="click->tabs#select">Bungarribee</a>
+        <button class="w-1/3 border-b-2 border-transparent px-1 py-4 text-center text-sm font-medium text-brand-brown hover:border-brand-grey hover:text-brand-grey" id="tab-nepean" data-tabs-target="btn" data-action="click->tabs#select">Nepean River</a>
+        <button class="w-1/3 border-b-2 border-transparent px-1 py-4 text-center text-sm font-medium text-brand-brown hover:border-brand-grey hover:text-brand-grey" id="tab-parramatta" data-tabs-target="btn" data-action="click->tabs#select">Parramatta</a>
       </nav>
     </div>
   </div>
@@ -45,7 +45,7 @@
           <h2 class="text-2xl font-medium tracking-tight" id="course-start-bungarribee">Course Start Point</h2>
           <p class="mt-6 text/6 text-gray-600">The course starts adjacent to the Bung Shelter, near the main carpark for Bungarribee Park and the Warrigal dog run. This is the same starting point as Rooty Hill parkrun. Vehicle access to Bungarribee Park is at the intersection of Doonside Road and Holbeche Road.</p>
           <p class="mt-6 text/6 text-gray-600">Arrive at 6:45am for a 7am race start.</p>
-          <p class="mt-8 text-lg/6 text-gray-600"><a class="text-[#54494B] underline underline-offset-[3px] hover:no-underline hover:text-[#9DA39A]" href="https://maps.app.goo.gl/uRW59Ysg1rT4FTw66">Google Maps Link</a> | <a class="text-[#54494B] underline underline-offset-[3px] hover:no-underline hover:text-[#9DA39A]" href="https://maps.apple.com/?address=Bungarribee%20NSW%202767,%20Australia&auid=2305727777122935073&ll=-33.783882,150.868367&lsp=9902&q=Rooty%20Hill%20Parkrun&t=m">Apple Maps Link</a></p>
+          <p class="mt-8 text-lg/6 text-gray-600"><a class="text-brand-brown underline underline-offset-3 hover:no-underline hover:text-brand-grey" href="https://maps.app.goo.gl/uRW59Ysg1rT4FTw66">Google Maps Link</a> | <a class="text-brand-brown underline underline-offset-3 hover:no-underline hover:text-brand-grey" href="https://maps.apple.com/?address=Bungarribee%20NSW%202767,%20Australia&auid=2305727777122935073&ll=-33.783882,150.868367&lsp=9902&q=Rooty%20Hill%20Parkrun&t=m">Apple Maps Link</a></p>
         </div>
         <div class="lg:row-span-2 mt-8 lg:my-auto">
           <%= image_tag "bungarribee-start.png", class: "rounded-lg" %>
@@ -60,17 +60,17 @@
         <div class="max-w-lg lg:order-2">
           <h2 class="text-2xl font-medium tracking-tight" id="course-description-bungarribee">Course Description</h2>
           <p class="mt-6 text/6 text-gray-600">The course is mostly on sealed (concrete/bitumen) tracks but there are two gravel sections and a dirt section that can be muddy after rain. The course is a large, looping out and back course and you're never more than about 1.5km from the start point.</p>
-          <p class="mt-6 text-lg/6 text-gray-600"><a class="text-[#54494B] underline underline-offset-[3px] hover:no-underline hover:text-[#9DA39A]" href="https://www.strava.com/routes/3336193874389944524">Strava Route</a></p>
+          <p class="mt-6 text-lg/6 text-gray-600"><a class="text-brand-brown underline underline-offset-3 hover:no-underline hover:text-brand-grey" href="https://www.strava.com/routes/3336193874389944524">Strava Route</a></p>
         </div>
         <div class="lg:row-span-2 mt-8 lg:my-auto lg:order-1">
           <div class="strava-embed-placeholder" data-embed-type="route" data-embed-id="3336193874389944524" data-units="metric" data-full-width="true" data-style="standard" data-surface-type="true" data-map-hash="12.89/-33.78104/150.86593" data-club-id="1343589" data-from-embed="true"></div><script src="https://strava-embeds.com/embed.js"></script>
         </div>
         <div class="max-w-lg lg:order-3">
           <h2 class="mt-9 lg:mt-0 text-2xl font-medium tracking-tight" id="event-rego-bungarribee">Event Registration</h2>
-          <p class="mt-6 text/6 text-gray-600">To participate, you just need to be registered on this site. If you've run or signed up before, you're all set. Use the <%= link_to "forgot password form", forgot_password_path, class: "underline hover:no-underline" %> to reset your password or set it for the first time.</p>
-          <p class="mt-6 text/6 text-gray-600">To register as a WS10 runner, fill in the <%= link_to "registration form", sign_up_path, class: "underline hover:no-underline" %> and then click on the confirmation link in your email.</p>
+          <p class="mt-6 text/6 text-gray-600">To participate, you just need to be registered on this site. If you've run or signed up before, you're all set. Use the <%= link_to "forgot password form", forgot_password_path, class: "text-brand-brown hover:text-brand-grey underline underline-offset-3 hover:no-underline" %> to reset your password or set it for the first time.</p>
+          <p class="mt-6 text/6 text-gray-600">To register as a WS10 runner, fill in the <%= link_to "registration form", sign_up_path, class: "text-brand-brown hover:text-brand-grey underline underline-offset-3 hover:no-underline" %> and then click on the confirmation link in your email.</p>
           <% if false %>
-            <p class="mt-6 text/6 text-gray-600">Tell us your coming (and help spread the word!) by indicating you will come to the <a class="text-[#54494B] underline underline-offset-[3px] hover:no-underline hover:text-[#9DA39A]" href="<%= @next_bungarribee_event_strava %>">Strava Event</a> or the <a class="text-[#54494B] underline underline-offset-[3px] hover:no-underline hover:text-[#9DA39A]" href="<%= @next_bungarribee_event_fb %>">Facebook Event</a>.</p>
+            <p class="mt-6 text/6 text-gray-600">Tell us your coming (and help spread the word!) by indicating you will come to the <a class="text-brand-brown underline underline-offset-3 hover:no-underline hover:text-brand-grey" href="<%= @next_bungarribee_event_strava %>">Strava Event</a> or the <a class="text-brand-brown underline underline-offset-3 hover:no-underline hover:text-brand-grey" href="<%= @next_bungarribee_event_fb %>">Facebook Event</a>.</p>
           <% end %>
         </div>
       </section>
@@ -99,7 +99,7 @@
           <h2 class="text-2xl font-medium tracking-tight" id="course-start-nepean">Course Start Point</h2>
           <p class="mt-6 text/6 text-gray-600">The course starts and finishes in Tench Reserve, in the same general area as Nepean River parkrun. If driving, there is parking on Tench Avenue and in carparks off Tench avenue.</p>
           <p class="mt-6 text/6 text-gray-600">Arrive at 6:45am for a 7am race start.</p>
-          <p class="mt-8 text-lg/6 text-gray-600"><a class="text-[#54494B] underline underline-offset-[3px] hover:no-underline hover:text-[#9DA39A]" href="https://www.google.com/maps/place/Nepean+River+Parkrun/@-33.7623863,150.6611338,17z/data=!4m6!3m5!1s0x6b1289ec090c8baf:0xa9d1ffa8acefca12!8m2!3d-33.7623908!4d150.6637087!16s%2Fg%2F11t9c9zkpm!5m1!1e1?entry=ttu&g_ep=EgoyMDI1MDEyNi4wIKXMDSoASAFQAw%3D%3D">Google Maps Link</a> | <a class="text-[#54494B] underline underline-offset-[3px] hover:no-underline hover:text-[#9DA39A]" href="https://maps.apple.com/?address=163%E2%80%93165%20Tench%20Ave%0APenrith%20NSW%202750%0AAustralia&auid=1916632410848447481&ll=-33.762531,150.663880&lsp=9902&q=Nepean%20River%20Parkrun&t=m">Apple Maps Link</a></p>
+          <p class="mt-8 text-lg/6 text-gray-600"><a class="text-brand-brown underline underline-offset-3 hover:no-underline hover:text-brand-grey" href="https://www.google.com/maps/place/Nepean+River+Parkrun/@-33.7623863,150.6611338,17z/data=!4m6!3m5!1s0x6b1289ec090c8baf:0xa9d1ffa8acefca12!8m2!3d-33.7623908!4d150.6637087!16s%2Fg%2F11t9c9zkpm!5m1!1e1?entry=ttu&g_ep=EgoyMDI1MDEyNi4wIKXMDSoASAFQAw%3D%3D">Google Maps Link</a> | <a class="text-brand-brown underline underline-offset-3 hover:no-underline hover:text-brand-grey" href="https://maps.apple.com/?address=163%E2%80%93165%20Tench%20Ave%0APenrith%20NSW%202750%0AAustralia&auid=1916632410848447481&ll=-33.762531,150.663880&lsp=9902&q=Nepean%20River%20Parkrun&t=m">Apple Maps Link</a></p>
         </div>
         <div class="lg:row-span-2 mt-8 lg:my-auto">
           <%= image_tag "nepean-start.png", class: "rounded-lg" %>
@@ -114,16 +114,16 @@
         <div class="max-w-lg lg:order-2">
           <h2 class="text-2xl font-medium tracking-tight" id="course-description-nepean">Course Description</h2>
           <p class="mt-6 text/6 text-gray-600">The event is run entirely on sealed cycle/pedestrian paths that are well suited to pushing a pram and resistant to adverse weather. The course is an out and back course around the river. There are no road crossings but expect to encounter lots of runners and walkers along with some cyclists.</p>
-          <p class="mt-6 text-lg/6 text-gray-600"><a class="text-[#54494B] underline underline-offset-[3px] hover:no-underline hover:text-[#9DA39A]" href="https://www.strava.com/routes/3349254877669215002">Strava Route</a></p>
+          <p class="mt-6 text-lg/6 text-gray-600"><a class="text-brand-brown underline underline-offset-3 hover:no-underline hover:text-brand-grey" href="https://www.strava.com/routes/3349254877669215002">Strava Route</a></p>
         </div>
         <div class="lg:row-span-2 mt-8 lg:my-auto lg:order-1">
           <div class="strava-embed-placeholder" data-embed-type="route" data-embed-id="3349254877669215002" data-units="metric" data-full-width="true" data-style="standard" data-surface-type="true" data-map-hash="12.66/-33.75417/150.67187" data-club-id="1343589" data-from-embed="true"></div><script src="https://strava-embeds.com/embed.js"></script>
         </div>
         <div class="max-w-lg lg:order-3">
           <h2 class="mt-9 lg:mt-0 text-2xl font-medium tracking-tight" id="event-rego-nepean">Event Registration</h2>
-          <p class="mt-6 text/6 text-gray-600">To participate, you just need to be registered on this site. If you've run or signed up before, you're all set. Use the <%= link_to "forgot password form", forgot_password_path, class: "underline hover:no-underline" %> to reset your password or set it for the first time.</p>
-          <p class="mt-6 text/6 text-gray-600">To register as a new WS10 runner, fill in the <%= link_to "registration form", sign_up_path, class: "underline hover:no-underline" %> and then click on the confirmation link in your email.</p>
-          <p class="mt-6 text/6 text-gray-600">Once you're registered, tell us your coming to this particular event (and help spread the word!) by RSVPing to the <a class="text-[#54494B] underline underline-offset-[3px] hover:no-underline hover:text-[#9DA39A]" href="<%= @next_nepean_event_strava %>">Strava Event</a> or the <a class="text-[#54494B] underline underline-offset-[3px] hover:no-underline hover:text-[#9DA39A]" href="<%= @next_nepean_event_fb %>">Facebook Event</a>.</p>
+          <p class="mt-6 text/6 text-gray-600">To participate, you just need to be registered on this site. If you've run or signed up before, you're all set. Use the <%= link_to "forgot password form", forgot_password_path, class: "text-brand-brown hover:text-brand-grey underline underline-offset-3 hover:no-underline" %> to reset your password or set it for the first time.</p>
+          <p class="mt-6 text/6 text-gray-600">To register as a new WS10 runner, fill in the <%= link_to "registration form", sign_up_path, class: "text-brand-brown hover:text-brand-grey underline underline-offset-3 hover:no-underline" %> and then click on the confirmation link in your email.</p>
+          <p class="mt-6 text/6 text-gray-600">Once you're registered, tell us your coming to this particular event (and help spread the word!) by RSVPing to the <a class="text-brand-brown underline underline-offset-3 hover:no-underline hover:text-brand-grey" href="<%= @next_nepean_event_strava %>">Strava Event</a> or the <a class="text-brand-brown underline underline-offset-3 hover:no-underline hover:text-brand-grey" href="<%= @next_nepean_event_fb %>">Facebook Event</a>.</p>
         </div>
       </section>
     </div>
@@ -143,11 +143,11 @@
           </div>
           <div class="relative overflow-hidden rounded-lg bg-white px-4 py-5 shadow-sm sm:p-6">
             <div class="absolute top-0 right-0 w-16 h-16">
-              <div class="bg-[#DB2955] absolute transform rotate-45 text-center text-white font-semibold py-1 right-[-60px] top-[20px] w-[190px]">
+              <div class="bg-primary absolute transform rotate-45 text-center text-white font-semibold py-1 right-[-60px] top-[20px] w-[190px]">
                 Next Event
               </div>
             </div>
-            <div class="mt-1 text-3xl font-semibold tracking-tight text-[#DB2955]">21 December</div>
+            <div class="mt-1 text-3xl font-semibold tracking-tight text-primary">21 December</div>
           </div>
         </div>
       </div>
@@ -156,7 +156,7 @@
           <h2 class="text-2xl font-medium tracking-tight" id="course-start-parramatta">Course Start Point</h2>
           <p class="mt-6 text/6 text-gray-600">Meet at the course finish point, near the Lady Fitzroy Memorial, just inside the old Tudorhouse Gates at George Street. After the pre-event briefing we'll move as a group to the start point near the Noller Footbridge.</p>
           <p class="mt-6 text/6 text-gray-600">Arrive at 6:45am for a 7am race start.</p>
-          <p class="mt-8 text-lg/6 text-gray-600"><a class="text-[#54494B] underline underline-offset-[3px] hover:no-underline hover:text-[#9DA39A]" href="https://www.google.com/maps/place/Lady+Fitzroy+Memorial/@-33.8125395,150.9986062,19z/data=!4m6!3m5!1s0x6b12a33ae9a94bd1:0x4911e09a6c662c92!8m2!3d-33.8125742!4d150.9996972!16s%2Fg%2F11gwg61mh_!5m1!1e1?entry=ttu&g_ep=EgoyMDI1MDEyNi4wIKXMDSoASAFQAw%3D%3D">Google Maps Link</a> | <a class="text-[#54494B] underline underline-offset-[3px] hover:no-underline hover:text-[#9DA39A]" href="https://maps.apple.com/?address=O'Connell%20St,%20Parramatta%20NSW%202150,%20Australia&auid=755998292114138734&ll=-33.812575,150.999681&lsp=9902&q=Lady%20Mary%20Fitzroy&t=m">Apple Maps Link</a></p>
+          <p class="mt-8 text-lg/6 text-gray-600"><a class="text-brand-brown underline underline-offset-3 hover:no-underline hover:text-brand-grey" href="https://www.google.com/maps/place/Lady+Fitzroy+Memorial/@-33.8125395,150.9986062,19z/data=!4m6!3m5!1s0x6b12a33ae9a94bd1:0x4911e09a6c662c92!8m2!3d-33.8125742!4d150.9996972!16s%2Fg%2F11gwg61mh_!5m1!1e1?entry=ttu&g_ep=EgoyMDI1MDEyNi4wIKXMDSoASAFQAw%3D%3D">Google Maps Link</a> | <a class="text-brand-brown underline underline-offset-3 hover:no-underline hover:text-brand-grey" href="https://maps.apple.com/?address=O'Connell%20St,%20Parramatta%20NSW%202150,%20Australia&auid=755998292114138734&ll=-33.812575,150.999681&lsp=9902&q=Lady%20Mary%20Fitzroy&t=m">Apple Maps Link</a></p>
         </div>
         <div class="lg:row-span-2 mt-8 lg:my-auto">
           <%= image_tag "parramatta-start-map.png", class: "rounded-lg mb-2" %>
@@ -172,16 +172,16 @@
         <div class="max-w-lg lg:order-2">
           <h2 class="text-2xl font-medium tracking-tight" id="course-description-parramatta">Course Description</h2>
           <p class="mt-6 text/6 text-gray-600">The event is run entirely on sealed cycle/pedestrian paths that are well suited to pushing a pram and resistant to adverse weather. The course consists of three (and a bit) laps of the park loop, starting near the Noller Footbridge and finishing in front of the George Street gatehouse.</p>
-          <p class="mt-6 text-lg/6 text-gray-600"><a class="text-[#54494B] underline underline-offset-[3px] hover:no-underline hover:text-[#9DA39A]" href="https://www.strava.com/routes/3332104237298943424">Strava Route</a></p>
+          <p class="mt-6 text-lg/6 text-gray-600"><a class="text-brand-brown underline underline-offset-3 hover:no-underline hover:text-brand-grey" href="https://www.strava.com/routes/3332104237298943424">Strava Route</a></p>
         </div>
         <div class="lg:row-span-2 mt-8 lg:my-auto lg:order-1">
           <div class="strava-embed-placeholder" data-embed-type="route" data-embed-id="3332104237298943424" data-units="metric" data-full-width="true" data-style="standard" data-surface-type="true" data-map-hash="12.89/-33.78104/150.86593" data-club-id="1343589" data-from-embed="true"></div><script src="https://strava-embeds.com/embed.js"></script>
         </div>
         <div class="max-w-lg lg:order-3">
           <h2 class="mt-9 lg:mt-0 text-2xl font-medium tracking-tight" id="event-rego-parramatta">Event Registration</h2>
-          <p class="mt-6 text/6 text-gray-600">To participate, you just need to be registered on this site. If you've run or signed up before, you're all set. Use the <%= link_to "forgot password form", forgot_password_path, class: "underline hover:no-underline" %> to reset your password or set it for the first time.</p>
-          <p class="mt-6 text/6 text-gray-600">To register as a new WS10 runner, fill in the <%= link_to "registration form", sign_up_path, class: "underline hover:no-underline" %> and then click on the confirmation link in your email.</p>
-          <p class="mt-6 text/6 text-gray-600">Tell us your coming (and help spread the word!) by indicating you will come to the <a class="text-[#54494B] underline underline-offset-[3px] hover:no-underline hover:text-[#9DA39A]" href="<%= @next_parramatta_event_strava %>">Strava Event</a> or the <a class="text-[#54494B] underline underline-offset-[3px] hover:no-underline hover:text-[#9DA39A]" href="<%= @next_parramatta_event_fb %>">Facebook Event</a>.</p>
+          <p class="mt-6 text/6 text-gray-600">To participate, you just need to be registered on this site. If you've run or signed up before, you're all set. Use the <%= link_to "forgot password form", forgot_password_path, class: "text-brand-brown hover:text-brand-grey underline underline-offset-3 hover:no-underline" %> to reset your password or set it for the first time.</p>
+          <p class="mt-6 text/6 text-gray-600">To register as a new WS10 runner, fill in the <%= link_to "registration form", sign_up_path, class: "text-brand-brown hover:text-brand-grey underline underline-offset-3 hover:no-underline" %> and then click on the confirmation link in your email.</p>
+          <p class="mt-6 text/6 text-gray-600">Tell us your coming (and help spread the word!) by indicating you will come to the <a class="text-brand-brown underline underline-offset-3 hover:no-underline hover:text-brand-grey" href="<%= @next_parramatta_event_strava %>">Strava Event</a> or the <a class="text-brand-brown underline underline-offset-3 hover:no-underline hover:text-brand-grey" href="<%= @next_parramatta_event_fb %>">Facebook Event</a>.</p>
         </div>
       </section>
     </div>

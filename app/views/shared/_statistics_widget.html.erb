@@ -3,32 +3,32 @@
 
   <div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
     <div class="text-center">
-      <div class="text-5xl font-medium text-[#DB2955]"><%= statistics[:unique_participants] %></div>
+      <div class="text-5xl font-medium text-primary"><%= statistics[:unique_participants] %></div>
       <div class="mt-2 text-gray-600">Unique Participants</div>
     </div>
 
     <div class="text-center">
-      <div class="text-5xl font-medium text-[#DB2955]"><%= statistics[:total_participants] %></div>
+      <div class="text-5xl font-medium text-primary"><%= statistics[:total_participants] %></div>
       <div class="mt-2 text-gray-600">Total Participants</div>
     </div>
 
     <div class="text-center">
-      <div class="text-5xl font-medium text-[#DB2955]"><%= number_with_delimiter(statistics[:total_kilometres]) %>km</div>
+      <div class="text-5xl font-medium text-primary"><%= number_with_delimiter(statistics[:total_kilometres]) %>km</div>
       <div class="mt-2 text-gray-600">Kilometres Run</div>
     </div>
 
     <div class="text-center">
-      <div class="text-5xl font-medium text-[#DB2955]"><%= format_total_time(statistics[:total_time_seconds]) %></div>
+      <div class="text-5xl font-medium text-primary"><%= format_total_time(statistics[:total_time_seconds]) %></div>
       <div class="mt-2 text-gray-600">Time Spent Running</div>
     </div>
 
     <div class="text-center">
-      <div class="text-5xl font-medium text-[#DB2955]"><%= format_pace_time(statistics[:fastest_time]) %></div>
+      <div class="text-5xl font-medium text-primary"><%= format_pace_time(statistics[:fastest_time]) %></div>
       <div class="mt-2 text-gray-600">Fastest Time</div>
     </div>
 
     <div class="text-center">
-      <div class="text-5xl font-medium text-[#DB2955]"><%= format_pace_time(statistics[:average_time]) %></div>
+      <div class="text-5xl font-medium text-primary"><%= format_pace_time(statistics[:average_time]) %></div>
       <div class="mt-2 text-gray-600">Average Time</div>
     </div>
   </div>

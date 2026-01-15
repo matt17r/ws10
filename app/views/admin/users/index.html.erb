@@ -1,6 +1,6 @@
 <div class="mx-auto w-full max-w-7xl p-8">
   <div class="flex justify-between items-center mb-8">
-    <h1 class="text-3xl font-bold text-[#DB2955]">User Management</h1>
+    <h1 class="text-3xl font-bold text-primary">User Management</h1>
   </div>
 
   <!-- CSV Import Section -->
@@ -9,11 +9,11 @@
     <%= form_with url: user_import_path, method: :post, multipart: true, class: "flex flex-wrap gap-4 items-end" do |f| %>
       <div class="flex-1 min-w-64">
         <%= f.label :file, "CSV File", class: "block text-sm font-medium text-gray-700 mb-1" %>
-        <%= f.file_field :file, accept: ".csv", class: "block w-full rounded-md border-gray-300 shadow-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-gray-50 file:text-gray-700 hover:file:bg-gray-100 focus:border-[#DB2955] focus:ring-[#DB2955]" %>
+        <%= f.file_field :file, accept: ".csv", class: "block w-full rounded-md border-gray-300 shadow-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-gray-50 file:text-gray-700 hover:file:bg-gray-100 focus:border-primary focus:ring-primary" %>
       </div>
 
       <div class="flex gap-2">
-        <%= f.submit "Import Users", class: "inline-flex items-center gap-x-1.5 rounded-md bg-[#DB2955] px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-[#DB2955]/[90%]" %>
+        <%= f.submit "Import Users", class: "inline-flex items-center gap-x-1.5 rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-primary-hover" %>
         <%= link_to "Download Template", user_import_template_path, class: "inline-flex items-center gap-x-1.5 rounded-md bg-gray-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-gray-500", data: { turbo: false } %>
       </div>
     <% end %>
@@ -25,16 +25,16 @@
     <%= form_with url: admin_users_path, method: :get, local: true, class: "flex flex-wrap gap-4 items-end" do |form| %>
       <div class="flex-1 min-w-64">
         <%= form.label :search, "Search Users", class: "block text-sm font-medium text-gray-700 mb-1" %>
-        <%= form.text_field :search, value: params[:search], placeholder: "Name, email, or display name...", class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-[#DB2955] focus:ring-[#DB2955]" %>
+        <%= form.text_field :search, value: params[:search], placeholder: "Name, email, or display name...", class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary" %>
       </div>
 
       <div class="min-w-32">
         <%= form.label :role, "Role", class: "block text-sm font-medium text-gray-700 mb-1" %>
-        <%= form.select :role, options_for_select([['All', 'all'], ['Administrator', 'Administrator'], ['Organiser', 'Organiser']], params[:role]), {}, { class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-[#DB2955] focus:ring-[#DB2955]" } %>
+        <%= form.select :role, options_for_select([['All', 'all'], ['Administrator', 'Administrator'], ['Organiser', 'Organiser']], params[:role]), {}, { class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary" } %>
       </div>
 
       <div class="flex gap-2">
-        <%= form.submit "Search", class: "inline-flex items-center gap-x-1.5 rounded-md bg-[#DB2955] px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-[#DB2955]/[90%]" %>
+        <%= form.submit "Search", class: "inline-flex items-center gap-x-1.5 rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-primary-hover" %>
         <%= link_to "Clear", admin_users_path, class: "inline-flex items-center gap-x-1.5 rounded-md bg-gray-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-gray-500" %>
       </div>
     <% end %>
@@ -58,7 +58,7 @@
               <div class="flex items-center">
                 <%= link_to admin_user_path(user), class: "flex items-center hover:bg-gray-50 transition-colors duration-150 rounded-lg p-2 -m-2" do %>
                   <div class="flex-shrink-0 h-10 w-10">
-                    <div class="h-10 w-10 rounded-full bg-[#9DA39A] flex items-center justify-center text-white font-semibold">
+                    <div class="h-10 w-10 rounded-full bg-brand-green flex items-center justify-center text-white font-semibold">
                       <%= user.emoji.presence || user.name.first.upcase %>
                     </div>
                   </div>
@@ -90,13 +90,13 @@
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium hidden md:table-cell">
               <div class="flex justify-end gap-2">
-                <%= link_to "View", admin_user_path(user), class: "text-[#9DA39A] hover:text-[#8A948A]" %>
+                <%= link_to "View", admin_user_path(user), class: "text-brand-green hover:text-brand-grey" %>
                 <% unless user.confirmed? %>
                   <%= link_to "Confirm", confirm_admin_user_path(user), method: :patch,
                         data: { turbo_method: :patch, confirm: "Confirm #{user.name}'s email address?" },
-                        class: "text-[#9DA39A] hover:text-[#8A948A]" %>
+                        class: "text-brand-green hover:text-brand-grey" %>
                 <% end %>
-                <%= link_to "Edit", edit_admin_user_path(user), class: "text-[#9DA39A] hover:text-[#8A948A]" %>
+                <%= link_to "Edit", edit_admin_user_path(user), class: "text-brand-green hover:text-brand-grey" %>
               </div>
             </td>
           </tr>

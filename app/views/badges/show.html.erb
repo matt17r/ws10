@@ -24,7 +24,7 @@
         <% badge_count = level_badge.user_badges.count %>
         <div class="bg-white rounded-lg shadow-lg p-6 border-4 <%= badge_border_class(level_badge) %>">
           <div class="flex items-start">
-            <div class="inline-flex items-center justify-center w-16 h-16 text-sm font-semibold text-primary bg-primary/5 rounded-full mr-4 flex-shrink-0">
+            <div class="inline-flex items-center justify-center w-16 h-16 text-sm font-semibold text-primary bg-primary-bg rounded-full mr-4 flex-shrink-0">
               <%= render inline: Rails.root.join("app/assets/images/badges/#{level_badge.badge_family}.svg").read %>
             </div>
             <div class="flex-1">
@@ -39,7 +39,7 @@
       <% badge_count = @badge.user_badges.count %>
       <div class="bg-white rounded-lg shadow-lg p-6 border-4 <%= badge_border_class(@badge) %>">
         <div class="flex items-start">
-          <div class="inline-flex items-center justify-center w-16 h-16 text-sm font-semibold text-primary bg-primary/5 rounded-full mr-4 flex-shrink-0">
+          <div class="inline-flex items-center justify-center w-16 h-16 text-sm font-semibold text-primary bg-primary-bg rounded-full mr-4 flex-shrink-0">
             <%= render inline: Rails.root.join("app/assets/images/badges/#{@badge.badge_family}.svg").read %>
           </div>
           <div class="flex-1">

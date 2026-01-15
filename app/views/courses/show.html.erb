@@ -24,7 +24,7 @@
     <div class="border-b border-gray-200">
       <nav class="-mb-px flex" aria-label="Courses">
         <% @locations.each do |location| %>
-          <%= link_to location.name, course_path(location), class: "w-1/3 border-b-2 #{location == @location ? 'border-primary text-primary' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'} px-1 py-4 text-center text-sm font-medium", aria_current: (location == @location ? 'page' : nil) %>
+          <%= link_to location.name, course_path(location), class: "w-1/3 border-b-2 #{location == @location ? 'border-primary text-primary' : 'border-transparent text-brand-brown hover:border-brand-grey hover:text-brand-grey'} px-1 py-4 text-center text-sm font-medium", aria_current: (location == @location ? 'page' : nil) %>
         <% end %>
       </nav>
     </div>
@@ -55,7 +55,7 @@
 
       <% if active_event = Event.find_by(status: "in_progress", location: @location) %>
         <div class="mt-8 text-center">
-          <%= link_to "Event Open: Check In Now!", check_in_path(CheckIn.token_for_event(active_event.number)), class: "inline-flex items-center justify-center px-6 py-3 rounded-full border border-transparent bg-primary shadow-md whitespace-nowrap text-base font-medium text-white hover:bg-primary/90" %>
+          <%= link_to "Event Open: Check In Now!", check_in_path(CheckIn.token_for_event(active_event.number)), class: "inline-flex items-center justify-center px-6 py-3 rounded-full border border-transparent bg-primary shadow-md whitespace-nowrap text-base font-medium text-white hover:bg-primary-hover" %>
         </div>
       <% end %>
 
@@ -64,8 +64,8 @@
           <h2 class="text-2xl font-medium tracking-tight" id="course-start-<%= @location.slug %>">Course Start Point</h2>
           <p class="mt-6 text/6 text-gray-600"><%= simple_format(@location.start_point_description) %></p>
           <p class="mt-8 text-lg/6 text-gray-600">
-            <a class="text-[#54494B] underline underline-offset-[3px] hover:no-underline hover:text-[#9DA39A]" href="<%= @location.google_maps_url %>">Google Maps Link</a> |
-            <a class="text-[#54494B] underline underline-offset-[3px] hover:no-underline hover:text-[#9DA39A]" href="<%= @location.apple_maps_url %>">Apple Maps Link</a>
+            <a class="text-brand-brown underline underline-offset-3 hover:no-underline hover:text-brand-grey" href="<%= @location.google_maps_url %>">Google Maps Link</a> |
+            <a class="text-brand-brown underline underline-offset-3 hover:no-underline hover:text-brand-grey" href="<%= @location.apple_maps_url %>">Apple Maps Link</a>
           </p>
         </div>
         <div class="lg:row-span-2 mt-8 lg:my-auto">
@@ -87,7 +87,7 @@
           <h2 class="text-2xl font-medium tracking-tight" id="course-description-<%= @location.slug %>">Course Description</h2>
           <p class="mt-6 text/6 text-gray-600"><%= simple_format(@location.course_description) %></p>
           <p class="mt-6 text-lg/6 text-gray-600">
-            <a class="text-[#54494B] underline underline-offset-[3px] hover:no-underline hover:text-[#9DA39A]" href="<%= @location.strava_route_url %>">Strava Route</a>
+            <a class="text-brand-brown underline underline-offset-3 hover:no-underline hover:text-brand-grey" href="<%= @location.strava_route_url %>">Strava Route</a>
           </p>
         </div>
         <div class="lg:row-span-2 mt-8 lg:my-auto lg:order-1">
@@ -105,20 +105,20 @@
         </div>
         <div class="max-w-lg lg:order-3">
           <h2 class="mt-9 lg:mt-0 text-2xl font-medium tracking-tight" id="event-rego-<%= @location.slug %>">Event Registration</h2>
-          <p class="mt-6 text/6 text-gray-600">To participate, you just need to be registered on this site. If you've run or signed up before, you're all set. Use the <%= link_to "forgot password form", forgot_password_path, class: "underline hover:no-underline" %> to reset your password or set it for the first time.</p>
-          <p class="mt-6 text/6 text-gray-600">To register as a new WS10 runner, fill in the <%= link_to "registration form", sign_up_path, class: "underline hover:no-underline" %> and then click on the confirmation link in your email.</p>
+          <p class="mt-6 text/6 text-gray-600">To participate, you just need to be registered on this site. If you've run or signed up before, you're all set. Use the <%= link_to "forgot password form", forgot_password_path, class: "text-brand-brown hover:text-brand-grey underline underline-offset-3 hover:no-underline" %> to reset your password or set it for the first time.</p>
+          <p class="mt-6 text/6 text-gray-600">To register as a new WS10 runner, fill in the <%= link_to "registration form", sign_up_path, class: "text-brand-brown hover:text-brand-grey underline underline-offset-3 hover:no-underline" %> and then click on the confirmation link in your email.</p>
 
           <% if @next_event && @next_event.location == @location && @next_event.has_social_links? %>
             <p class="mt-6 text/6 text-gray-600">
               Tell us you're coming (and help spread the word!) by indicating you will come to the
               <% if @next_event.strava_url.present? %>
-                <a class="text-[#54494B] underline underline-offset-[3px] hover:no-underline hover:text-[#9DA39A]" href="<%= @next_event.strava_url %>">Strava Event</a>
+                <a class="text-brand-brown underline underline-offset-3 hover:no-underline hover:text-brand-grey" href="<%= @next_event.strava_url %>">Strava Event</a>
               <% end %>
               <% if @next_event.facebook_url.present? && @next_event.strava_url.present? %>
                 or the
               <% end %>
               <% if @next_event.facebook_url.present? %>
-                <a class="text-[#54494B] underline underline-offset-[3px] hover:no-underline hover:text-[#9DA39A]" href="<%= @next_event.facebook_url %>">Facebook Event</a>
+                <a class="text-brand-brown underline underline-offset-3 hover:no-underline hover:text-brand-grey" href="<%= @next_event.facebook_url %>">Facebook Event</a>
               <% end %>.
             </p>
           <% end %>

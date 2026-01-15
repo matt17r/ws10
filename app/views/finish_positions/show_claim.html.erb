@@ -17,7 +17,7 @@
         <div class="px-4 py-5 sm:p-6">
           <div class="text-center">
             <div class="mb-6">
-              <div class="inline-flex items-center justify-center w-24 h-24 rounded-full bg-[#DB2955] text-white text-4xl font-bold">
+              <div class="inline-flex items-center justify-center w-24 h-24 rounded-full bg-primary text-white text-4xl font-bold">
                 <%= @position %>
               </div>
             </div>
@@ -41,7 +41,7 @@
               </p>
 
               <%= form_with url: claim_finish_token_path(params[:token_prefix], params[:position]), method: :post, class: "space-y-4" do %>
-                <%= button_tag type: "submit", class: "inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-[#DB2955] hover:bg-[#c02447] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#DB2955]" do %>
+                <%= button_tag type: "submit", class: "inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary" do %>
                   Claim Position #<%= @position %>
                 <% end %>
               <% end %>
@@ -49,7 +49,7 @@
               <% unless authenticated? %>
                 <p class="mt-4 text-sm text-gray-500">
                   You'll be asked to sign in before claiming your position.
-                  <%= link_to "Don't have an account? Sign up here", sign_up_path, class: "text-[#DB2955] hover:text-[#c02447]" %>
+                  <%= link_to "Don't have an account? Sign up here", sign_up_path, class: "text-primary hover:text-primary-hover" %>
                 </p>
               <% end %>
             <% end %>
@@ -58,7 +58,7 @@
       </div>
 
       <div class="mt-6 text-center">
-        <%= link_to "← Back to Event", event_path(@event.number), class: "text-[#DB2955] hover:text-[#c02447]" %>
+        <%= link_to "← Back to Event", event_path(@event.number), class: "text-primary hover:text-primary-hover" %>
       </div>
     </div>
   </div>

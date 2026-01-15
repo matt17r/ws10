@@ -8,10 +8,10 @@
     </div>
   <% end %>
   <div class="relative flex group/item relative">
-    <%= button_to "Sign out", sign_out_path, method: :delete, class: "flex items-center px-4 py-3 text-base font-semibold text-[#DB2955] cursor-pointer bg-blend-multiply hover:bg-black/[2.5%]" %>
+    <%= button_to "Sign out", sign_out_path, method: :delete, class: "flex items-center px-4 py-3 text-base font-semibold text-primary cursor-pointer bg-blend-multiply hover:bg-black/[2.5%]" %>
   </div>
 <% else %>
   <div class="relative flex group/item relative">
-    <%=link_to "Sign in/up", sign_in_path, class: "flex items-center px-4 py-3 text-base font-semibold text-[#DB2955] bg-blend-multiply hover:bg-black/[2.5%]" %>
+    <%=link_to "Sign in/up", sign_in_path, class: "flex items-center px-4 py-3 text-base font-semibold text-primary bg-blend-multiply hover:bg-black/[2.5%]" %>
   </div>
 <% end %>

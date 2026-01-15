@@ -53,7 +53,7 @@
         </table>
         <%= button_to "Delete All Results", results_destroy_all_path(event_id: @event.id), method: :delete, form: { data: { turbo_confirm: "Are you sure you want to delete all #{@event.results.count} results? This cannot be undone." }, class: "inline-block" }, class: "my-2 rounded-md border border-transparent bg-red-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-red-700 cursor-pointer" %>
       <% else %>
-        <%= button_to "Link all finish positions and times", result_link_path(event_id: @event.id), method: :post, form: { class: "inline-block" }, class: "rounded-md border border-transparent bg-primary px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary/90 cursor-pointer" %>
+        <%= button_to "Link all finish positions and times", result_link_path(event_id: @event.id), method: :post, form: { class: "inline-block" }, class: "rounded-md border border-transparent bg-primary px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-hover cursor-pointer" %>
       <% end %>
       <div class="my-3 grid grid-cols-1 font-sm md:grid-cols-2 lg:grid-cols-3">
         <div data-controller="search">
@@ -89,7 +89,7 @@
                     <input form="<%= form_id %>" type="number" name="finish_position[position]" id="<%= "#{dom_id(@event)}_#{dom_id(user, :position)}" %>"  min="1" class="block w-24 rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-primary sm:text-sm/6" />
                   </td>
                   <td>
-                    <input form="<%= form_id %>" type="submit" value="Add" class="justify-center rounded-md border border-transparent bg-primary px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary/[90%] cursor-pointer" />
+                    <input form="<%= form_id %>" type="submit" value="Add" class="justify-center rounded-md border border-transparent bg-primary px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-hover cursor-pointer" />
                   </td>
                 </tr>
               <% end %>
@@ -134,7 +134,7 @@
               </div>
 
               <div class="self-end">
-                <%= f.submit "Unknown", class: "rounded-md border border-transparent bg-primary px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary/90 cursor-pointer" %>
+                <%= f.submit "Unknown", class: "rounded-md border border-transparent bg-primary px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-hover cursor-pointer" %>
               </div>
 
               <div class="self-end">
@@ -179,7 +179,7 @@
               </div>
 
               <div class="my-4">
-                <%= f.submit "Add Finish Time", class: "justify-center rounded-md border border-transparent bg-primary px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary/[90%] cursor-pointer" %>
+                <%= f.submit "Add Finish Time", class: "justify-center rounded-md border border-transparent bg-primary px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-hover cursor-pointer" %>
               </div>
             <% end %>
             <%= button_to "Delete All Finish Times", finish_times_destroy_all_path(event_id: @event.id), method: :delete, form: { data: { turbo_confirm: "Are you sure you want to delete all #{@event.finish_times.count} finish times? This cannot be undone." } }, class: "my-4 rounded-md border border-transparent bg-red-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-red-700 cursor-pointer" %>
@@ -192,7 +192,7 @@
                   <%= f.file_field :file, accept: ".csv", class: "block rounded-md border border-gray-300 shadow-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-gray-50 file:text-gray-700 hover:file:bg-gray-100 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" %>
                 </div>
                 <div class="my-5">
-                  <%= f.submit "Upload times", class: "justify-center rounded-md border border-transparent bg-primary px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary/[90%] cursor-pointer" %>
+                  <%= f.submit "Upload times", class: "justify-center rounded-md border border-transparent bg-primary px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-hover cursor-pointer" %>
                 </div>
               <% end %>
 
@@ -211,7 +211,7 @@
                 </div>
 
                 <div class="my-4">
-                  <%= f.submit "Add Finish Time", class: "justify-center rounded-md border border-transparent bg-primary px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary/[90%] cursor-pointer" %>
+                  <%= f.submit "Add Finish Time", class: "justify-center rounded-md border border-transparent bg-primary px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-hover cursor-pointer" %>
                 </div>
               <% end %>
             </div>
