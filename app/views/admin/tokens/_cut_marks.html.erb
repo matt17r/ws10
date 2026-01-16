@@ -24,13 +24,17 @@
   <% x_positions.each do |x| %>
     <div class="cut-mark v" style="left: <%= x %>mm; top: 0mm;"></div>
     <div class="cut-mark v" style="left: <%= x %>mm; bottom: 0mm;"></div>
-    <div class="cut-mark v short" style="left: <%= x %>mm; top: <%= page_centre_y %>mm;"></div>
+  <% end %>
+
+  <%# Short vertical marks at centre intersecting with gaps %>
+  <% gap_y_positions.each do |y| %>
+    <div class="cut-mark v short" style="left: <%= page_centre_x %>mm; top: <%= y - 1 %>mm;"></div>
   <% end %>
 
   <%# Horizontal marks at row positions %>
   <% y_positions.each do |y| %>
     <div class="cut-mark h" style="top: <%= y %>mm; left: 0mm;"></div>
     <div class="cut-mark h" style="top: <%= y %>mm; right: 0mm;"></div>
-    <div class="cut-mark h" style="top: <%= y %>mm; left: <%= page_centre_x - 9 %>mm;"></div>
+    <div class="cut-mark h short" style="top: <%= y %>mm; left: <%= page_centre_x - 1 %>mm;"></div>
   <% end %>
 </div>

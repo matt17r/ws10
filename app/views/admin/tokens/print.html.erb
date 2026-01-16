@@ -76,7 +76,7 @@
 
     .cut-mark {
       position: absolute;
-      background: black;
+      background: #d1d5db;
       print-color-adjust: exact;
       -webkit-print-color-adjust: exact;
     }
@@ -93,6 +93,10 @@
 
     .cut-mark.v.short {
       height: 2mm;
+    }
+
+    .cut-mark.h.short {
+      width: 2mm;
     }
 
     .card-front {
@@ -226,7 +230,6 @@
   <% @tokens.each_slice(10).with_index do |page_tokens, page_index| %>
     <!-- Front side -->
     <div class="page">
-      <%= render partial: 'cut_marks' %>
       <div class="cards-container">
         <div class="cards-grid">
           <% page_tokens.each do |token| %>
@@ -251,6 +254,7 @@
 
     <!-- Back side -->
     <div class="page back">
+      <%= render partial: 'cut_marks' %>
       <div class="cards-container">
         <div class="cards-grid">
           <% page_tokens.each do |token| %>
