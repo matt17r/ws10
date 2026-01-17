@@ -1,6 +1,6 @@
 # WS10: Website and admin for Western Sydney 10 running events
 
-A Rails 8.0 application for managing running events with user registration, results tracking, and comprehensive admin tools.
+A Rails 8.1 application for managing running events with user registration, results tracking, and comprehensive admin tools.
 
 ## Features
 
@@ -16,7 +16,7 @@ A Rails 8.0 application for managing running events with user registration, resu
 
 ### Tech Stack
 
-- **Backend**: Rails 8.0 with Ruby 3.3.4
+- **Backend**: Rails 8.1 with Ruby 3.3.4
 - **Database**: SQLite (all environments)
 - **Frontend**: Stimulus, Turbo, Tailwind CSS, Importmap
 - **Background Jobs**: Solid Queue (runs in Puma process via `SOLID_QUEUE_IN_PUMA`)
@@ -26,11 +26,14 @@ A Rails 8.0 application for managing running events with user registration, resu
 
 ### Core Models
 
-- **Event** - Central entity representing running events with date, location, and number. Manages finish positions, times, and results
+- **Event** - Central entity representing running events with date and number. Belongs to a Location. Manages finish positions, times, and results
 - **User** - Handles authentication and user management with email confirmation. Links to results and volunteer assignments
 - **Result** - Links users to events with optional completion times and finish positions
 - **FinishPosition** / **FinishTime** - Track event completion data separately for flexible result management
 - **Volunteer** / **Role** / **Assignment** - Manage event staffing and user permissions (Administrator, Organiser)
+- **Location** - Manages event locations with course details, maps, facilities, and route information
+- **Badge** / **UserBadge** - Achievement badge system with levels (bronze, silver, gold, singular) tracking user milestones
+- **CheckIn** - Token-based event check-in system for tracking participant attendance
 
 ### Key Features
 

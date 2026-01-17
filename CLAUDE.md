@@ -5,7 +5,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Development Commands
 
 ### Basic Rails Commands
-- `bin/dev` - Start the Rails development server and Tailwind watch process
+- `bin/dev` - Start the Rails development server and Tailwind watch process (not normally required, the user runs the server constantly)
 - `bin/rails console` - Open Rails console for debugging
 - `bin/rails generate` - Generate Rails components (models, controllers, migrations)
 - `bin/rails db:migrate` - Run database migrations
@@ -23,24 +23,27 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `bin/rubocop` - Run Ruby style linter (uses rubocop-rails-omakase)
 
 ### Deployment (Kamal)
+Let the user handle deployment, but here are the commands you might need to suggest to them.
+
 - `kamal setup` - Initial deployment setup
 - `kamal deploy` - Deploy application
 - `kamal console` - Access production Rails console
 - `kamal shell` - SSH into production container
 - `kamal logs` - View production logs
 
-Note: Deployment requires `KAMAL_REGISTRY_PASSWORD` environment variable and SSH access to server specified in `config/deploy.yml`.
-
 ## Application Architecture
 
-This is a Rails 8.x application for managing running events with user registration and results tracking.
+This is a Rails 8.1 application for managing running events with user registration and results tracking.
 
 ### Core Models
-- **Event** (`app/models/event.rb`) - Central entity representing running events with date, location, and number. Manages finish positions, times, and results.
+- **Event** (`app/models/event.rb`) - Central entity representing running events with date and number. Belongs to a Location. Manages finish positions, times, and results.
 - **User** (`app/models/user.rb`) - Handles authentication and user management with email confirmation.
 - **Result** (`app/models/result.rb`) - Links users to events with optional completion times.
 - **FinishPosition** / **FinishTime** - Track event completion data.
 - **Volunteer** / **Role** / **Assignment** - Manage event staffing.
+- **Location** (`app/models/location.rb`) - Manages event locations/courses with route details, maps, facilities, and Strava integration.
+- **Badge** / **UserBadge** - Achievement badge system with levels (bronze, silver, gold, singular) tracking user milestones.
+- **CheckIn** (`app/models/check_in.rb`) - Token-based event check-in system for tracking participant attendance.
 
 ### Authentication
 Uses a custom authentication system (`app/controllers/concerns/authentication.rb`) with session-based login. No external auth gems like Devise.
@@ -86,7 +89,7 @@ All controllers inherit from `ApplicationController` which includes `Authenticat
 Models follow standard Rails patterns with Active Record. The `Event` model contains the main business logic for result notifications and user management.
 
 ### Email System
-Event-related emails are triggered automatically when `results_ready` is set to true on an Event. Uses Action Mailer with deliver_later for background processing.
+Event-related emails are triggered automatically when an event's status changes to `finalised`. Uses Action Mailer with deliver_later for background processing.
 
 ### Admin Features
 Admin functionality is separated into `app/controllers/admin/` namespace with `AdminAuthentication` concern for access control.
