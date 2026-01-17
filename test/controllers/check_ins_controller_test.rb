@@ -289,4 +289,118 @@ class CheckInsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to user_path
     assert_equal "Check-in not found.", flash[:alert]
   end
+
+  test "create_for_friend requires authentication" do
+    event = events(:draft_event)
+    event.update!(status: "in_progress")
+    token = CheckIn.token_for_event(event.number)
+
+    post check_in_friend_url(token), params: { barcode: "A000001" }
+
+    assert_redirected_to sign_in_path
+  end
+
+  test "create_for_friend requires current user to be checked in first" do
+    event = events(:draft_event)
+    event.update!(status: "in_progress")
+    user = users(:one)
+    friend = users(:three)
+    sign_in_as user
+    token = CheckIn.token_for_event(event.number)
+
+    post check_in_friend_url(token), params: { barcode: friend.barcode_string }
+
+    assert_redirected_to check_in_path(token)
+    assert_match(/check yourself in first/i, flash[:alert])
+  end
+
+  test "create_for_friend successfully checks in friend" do
+    event = events(:draft_event)
+    event.update!(status: "in_progress")
+    user = users(:one)
+    friend = users(:three)
+    sign_in_as user
+    CheckIn.create!(user: user, event: event, checked_in_at: Time.current)
+    token = CheckIn.token_for_event(event.number)
+
+    assert_difference "CheckIn.count", 1 do
+      post check_in_friend_url(token), params: { barcode: friend.barcode_string }
+    end
+
+    assert_redirected_to check_in_path(token)
+    assert event.check_ins.exists?(user: friend)
+  end
+
+  test "create_for_friend redirects back to check-in page after success" do
+    event = events(:draft_event)
+    event.update!(status: "in_progress")
+    user = users(:one)
+    friend = users(:three)
+    sign_in_as user
+    CheckIn.create!(user: user, event: event, checked_in_at: Time.current)
+    token = CheckIn.token_for_event(event.number)
+
+    post check_in_friend_url(token), params: { barcode: friend.barcode_string }
+
+    assert_redirected_to check_in_path(token)
+  end
+
+  test "create_for_friend shows error for invalid barcode" do
+    event = events(:draft_event)
+    event.update!(status: "in_progress")
+    user = users(:one)
+    sign_in_as user
+    CheckIn.create!(user: user, event: event, checked_in_at: Time.current)
+    token = CheckIn.token_for_event(event.number)
+
+    post check_in_friend_url(token), params: { barcode: "invalid" }
+
+    assert_redirected_to check_in_path(token)
+    assert_match(/No user found/i, flash[:alert])
+  end
+
+  test "create_for_friend shows error when friend already checked in" do
+    event = events(:draft_event)
+    event.update!(status: "in_progress")
+    user = users(:one)
+    friend = users(:three)
+    sign_in_as user
+    CheckIn.create!(user: user, event: event, checked_in_at: Time.current)
+    CheckIn.create!(user: friend, event: event, checked_in_at: Time.current)
+    token = CheckIn.token_for_event(event.number)
+
+    assert_no_difference "CheckIn.count" do
+      post check_in_friend_url(token), params: { barcode: friend.barcode_string }
+    end
+
+    assert_redirected_to check_in_path(token)
+    assert_match(/Could not check in/i, flash[:alert])
+  end
+
+  test "create_for_friend accepts lowercase barcode" do
+    event = events(:draft_event)
+    event.update!(status: "in_progress")
+    user = users(:one)
+    friend = users(:three)
+    sign_in_as user
+    CheckIn.create!(user: user, event: event, checked_in_at: Time.current)
+    token = CheckIn.token_for_event(event.number)
+
+    assert_difference "CheckIn.count", 1 do
+      post check_in_friend_url(token), params: { barcode: friend.barcode_string.downcase }
+    end
+
+    assert event.check_ins.exists?(user: friend)
+  end
+
+  test "create_for_friend redirects when no active event" do
+    user = users(:one)
+    sign_in_as user
+    token = CheckIn.token_for_event(999)
+
+    post check_in_friend_url(token), params: { barcode: "A000001" }
+
+    assert_redirected_to root_path
+    assert_equal "No active event for check-in.", flash[:alert]
+  end
 end

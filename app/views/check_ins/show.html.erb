@@ -30,6 +30,24 @@
                   You've already checked in to this event. See you at the start line!
                 </p>
               </div>
+
+              <div class="border-t border-gray-200 pt-6">
+                <% if flash[:check_in_message].present? %>
+                  <p class="mt-4 text-green-700 font-medium"><%= flash[:check_in_message] %></p>
+                <% end %>
+                <%= form_with url: check_in_friend_path(params[:token]), method: :post, class: "space-y-4" do |form| %>
+                  <div class="max-w-48 mx-auto">
+                    <%= form.label :barcode, "Check someone else in using their barcode:", class: "block text-lg font-medium text-gray-900" %>
+                    <%= form.text_field :barcode,
+                        placeholder: "A001234",
+                        class: "mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary text-2xl py-3 text-center uppercase tracking-wider",
+                        pattern: "[Aa]?\\d{1,6}",
+                        required: true,
+                        autocomplete: "off", autofocus: true %>
+                  </div>
+                  <%= form.submit "Check them in", class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary" %>
+                <% end %>
+              </div>
             <% else %>
               <div class="mb-6">
                 <div class="inline-flex items-center justify-center w-24 h-24 rounded-full bg-primary text-white text-4xl">

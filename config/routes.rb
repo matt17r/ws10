@@ -93,8 +93,10 @@ Rails.application.routes.draw do
 
   get "checkin/:token", to: "check_ins#show", as: :check_in, constraints: { token: /[a-f0-9]{8}/ }
   post "checkin/:token", to: "check_ins#create", constraints: { token: /[a-f0-9]{8}/ }
+  post "checkin/:token/friend", to: "check_ins#create_for_friend", as: :check_in_friend, constraints: { token: /[a-f0-9]{8}/ }
   delete "checkin/:id", to: "check_ins#destroy", as: :user_check_in, constraints: { id: /\d+/ }
 
   get ":token_prefix/:position", to: "finish_positions#show_claim", as: :claim_finish_token, constraints: { token_prefix: /[a-f0-9]{4}/, position: /\d{3}/ }
   post ":token_prefix/:position", to: "finish_positions#claim", constraints: { token_prefix: /[a-f0-9]{4}/, position: /\d{3}/ }
+  post ":token_prefix/:position/friend", to: "finish_positions#claim_for_friend", as: :claim_finish_for_friend, constraints: { token_prefix: /[a-f0-9]{4}/, position: /\d{3}/ }
 end

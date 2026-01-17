@@ -185,4 +185,59 @@ class UserTest < ActiveSupport::TestCase
       user.destroy
     end
   end
+
+  test "find_by_barcode returns user for valid barcode" do
+    user = users(:one)
+
+    found = User.find_by_barcode(user.barcode_string)
+
+    assert_equal user, found
+  end
+
+  test "find_by_barcode is case insensitive" do
+    user = users(:one)
+
+    found = User.find_by_barcode(user.barcode_string.downcase)
+
+    assert_equal user, found
+  end
+
+  test "find_by_barcode returns nil for invalid format" do
+    assert_nil User.find_by_barcode("B000001")
+    assert_nil User.find_by_barcode("invalid")
+    assert_nil User.find_by_barcode("")
+    assert_nil User.find_by_barcode(nil)
+  end
+
+  test "find_by_barcode returns nil for non-existent user" do
+    assert_nil User.find_by_barcode("A999999")
+  end
+
+  test "find_by_barcode accepts digits only" do
+    user = users(:one)
+
+    found = User.find_by_barcode(user.id.to_s)
+
+    assert_equal user, found
+  end
+
+  test "find_by_barcode accepts digits with leading zeros" do
+    user = users(:one)
+
+    found = User.find_by_barcode(sprintf("%06d", user.id))
+
+    assert_equal user, found
+  end
+
+  test "find_by_barcode! raises RecordNotFound for invalid barcode" do
+    assert_raises(ActiveRecord::RecordNotFound) do
+      User.find_by_barcode!("invalid")
+    end
+  end
+
+  test "find_by_barcode! raises RecordNotFound for non-existent user" do
+    assert_raises(ActiveRecord::RecordNotFound) do
+      User.find_by_barcode!("A999999")
+    end
+  end
 end

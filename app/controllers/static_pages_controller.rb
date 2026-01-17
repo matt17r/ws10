@@ -14,6 +14,11 @@ class StaticPagesController < ApplicationController
   def home
     @upcoming_events = Event.not_finalised.includes(:location).where("date >= ?", Date.today).order(:date).limit(3)
     @statistics = Event.home_statistics
+
+    if authenticated? && (active_event = @upcoming_events.find(&:active?))
+      @current_user_checked_in = active_event.check_ins.exists?(user: Current.session.user)
+      @active_event_token = CheckIn.token_for_event(active_event.number)
+    end
   end
 
   def results

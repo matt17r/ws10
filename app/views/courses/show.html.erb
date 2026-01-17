@@ -55,7 +55,11 @@
 
       <% if active_event = Event.find_by(status: "in_progress", location: @location) %>
         <div class="mt-8 text-center">
-          <%= link_to "Event Open: Check In Now!", check_in_path(CheckIn.token_for_event(active_event.number)), class: "inline-flex items-center justify-center px-6 py-3 rounded-full border border-transparent bg-primary shadow-md whitespace-nowrap text-base font-medium text-white hover:bg-primary-hover" %>
+          <% if authenticated? && active_event.check_ins.exists?(user: Current.session.user) %>
+            <%= link_to "Check Others In", check_in_path(CheckIn.token_for_event(active_event.number)), class: "inline-flex items-center justify-center px-6 py-3 rounded-full border border-primary whitespace-nowrap text-base font-medium text-primary hover:bg-primary-bg" %>
+          <% else %>
+            <%= link_to "Check In Now!", check_in_path(CheckIn.token_for_event(active_event.number)), class: "inline-flex items-center justify-center px-6 py-3 rounded-full border border-transparent bg-primary shadow-md whitespace-nowrap text-base font-medium text-white hover:bg-primary-hover" %>
+          <% end %>
         </div>
       <% end %>
 

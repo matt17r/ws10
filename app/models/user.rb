@@ -104,6 +104,21 @@ class User < ApplicationRecord
     end
   end
 
+  def self.find_by_barcode(barcode)
+    return nil if barcode.blank?
+
+    user_id = case barcode.to_s.strip
+    when /\AA(\d+)\z/i then $1.to_i
+    when /\A\d+\z/ then barcode.to_i
+    end
+
+    find_by(id: user_id) if user_id
+  end
+
+  def self.find_by_barcode!(barcode)
+    find_by_barcode(barcode) || raise(ActiveRecord::RecordNotFound, "No user found with barcode: #{barcode}")
+  end
+
   private
 
   def emoji_must_be_single_emoji

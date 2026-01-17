@@ -35,7 +35,11 @@
                 <%= link_to "Course Info", course_path(event.location), class: "inline-flex items-center justify-center px-4 py-2 rounded-full border border-primary whitespace-nowrap text-base font-medium text-primary hover:bg-primary-bg" %>
               <% end %>
               <% if index == 0 && event.active? %>
-                <%= link_to "Check In Now!", check_in_path(CheckIn.token_for_event(event.number)), class: "inline-flex items-center justify-center px-4 py-[calc(theme(spacing.2)-1px)] rounded-full border border-transparent bg-primary shadow-md whitespace-nowrap text-base font-medium text-white" %>
+                <% if @current_user_checked_in %>
+                  <%= link_to "Check Others In", check_in_path(@active_event_token), class: "inline-flex items-center justify-center px-4 py-[calc(theme(spacing.2)-1px)] rounded-full border border-transparent bg-primary shadow-md whitespace-nowrap text-base font-medium text-white" %>
+                <% else %>
+                  <%= link_to "Check In Now!", check_in_path(CheckIn.token_for_event(event.number)), class: "inline-flex items-center justify-center px-4 py-[calc(theme(spacing.2)-1px)] rounded-full border border-transparent bg-primary shadow-md whitespace-nowrap text-base font-medium text-white" %>
+                <% end %>
               <% end %>
             </div>
           </div>

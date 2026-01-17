@@ -35,6 +35,78 @@
                 </div>
                 <p class="text-gray-600 mb-4">Please see an organiser if there's been an error.</p>
               </div>
+            <% elsif authenticated? && @user_has_claimed %>
+              <p class="text-sm text-gray-500 mb-6">
+                You've already claimed position #<%= @user_claimed_position.position %> for this event.<br>
+                Please see an organiser if there's been an error.
+              </p>
+
+              <div class="mb-8">
+                <%= form_with url: claim_finish_for_friend_path(params[:token_prefix], params[:position]), method: :post, class: "space-y-4" do |form| %>
+                  <div class="max-w-48 mx-auto">
+                    <%= form.label :barcode, "Assign to someone else using their barcode:", class: "block text-lg font-medium text-gray-900" %>
+                    <%= form.text_field :barcode,
+                        placeholder: "A001234",
+                        class: "mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary text-2xl py-3 text-center uppercase tracking-wider",
+                        pattern: "[Aa]?\\d{1,6}",
+                        required: true,
+                        autocomplete: "off",
+                        autofocus: true %>
+                  </div>
+
+                  <%= form.submit "Assign", class: "inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary" %>
+                <% end %>
+              </div>
+            <% elsif authenticated? %>
+              <div data-controller="helper-mode">
+                <div data-helper-mode-target="claimSelf">
+                  <p class="text-gray-600 mb-8">
+                    Click the button below to claim this finish position.
+                  </p>
+
+                  <%= form_with url: claim_finish_token_path(params[:token_prefix], params[:position]), method: :post, class: "space-y-4" do %>
+                    <%= button_tag type: "submit", class: "inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary" do %>
+                      Claim Position #<%= @position %>
+                    <% end %>
+                  <% end %>
+
+                  <div class="mt-8 pt-6 border-t border-gray-200">
+                    <button type="button" data-action="helper-mode#showFriendForm" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                      Assign to someone else
+                    </button>
+                  </div>
+                </div>
+
+                <div data-helper-mode-target="claimFriend" class="hidden mb-8">
+                  <div class="mb-6 flex items-center justify-center">
+                    <label class="inline-flex items-center gap-3 cursor-pointer">
+                      <div class="group relative inline-flex w-11 shrink-0 rounded-full bg-gray-200 p-0.5 inset-ring inset-ring-gray-900/5 outline-offset-2 outline-primary transition-colors duration-200 ease-in-out has-checked:bg-primary has-focus-visible:outline-2">
+                        <span class="size-5 rounded-full bg-white shadow-xs ring-1 ring-gray-900/5 transition-transform duration-200 ease-in-out group-has-checked:translate-x-5"></span>
+                        <input type="checkbox" data-action="helper-mode#toggle" data-helper-mode-target="toggleCheckbox" class="absolute inset-0 size-full appearance-none focus:outline-hidden" />
+                      </div>
+                      <div class="text-left">
+                        <div class="text-base font-semibold text-gray-900">Helper mode</div>
+                        <div class="text-sm text-gray-600">Keep assigning to others</div>
+                      </div>
+                    </label>
+                  </div>
+
+                  <%= form_with url: claim_finish_for_friend_path(params[:token_prefix], params[:position]), method: :post, class: "space-y-4" do |form| %>
+                    <div class="max-w-48 mx-auto">
+                      <%= form.label :barcode, "Assign to runner with barcode:", class: "block text-lg font-medium text-gray-900" %>
+                      <%= form.text_field :barcode,
+                          placeholder: "A001234",
+                          class: "mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary text-2xl py-3 text-center uppercase tracking-wider",
+                          pattern: "[Aa]?\\d{1,6}",
+                          required: true,
+                          autocomplete: "off",
+                          autofocus: true %>
+                    </div>
+
+                    <%= form.submit "Assign", class: "inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary" %>
+                  <% end %>
+                </div>
+              </div>
             <% else %>
               <p class="text-gray-600 mb-8">
                 Click the button below to claim this finish position.
@@ -46,12 +118,10 @@
                 <% end %>
               <% end %>
 
-              <% unless authenticated? %>
-                <p class="mt-4 text-sm text-gray-500">
-                  You'll be asked to sign in before claiming your position.
-                  <%= link_to "Don't have an account? Sign up here", sign_up_path, class: "text-primary hover:text-primary-hover" %>
-                </p>
-              <% end %>
+              <p class="mt-4 text-sm text-gray-500">
+                You'll be asked to sign in before claiming your position.<br>
+                <%= link_to "Don't have an account? Sign up here", sign_up_path, class: "text-primary hover:text-primary-hover" %>
+              </p>
             <% end %>
           </div>
         </div>

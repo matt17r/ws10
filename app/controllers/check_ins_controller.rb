@@ -1,7 +1,7 @@
 class CheckInsController < ApplicationController
   include AdminAuthentication
 
-  skip_before_action :require_admin!, only: [ :show, :create, :destroy ]
+  skip_before_action :require_admin!, only: [ :show, :create, :create_for_friend, :destroy ]
   allow_unauthenticated_access only: [ :show, :create ]
 
   def show
@@ -35,6 +35,34 @@ class CheckInsController < ApplicationController
     redirect_to user_path
   rescue ActiveRecord::RecordInvalid => e
     redirect_to user_path, alert: "Could not check in: #{e.message}"
+  end
+
+  def create_for_friend
+    @event = find_active_event
+    parse_token! if @event
+
+    unless @event
+      redirect_to root_path, alert: "No active event for check-in."
+      return
+    end
+
+    unless current_user_checked_in?
+      redirect_to check_in_path(params[:token]), alert: "Please check yourself in first."
+      return
+    end
+
+    friend = User.find_by_barcode(params[:barcode])
+
+    unless friend
+      redirect_to check_in_path(params[:token]), alert: "No user found with barcode #{params[:barcode]}. Please check the barcode and try again."
+      return
+    end
+
+    perform_check_in!(friend)
+    flash[:check_in_message] = "#{friend.display_name} has been checked in!"
+    redirect_to check_in_path(params[:token]), notice: "Success!"
+  rescue ActiveRecord::RecordInvalid => e
+    redirect_to check_in_path(params[:token]), alert: "Could not check in #{friend.display_name}: #{e.message}"
   end
 
   def destroy
@@ -83,7 +111,7 @@ class CheckInsController < ApplicationController
   def perform_check_in!(user)
     CheckIn.transaction do
       if @event.check_ins.exists?(user: user)
-        raise ActiveRecord::RecordInvalid.new(CheckIn.new), "You have already checked in to this event"
+        raise ActiveRecord::RecordInvalid.new(CheckIn.new), "Already checked in to this event"
       end
 
       @event.check_ins.create!(user: user, checked_in_at: Time.current)

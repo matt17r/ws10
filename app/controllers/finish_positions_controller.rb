@@ -10,6 +10,11 @@ class FinishPositionsController < ApplicationController
     end
 
     @claimed_position = @event.finish_positions.find_by(position: @position) if position_claimed?
+
+    if authenticated?
+      @user_claimed_position = @event.finish_positions.find_by(user: Current.session.user)
+      @user_has_claimed = @user_claimed_position.present?
+    end
   end
 
   def claim
@@ -30,6 +35,37 @@ class FinishPositionsController < ApplicationController
     redirect_to user_path, notice: "Successfully claimed position ##{@position}!"
   rescue ActiveRecord::RecordInvalid => e
     redirect_to user_path, alert: "Could not claim position: #{e.message}"
+  rescue ActiveRecord::RecordNotFound => e
+    redirect_to root_path, alert: e.message
+  end
+
+  def claim_for_friend
+    parse_token!
+
+    unless @event
+      redirect_to root_path, alert: "No active event. Please contact the organizers."
+      return
+    end
+
+    friend = User.find_by_barcode(params[:barcode])
+
+    unless friend
+      redirect_to claim_finish_token_path(params[:token_prefix], params[:position]),
+                  alert: "No user found with barcode #{params[:barcode]}. Please check the barcode and try again."
+      return
+    end
+
+    existing_position = @event.finish_positions.find_by(user: friend)
+    if existing_position
+      redirect_to claim_finish_token_path(params[:token_prefix], params[:position]),
+                  alert: "#{friend.display_name} has already claimed position ##{existing_position.position}. Please see an organiser."
+      return
+    end
+
+    claim_position!(friend)
+    redirect_to user_results_path(friend.barcode_string), notice: "Successfully claimed position ##{@position} for #{friend.display_name}!"
+  rescue ActiveRecord::RecordInvalid => e
+    redirect_to claim_finish_token_path(params[:token_prefix], params[:position]), alert: "Could not claim position: #{e.message}"
   rescue ActiveRecord::RecordNotFound => e
     redirect_to root_path, alert: e.message
   end

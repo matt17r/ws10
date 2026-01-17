@@ -1,21 +1,9 @@
 require "test_helper"
 
 class UserBadgeTest < ActiveSupport::TestCase
-  def create_badge(overrides = {})
-    attrs = {
-      name: "Test",
-      slug: "test-#{SecureRandom.hex(4)}",
-      badge_family: "test",
-      level: "bronze",
-      level_order: rand(1..100),
-      repeatable: false
-    }.merge(overrides)
-    Badge.create!(attrs)
-  end
-
   test "can create a valid user_badge" do
     user = users(:one)
-    badge = create_badge
+    badge = Badge.all.sample
     event = events(:one)
     user_badge = UserBadge.new(user: user, badge: badge, event: event)
     assert user_badge.valid?
@@ -23,7 +11,7 @@ class UserBadgeTest < ActiveSupport::TestCase
 
   test "automatically sets earned_at on creation" do
     user = users(:one)
-    badge = create_badge
+    badge = Badge.all.sample
     event = events(:one)
     user_badge = UserBadge.create!(user: user, badge: badge, event: event)
     assert_not_nil user_badge.earned_at
@@ -32,7 +20,7 @@ class UserBadgeTest < ActiveSupport::TestCase
 
   test "does not override manually set earned_at" do
     user = users(:one)
-    badge = create_badge
+    badge = Badge.all.sample
     event = events(:one)
     past_time = 2.days.ago
     user_badge = UserBadge.create!(user: user, badge: badge, event: event, earned_at: past_time)
@@ -41,7 +29,7 @@ class UserBadgeTest < ActiveSupport::TestCase
 
   test "requires earned_at" do
     user = users(:one)
-    badge = create_badge
+    badge = Badge.all.sample
     event = events(:one)
     user_badge = UserBadge.create!(user: user, badge: badge, event: event)
     user_badge.earned_at = nil
@@ -51,7 +39,7 @@ class UserBadgeTest < ActiveSupport::TestCase
 
   test "allows multiple user_badges for same user and badge" do
     user = users(:one)
-    badge = create_badge
+    badge = Badge.all.sample
     event = events(:one)
     UserBadge.create!(user: user, badge: badge, event: event)
     second_badge = UserBadge.new(user: user, badge: badge, event: event)
@@ -59,7 +47,7 @@ class UserBadgeTest < ActiveSupport::TestCase
   end
 
   test "database enforces NOT NULL on user_id" do
-    badge = create_badge
+    badge = Badge.all.sample
     user_badge = UserBadge.new(badge: badge)
     assert_raises(ActiveRecord::NotNullViolation) { user_badge.save(validate: false) }
   end
@@ -72,19 +60,17 @@ class UserBadgeTest < ActiveSupport::TestCase
 
   test "database enforces NOT NULL on earned_at" do
     user = users(:one)
-    badge = create_badge
+    badge = Badge.all.sample
     user_badge = UserBadge.new(user: user, badge: badge, earned_at: nil)
     assert_raises(ActiveRecord::NotNullViolation) { user_badge.save(validate: false) }
   end
 
   test "recent scope returns badges earned within last hour" do
     user = users(:one)
-    badge = create_badge
+    badge1, badge2 = Badge.all.sample(2)
     event = events(:one)
-    recent_badge = UserBadge.create!(user: user, badge: badge, event: event)
-
-    old_badge_data = create_badge
-    old_badge = UserBadge.create!(user: user, badge: old_badge_data, event: event, earned_at: 2.hours.ago)
+    recent_badge = UserBadge.create!(user: user, badge: badge1, event: event)
+    old_badge = UserBadge.create!(user: user, badge: badge2, event: event, earned_at: 2.hours.ago)
 
     recent = UserBadge.recent
     assert_includes recent, recent_badge
@@ -95,8 +81,7 @@ class UserBadgeTest < ActiveSupport::TestCase
     user = users(:one)
     event1 = events(:one)
     event2 = events(:two)
-    badge1 = create_badge
-    badge2 = create_badge
+    badge1, badge2 = Badge.all.sample(2)
 
     event1_badge = UserBadge.create!(user: user, badge: badge1, event: event1)
     event2_badge = UserBadge.create!(user: user, badge: badge2, event: event2)
@@ -108,7 +93,7 @@ class UserBadgeTest < ActiveSupport::TestCase
 
   test "display_name includes year for all-seasons badges" do
     user = users(:one)
-    badge = create_badge(name: "All Seasons", badge_family: "all-seasons")
+    badge = badges(:all_seasons)
     event = events(:one)
     earned_date = Date.new(2025, 12, 15)
     user_badge = UserBadge.create!(user: user, badge: badge, event: event, earned_at: earned_date)
@@ -118,7 +103,7 @@ class UserBadgeTest < ActiveSupport::TestCase
 
   test "display_name shows just badge name for non all-seasons badges" do
     user = users(:one)
-    badge = create_badge(name: "Centurion (Bronze)", badge_family: "centurion")
+    badge = badges(:centurion_bronze)
     event = events(:one)
     user_badge = UserBadge.create!(user: user, badge: badge, event: event)
 
@@ -127,7 +112,7 @@ class UserBadgeTest < ActiveSupport::TestCase
 
   test "requires event_id on creation" do
     user = users(:one)
-    badge = create_badge
+    badge = Badge.all.sample
     user_badge = UserBadge.new(user: user, badge: badge)
     assert_not user_badge.valid?
     assert_includes user_badge.errors[:event_id], "can't be blank"
@@ -135,14 +120,14 @@ class UserBadgeTest < ActiveSupport::TestCase
 
   test "database enforces NOT NULL on event_id" do
     user = users(:one)
-    badge = create_badge
+    badge = Badge.all.sample
     user_badge = UserBadge.new(user: user, badge: badge, event_id: nil)
     assert_raises(ActiveRecord::NotNullViolation) { user_badge.save(validate: false) }
   end
 
   test "database enforces foreign key constraint on event_id" do
     user = users(:one)
-    badge = create_badge
+    badge = Badge.all.sample
     user_badge = UserBadge.new(user: user, badge: badge, event_id: 999999, earned_at: Time.current)
     assert_raises(ActiveRecord::InvalidForeignKey) { user_badge.save(validate: false) }
   end
