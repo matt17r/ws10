@@ -1,7 +1,7 @@
 class Event < ApplicationRecord
   include HomeStatistics
 
-  enum :status, { draft: "draft", in_progress: "in_progress", finalised: "finalised" }
+  enum :status, { draft: "draft", in_progress: "in_progress", finalised: "finalised", abandoned: "abandoned", cancelled: "cancelled" }
 
   after_update :send_results_emails_if_finalised
   after_update :invalidate_statistics_cache_if_finalised
@@ -15,7 +15,9 @@ class Event < ApplicationRecord
   has_many :check_ins
   has_many :checked_in_users, through: :check_ins, source: :user
 
-  scope :not_finalised, -> { where.not(status: "finalised") }
+  scope :not_finalised, -> { where.not(status: [ "finalised", "abandoned", "cancelled" ]) }
+  scope :upcoming_for_home, -> { where.not(status: [ "finalised", "cancelled" ]) }
+  scope :public_visible, -> { where(status: [ "in_progress", "finalised", "abandoned", "cancelled" ]) }
 
   validates :date, presence: true
   validates :number, numericality: { only_integer: true, greater_than: 0 }
@@ -51,6 +53,7 @@ class Event < ApplicationRecord
   end
 
   def activate!
+    raise "Cannot activate an abandoned or cancelled event" if abandoned? || cancelled?
     Event.transaction do
       Event.where(status: "in_progress").where.not(id: id).update_all(status: "draft")
       update!(status: "in_progress")
@@ -59,6 +62,16 @@ class Event < ApplicationRecord
 
   def deactivate!
     update!(status: "draft")
+  end
+
+  def abandon!
+    raise "Cannot abandon a finalised event" if finalised?
+    update!(status: "abandoned")
+  end
+
+  def archive_as_cancelled!
+    raise "Can only archive abandoned events" unless abandoned?
+    update!(status: "cancelled")
   end
 
   private

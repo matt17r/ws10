@@ -45,15 +45,27 @@
                   </div>
                 </div>
                 <div class="mt-1 text-3xl font-semibold tracking-tight text-primary"><%= event.date.strftime("%-d %B") %></div>
+              <% elsif event.abandoned? || event.cancelled? %>
+                <div class="mt-1 text-3xl font-semibold tracking-tight text-red-500 line-through"><%= event.date.strftime("%-d %B") %></div>
+                <div class="text-sm text-red-600 mt-1">Cancelled</div>
+              <% elsif event.finalised? %>
+                <div class="mt-1 text-3xl font-semibold tracking-tight text-gray-500 line-through"><%= event.date.strftime("%-d %B") %></div>
               <% else %>
-                <div class="mt-1 text-3xl font-semibold tracking-tight <%= event.finalised? ? 'text-gray-500 line-through' : 'text-gray-900' %>"><%= event.date.strftime("%-d %B") %></div>
+                <div class="mt-1 text-3xl font-semibold tracking-tight text-gray-900"><%= event.date.strftime("%-d %B") %></div>
               <% end %>
             </div>
           <% end %>
         </div>
       </div>
 
-      <% if active_event = Event.find_by(status: "in_progress", location: @location) %>
+      <% if @abandoned_event %>
+        <div class="mt-8 p-6 bg-red-50 border-2 border-red-500 rounded-lg text-center">
+          <h2 class="text-3xl font-bold text-red-600 mb-2">Event Cancelled</h2>
+          <p class="text-xl text-red-800">
+            The <%= @abandoned_event.date.strftime("%-d %B") %> event has been cancelled<%= ": #{@abandoned_event.cancellation_reason}" if @abandoned_event.cancellation_reason.present? %>.
+          </p>
+        </div>
+      <% elsif active_event = Event.find_by(status: "in_progress", location: @location) %>
         <div class="mt-8 text-center">
           <% if authenticated? && active_event.check_ins.exists?(user: Current.session.user) %>
             <%= link_to "Check Others In", check_in_path(CheckIn.token_for_event(active_event.number)), class: "inline-flex items-center justify-center px-6 py-3 rounded-full border border-primary whitespace-nowrap text-base font-medium text-primary hover:bg-primary-bg" %>

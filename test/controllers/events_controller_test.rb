@@ -113,4 +113,84 @@ class EventsControllerTest < ActionDispatch::IntegrationTest
     get event_url(event)
     assert_response :success
   end
+
+  test "index should show abandoned and cancelled events to public" do
+    abandoned_event = events(:one)
+    cancelled_event = events(:two)
+    draft_event = events(:draft_event)
+
+    abandoned_event.update!(status: "abandoned")
+    cancelled_event.update!(status: "cancelled")
+    draft_event.update!(status: "draft")
+
+    get events_url
+    assert_response :success
+
+    events_shown = assigns(:events)
+    assert_includes events_shown, abandoned_event
+    assert_includes events_shown, cancelled_event
+    assert_not_includes events_shown, draft_event
+  end
+
+  test "non-admin users can view abandoned events" do
+    event = events(:draft_event)
+    event.update!(status: "abandoned")
+
+    get event_url(event)
+    assert_response :success
+  end
+
+  test "non-admin users can view cancelled events" do
+    event = events(:draft_event)
+    event.update!(status: "cancelled")
+
+    get event_url(event)
+    assert_response :success
+  end
+
+  test "should require admin for abandon" do
+    event = events(:draft_event)
+    event.update!(status: "draft")
+
+    post abandon_admin_event_url(number: event.number)
+    assert_response :not_found
+    event.reload
+    assert_not event.abandoned?
+  end
+
+  test "admin should be able to abandon event" do
+    admin_user = users(:one)
+    sign_in_as(admin_user)
+    event = events(:draft_event)
+    event.update!(status: "draft")
+
+    post abandon_admin_event_url(number: event.number)
+    assert_redirected_to dashboard_path
+
+    event.reload
+    assert event.abandoned?
+  end
+
+  test "should require admin for archive" do
+    event = events(:draft_event)
+    event.update!(status: "abandoned")
+
+    post archive_admin_event_url(number: event.number)
+    assert_response :not_found
+    event.reload
+    assert_not event.cancelled?
+  end
+
+  test "admin should be able to archive abandoned event" do
+    admin_user = users(:one)
+    sign_in_as(admin_user)
+    event = events(:draft_event)
+    event.update!(status: "abandoned")
+
+    post archive_admin_event_url(number: event.number)
+    assert_redirected_to dashboard_path
+
+    event.reload
+    assert event.cancelled?
+  end
 end

@@ -297,4 +297,135 @@ class EventTest < ActiveSupport::TestCase
 
     assert_empty checked_in_unplaced
   end
+
+  test "enum provides abandoned? predicate" do
+    event = events(:draft_event)
+    event.update!(status: "abandoned")
+    assert event.abandoned?
+    assert_not event.draft?
+    assert_not event.in_progress?
+    assert_not event.finalised?
+    assert_not event.cancelled?
+  end
+
+  test "enum provides cancelled? predicate" do
+    event = events(:draft_event)
+    event.update!(status: "cancelled")
+    assert event.cancelled?
+    assert_not event.draft?
+    assert_not event.in_progress?
+    assert_not event.finalised?
+    assert_not event.abandoned?
+  end
+
+  test "upcoming_for_home scope includes abandoned events" do
+    draft_event = events(:draft_event)
+    abandoned_event = events(:one)
+    cancelled_event = events(:two)
+
+    draft_event.update!(status: "draft")
+    abandoned_event.update!(status: "abandoned")
+    cancelled_event.update!(status: "cancelled")
+
+    upcoming = Event.upcoming_for_home
+    assert_includes upcoming, draft_event
+    assert_includes upcoming, abandoned_event
+    assert_not_includes upcoming, cancelled_event
+  end
+
+  test "not_finalised scope excludes abandoned and cancelled events" do
+    draft_event = events(:draft_event)
+    abandoned_event = events(:one)
+    cancelled_event = events(:two)
+
+    draft_event.update!(status: "draft")
+    abandoned_event.update!(status: "abandoned")
+    cancelled_event.update!(status: "cancelled")
+
+    not_finalised = Event.not_finalised
+    assert_includes not_finalised, draft_event
+    assert_not_includes not_finalised, abandoned_event
+    assert_not_includes not_finalised, cancelled_event
+  end
+
+  test "abandon! works for draft events" do
+    event = events(:draft_event)
+    event.update!(status: "draft")
+    event.abandon!
+    assert event.reload.abandoned?
+  end
+
+  test "abandon! works for in_progress events" do
+    event = events(:draft_event)
+    event.update!(status: "in_progress")
+    event.abandon!
+    assert event.reload.abandoned?
+  end
+
+  test "abandon! fails for finalised events" do
+    event = events(:draft_event)
+    event.update!(status: "finalised")
+
+    error = assert_raises(RuntimeError) do
+      event.abandon!
+    end
+    assert_equal "Cannot abandon a finalised event", error.message
+  end
+
+  test "archive_as_cancelled! works for abandoned events" do
+    event = events(:draft_event)
+    event.update!(status: "abandoned")
+    event.archive_as_cancelled!
+    assert event.reload.cancelled?
+  end
+
+  test "archive_as_cancelled! fails for non-abandoned events" do
+    event = events(:draft_event)
+    event.update!(status: "draft")
+
+    error = assert_raises(RuntimeError) do
+      event.archive_as_cancelled!
+    end
+    assert_equal "Can only archive abandoned events", error.message
+  end
+
+  test "activate! fails for abandoned events" do
+    event = events(:draft_event)
+    event.update!(status: "abandoned")
+
+    error = assert_raises(RuntimeError) do
+      event.activate!
+    end
+    assert_equal "Cannot activate an abandoned or cancelled event", error.message
+  end
+
+  test "activate! fails for cancelled events" do
+    event = events(:draft_event)
+    event.update!(status: "cancelled")
+
+    error = assert_raises(RuntimeError) do
+      event.activate!
+    end
+    assert_equal "Cannot activate an abandoned or cancelled event", error.message
+  end
+
+  test "should not send emails when transitioning to abandoned" do
+    event = events(:draft_event)
+    event.update!(status: "draft")
+    event.results.create!(user: users(:one), time: 1600)
+
+    assert_no_enqueued_jobs do
+      event.update!(status: "abandoned")
+    end
+  end
+
+  test "should not send emails when transitioning to cancelled" do
+    event = events(:draft_event)
+    event.update!(status: "abandoned")
+    event.results.create!(user: users(:one), time: 1600)
+
+    assert_no_enqueued_jobs do
+      event.update!(status: "cancelled")
+    end
+  end
 end

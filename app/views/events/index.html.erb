@@ -39,10 +39,32 @@
                 <tbody class="divide-y divide-gray-200 bg-white">
                   <% @events.each do |event| %>
                     <tr class="hover:bg-brand-green/50">
-                      <td class="whitespace-nowrap pl-4 pr-3 py-5 text-2xl text-gray-700"><%= link_to "##{event.number} – #{event.location}", event %></td>
+                      <td class="pl-4 pr-3 py-5 text-2xl text-gray-700">
+                        <%= link_to event do %>
+                          <div class="flex items-center gap-2">
+                            <span>#<%= event.number %> – <%= event.location %></span>
+                            <% if event.abandoned? %>
+                              <span class="inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/20">CANCELLED</span>
+                            <% elsif event.cancelled? %>
+                              <span class="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/20">CANCELLED</span>
+                            <% end %>
+                          </div>
+                          <% if (event.abandoned? || event.cancelled?) && event.cancellation_reason.present? %>
+                            <div class="text-sm text-gray-600 mt-1"><%= event.cancellation_reason %></div>
+                          <% end %>
+                        <% end %>
+                      </td>
                       <td class="whitespace-nowrap px-3 py-5 text-2xl text-gray-700"><%= link_to l(event.date), event %></td>
-                      <td class="whitespace-nowrap px-3 py-5 text-2xl text-gray-700"><%= link_to (event.results.count + event.volunteers.count), event %></td>
-                      <td class="whitespace-nowrap pl-3 pr-4 py-5 text-2xl text-gray-700"><%= link_to event.results.order(Result.arel_table[:time].asc.nulls_last).first&.time_string || "N/A", event %></td>
+                      <td class="whitespace-nowrap px-3 py-5 text-2xl text-gray-700">
+                        <%= link_to event do %>
+                          <%= (event.abandoned? || event.cancelled?) ? "N/A" : (event.results.count + event.volunteers.count) %>
+                        <% end %>
+                      </td>
+                      <td class="whitespace-nowrap pl-3 pr-4 py-5 text-2xl text-gray-700">
+                        <%= link_to event do %>
+                          <%= (event.abandoned? || event.cancelled?) ? "N/A" : (event.results.order(Result.arel_table[:time].asc.nulls_last).first&.time_string || "N/A") %>
+                        <% end %>
+                      </td>
                     </tr>
                   <% end %>
                 </tbody>

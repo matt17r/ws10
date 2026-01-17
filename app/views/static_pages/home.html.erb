@@ -13,9 +13,15 @@
         <div class="relative -m-2 grid grid-cols-1 rounded-4xl max-lg:mx-auto max-lg:w-full max-lg:max-w-md overflow-hidden">
         <% if index == 0 %>
           <%= link_to course_path(event.location), class: "absolute top-0 right-0 w-16 h-16" do %>
-            <div class="bg-primary absolute transform rotate-45 text-center text-white font-semibold py-1 right-[-40px] top-[32px] w-[170px]">
-              Next Event
-            </div>
+            <% if event.abandoned? %>
+              <div class="bg-red-600 absolute transform rotate-45 text-center text-white font-semibold py-1 right-[-40px] top-[32px] w-[170px]">
+                CANCELLED
+              </div>
+            <% else %>
+              <div class="bg-primary absolute transform rotate-45 text-center text-white font-semibold py-1 right-[-40px] top-[32px] w-[170px]">
+                Next Event
+              </div>
+            <% end %>
           <% end %>
         <% end %>
           <div class="rounded-4xl bg-white p-10 pb-9 shadow-2xl ring-1 ring-black/25 ring-inset">
@@ -27,6 +33,9 @@
             <% end %>
             <%= link_to course_path(event.location) do %>
               <div class="mt-8 text-5xl font-medium <%= index == 0 ? "text-primary" : "text-gray-950" %>"><%= event.date.strftime("%-d %b") %></div>
+            <% end %>
+            <% if event.abandoned? && event.cancellation_reason.present? %>
+              <p class="mt-2 text-sm text-red-600"><%= event.cancellation_reason %></p>
             <% end %>
             <div class="mt-8 flex gap-2 flex-wrap">
               <% if index == 0 && !event.active? %>

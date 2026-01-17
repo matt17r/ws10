@@ -42,6 +42,8 @@ Rails.application.routes.draw do
           get :edit_results
           post :activate
           post :deactivate
+          post :abandon
+          post :archive
         end
       end
       resources :locations, controller: "admin/locations", param: :slug

@@ -218,7 +218,32 @@
           <% end %>
         </div>
       </div>
-    <% else %>
+    <% end %>
+
+    <% abandoned_events = Event.where(status: "abandoned").order(date: :asc) %>
+    <% if abandoned_events.any? %>
+      <div class="mt-8 mb-8">
+        <h2 class="text-pretty text-3xl font-medium tracking-tight text-gray-950 mb-4">Cancelled Events Pending Archival</h2>
+        <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+          <% abandoned_events.each do |event| %>
+            <div class="flex items-center justify-between mb-3 last:mb-0">
+              <div>
+                <span class="text-lg font-medium text-gray-900"><%= link_to "#{event.location} - #{event.date}", event_path(event.number), class: "text-gray-900 hover:text-primary" %></span>
+                <% if event.cancellation_reason.present? %>
+                  <p class="text-sm text-gray-600 mt-1"><%= event.cancellation_reason %></p>
+                <% end %>
+              </div>
+              <div class="flex gap-2">
+                <%= link_to "Edit", edit_admin_event_path(event.number), class: "justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-500 cursor-pointer" %>
+                <%= button_to "Archive", archive_admin_event_path(event.number), method: :post, form: { data: { turbo_confirm: "Archive this event? It will be removed from the home page." }, class: "inline-block" }, class: "justify-center rounded-md border border-transparent bg-gray-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-700 cursor-pointer" %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+    <% unless @event %>
       <p class="text-gray-600 mt-8">No in-progress events. All events have been finalized!</p>
     <% end %>
   </div>

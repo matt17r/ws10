@@ -20,6 +20,7 @@ class CoursesController < ApplicationController
     @location = Location.find_by!(slug: params[:slug])
     @locations = Location.all.order(:name)
     @next_event = Event.not_finalised.where("date >= ?", Date.today).order(:date).first
+    @abandoned_event = Event.where(status: "abandoned", location: @location).where("date >= ?", Date.today).order(:date).first
     @latest_event = @location.latest_event
     @current_year_events = @location.events.where("strftime('%Y', date) = ?", Date.today.year.to_s).order(:date)
   end

@@ -4,13 +4,13 @@ class EventsController < ApplicationController
   skip_before_action :require_admin!, only: [ :index, :show, :show_latest ]
   allow_unauthenticated_access(only: [ :index, :show, :show_latest ])
 
-  before_action :set_event, only: [ :show, :edit, :update, :destroy, :edit_results, :activate, :deactivate ]
+  before_action :set_event, only: [ :show, :edit, :update, :destroy, :edit_results, :activate, :deactivate, :abandon, :archive ]
 
   def index
     if Current.user&.admin?
       @events = Event.order(number: :desc).includes(:results)
     else
-      @events = Event.where(status: "finalised").order(number: :desc).includes(:results)
+      @events = Event.where(status: [ "finalised", "abandoned", "cancelled" ]).order(number: :desc).includes(:results)
     end
   end
 
@@ -77,6 +77,16 @@ class EventsController < ApplicationController
     redirect_to dashboard_path, notice: "Event #{@event} deactivated! Finish position claiming is now disabled."
   end
 
+  def abandon
+    @event.abandon!
+    redirect_to dashboard_path, notice: "Event #{@event} has been cancelled."
+  end
+
+  def archive
+    @event.archive_as_cancelled!
+    redirect_to dashboard_path, notice: "Event #{@event} has been archived."
+  end
+
   private
 
   def set_event
@@ -84,6 +94,6 @@ class EventsController < ApplicationController
   end
 
   def event_params
-    params.expect(event: [ :number, :date, :location_id, :description, :status, :facebook_url, :strava_url ])
+    params.expect(event: [ :number, :date, :location_id, :description, :status, :facebook_url, :strava_url, :cancellation_reason ])
   end
 end

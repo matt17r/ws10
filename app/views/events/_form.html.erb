@@ -56,7 +56,20 @@
         <%= form.radio_button :status, 'finalised', class: "h-4 w-4 border-gray-400 focus:outline-blue-600" %>
         <%= form.label :status_finalised, "Finalised (Results ready)", class: "ml-2" %>
       </div>
+      <div class="flex items-center gap-2">
+        <%= form.radio_button :status, 'abandoned', class: "h-4 w-4 border-gray-400 focus:outline-blue-600" %>
+        <%= form.label :status_abandoned, "Abandoned (Cancelled, still shown on home page)", class: "ml-2" %>
+      </div>
+      <div class="flex items-center gap-2">
+        <%= form.radio_button :status, 'cancelled', class: "h-4 w-4 border-gray-400 focus:outline-blue-600" %>
+        <%= form.label :status_cancelled, "Cancelled (Archived, removed from home page)", class: "ml-2" %>
+      </div>
     </div>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :cancellation_reason, "Cancellation Reason (for abandoned/cancelled events)" %>
+    <%= form.text_area :cancellation_reason, rows: 3, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": event.errors[:cancellation_reason].none?, "border-red-400 focus:outline-red-600": event.errors[:cancellation_reason].any?}], placeholder: "e.g., Due to heavy rain" %>
   </div>
 
   <div class="inline">
