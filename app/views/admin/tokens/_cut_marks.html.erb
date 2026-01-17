@@ -37,4 +37,11 @@
     <div class="cut-mark h" style="top: <%= y %>mm; right: 0mm;"></div>
     <div class="cut-mark h short" style="top: <%= y %>mm; left: <%= page_centre_x - 1 %>mm;"></div>
   <% end %>
+
+  <%# Vertical marks along left, center, and right columns at row positions %>
+  <% y_positions.each do |y| %>
+    <% x_positions.each do |x| %>
+      <div class="cut-mark v short" style="top: <%= y - 1 %>mm; left: <%= x %>mm;"></div>
+    <% end %>
+  <% end %>
 </div>
