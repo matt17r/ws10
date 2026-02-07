@@ -87,14 +87,14 @@ class EventTest < ActiveSupport::TestCase
     assert_includes unplaced, user_without_result
   end
 
-  test "should send emails when status changes to finalised" do
+  test "should not automatically send emails when status changes to finalised" do
     event = events(:draft_event)
     event.update!(status: "draft")
 
     result_with_time = event.results.create!(user: users(:one), time: 1600)
     result_without_time = event.results.create!(user: users(:two))
 
-    assert_enqueued_jobs 3 do  # AwardBadgesJob + 2 email jobs
+    assert_no_enqueued_jobs do
       event.update!(status: "finalised")
     end
   end
@@ -117,24 +117,63 @@ class EventTest < ActiveSupport::TestCase
     end
   end
 
-  test "should send different email types based on result time" do
+  test "send_notification_emails! sends different email types based on result time" do
     event = events(:draft_event)
-    event.update!(status: "draft")
+    event.update!(status: "finalised", emails_sent: false)
 
     result_with_time = event.results.create!(user: users(:one), time: 1800)
     result_without_time = event.results.create!(user: users(:two))
 
     assert_enqueued_jobs 3 do  # AwardBadgesJob + 2 email jobs
-      event.update!(status: "finalised")
+      event.send_notification_emails!
     end
   end
 
-  test "should handle events with no results when marking finalised" do
+  test "send_notification_emails! handles events with no results" do
     event = events(:draft_event)
+    event.update!(status: "finalised", emails_sent: false)
     event.results.destroy_all
+    event.volunteers.destroy_all
 
     assert_enqueued_jobs 1 do  # Only AwardBadgesJob, no email jobs
-      event.update!(status: "finalised")
+      event.send_notification_emails!
+    end
+  end
+
+  test "send_notification_emails! sends volunteer thank you emails" do
+    event = events(:draft_event)
+    event.update!(status: "finalised", emails_sent: false)
+    event.results.destroy_all
+
+    volunteer1 = event.volunteers.create!(user: users(:one), role: "Timer")
+    volunteer2 = event.volunteers.create!(user: users(:two), role: "Marshal")
+
+    assert_enqueued_jobs 3 do  # AwardBadgesJob + 2 volunteer thank you emails
+      event.send_notification_emails!
+    end
+  end
+
+  test "send_notification_emails! marks emails as sent" do
+    event = events(:draft_event)
+    event.update!(status: "finalised", emails_sent: false)
+    event.results.create!(user: users(:one), time: 1600)
+
+    perform_enqueued_jobs do
+      event.send_notification_emails!
+    end
+
+    assert event.reload.emails_sent?
+  end
+
+  test "send_notification_emails! does not send twice" do
+    event = events(:draft_event)
+    event.update!(status: "finalised", emails_sent: false)
+    event.results.create!(user: users(:one), time: 1600)
+
+    event.send_notification_emails!
+
+    assert_no_enqueued_jobs do
+      event.send_notification_emails!
     end
   end
 

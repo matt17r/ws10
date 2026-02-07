@@ -44,6 +44,7 @@ Rails.application.routes.draw do
           post :deactivate
           post :abandon
           post :archive
+          post :send_emails
         end
       end
       resources :locations, controller: "admin/locations", param: :slug

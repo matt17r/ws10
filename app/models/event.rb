@@ -74,22 +74,32 @@ class Event < ApplicationRecord
     update!(status: "cancelled")
   end
 
+  def send_notification_emails!
+    return if emails_sent?
+
+    # Award badges FIRST (background job)
+    AwardBadgesJob.perform_later(id)
+
+    # Then queue emails
+    results.where.not(time: nil).includes(:user).find_each do |result|
+      EventMailer.result_notification(result: result).deliver_later
+    end
+
+    results.where(time: nil).includes(:user).find_each do |result|
+      EventMailer.participation_notification(result: result).deliver_later
+    end
+
+    volunteers.includes(:user).find_each do |volunteer|
+      EventMailer.volunteer_thank_you(volunteer: volunteer).deliver_later
+    end
+
+    update!(emails_sent: true)
+  end
+
   private
 
   def send_results_emails_if_finalised
-    if saved_change_to_status? && finalised?
-      # Award badges FIRST (background job)
-      AwardBadgesJob.perform_later(id)
-
-      # Then queue emails
-      results.where.not(time: nil).includes(:user).find_each do |result|
-        EventMailer.result_notification(result: result).deliver_later
-      end
-
-      results.where(time: nil).includes(:user).find_each do |result|
-        EventMailer.participation_notification(result: result).deliver_later
-      end
-    end
+    # No longer auto-send when finalised - admin must manually trigger
   end
 
   def invalidate_statistics_cache_if_finalised

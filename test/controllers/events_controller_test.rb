@@ -193,4 +193,48 @@ class EventsControllerTest < ActionDispatch::IntegrationTest
     event.reload
     assert event.cancelled?
   end
+
+  test "admin can send emails for finalised event" do
+    admin_user = users(:one)
+    sign_in_as(admin_user)
+    event = events(:draft_event)
+    event.update!(status: "finalised", emails_sent: false)
+    event.results.create!(user: users(:two), time: 1600)
+
+    post send_emails_admin_event_url(number: event.number)
+    assert_redirected_to event_path(event)
+
+    event.reload
+    assert event.emails_sent?
+  end
+
+  test "send_emails requires admin authentication" do
+    event = events(:draft_event)
+    event.update!(status: "finalised", emails_sent: false)
+
+    post send_emails_admin_event_url(number: event.number)
+    assert_response :not_found
+  end
+
+  test "send_emails fails if event is not finalised" do
+    admin_user = users(:one)
+    sign_in_as(admin_user)
+    event = events(:draft_event)
+    event.update!(status: "draft", emails_sent: false)
+
+    post send_emails_admin_event_url(number: event.number)
+    assert_redirected_to event_path(event)
+
+    assert_not event.reload.emails_sent?
+  end
+
+  test "send_emails fails if emails already sent" do
+    admin_user = users(:one)
+    sign_in_as(admin_user)
+    event = events(:draft_event)
+    event.update!(status: "finalised", emails_sent: true)
+
+    post send_emails_admin_event_url(number: event.number)
+    assert_redirected_to event_path(event)
+  end
 end

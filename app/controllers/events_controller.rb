@@ -4,7 +4,7 @@ class EventsController < ApplicationController
   skip_before_action :require_admin!, only: [ :index, :show, :show_latest ]
   allow_unauthenticated_access(only: [ :index, :show, :show_latest ])
 
-  before_action :set_event, only: [ :show, :edit, :update, :destroy, :edit_results, :activate, :deactivate, :abandon, :archive ]
+  before_action :set_event, only: [ :show, :edit, :update, :destroy, :edit_results, :activate, :deactivate, :abandon, :archive, :send_emails ]
 
   def index
     if Current.user&.admin?
@@ -85,6 +85,21 @@ class EventsController < ApplicationController
   def archive
     @event.archive_as_cancelled!
     redirect_to dashboard_path, notice: "Event #{@event} has been archived."
+  end
+
+  def send_emails
+    if @event.emails_sent?
+      redirect_to event_path(@event), alert: "Emails have already been sent for this event."
+      return
+    end
+
+    unless @event.finalised?
+      redirect_to event_path(@event), alert: "Event must be finalised before sending emails."
+      return
+    end
+
+    @event.send_notification_emails!
+    redirect_to event_path(@event), notice: "Emails are being sent to #{@event.results.count} participants and #{@event.volunteers.count} volunteers."
   end
 
   private

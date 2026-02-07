@@ -8,7 +8,7 @@
     <meta name="format-detection" content="telephone=no,address=no,email=no,date=no,url=no"> <!-- Tell iOS not to automatically link certain text strings. -->
     <meta name="color-scheme" content="light dark">
     <meta name="supported-color-schemes" content="light dark">
-    <title><%= "Your result for WS10 ##{@event.number} at #{@event.location}" %></title> <!-- The title tag shows in email notifications, like Android 4.4. -->
+    <title><%= "Thank you for volunteering at WS10 ##{@event.number}" %></title> <!-- The title tag shows in email notifications, like Android 4.4. -->
 
     <!-- What it does: Makes background images in 72ppi Outlook render at correct size. -->
     <!--[if gte mso 9]>
@@ -214,7 +214,7 @@
 
         <!-- Visually Hidden Preheader Text : BEGIN -->
         <div style="max-height:0; overflow:hidden; mso-hide:all;" aria-hidden="true">
-            Thanks  <%= @user.name %>, for participating in the WS10 at <%= @event.location %> on <%= @event.date %>. We recorded your participation but not a time which usually means you didn't complete the event or didn't complete it in the available time. The full results are available on the WS10 website. I hope to see you at the next event on the third Sunday of next month!
+            Thank you <%= @user.name %> for volunteering at WS10 #<%= @event.number %> at <%= @event.location %> on <%= @event.date %>. Your contribution as <%= @volunteer.role %> made this event possible. The full results are available on the WS10 website. I hope to see you at the next event!
         </div>
         <!-- Visually Hidden Preheader Text : END -->
 
@@ -253,15 +253,10 @@
                         <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
                             <tr>
                                 <td style="padding: 20px; font-family: sans-serif; font-size: 18px; line-height: 24px; color: #555555;">
-                                    <h1 style="margin: 0 0 10px 0; font-family: sans-serif; font-size: 40px; line-height: 45px; color: #54494B;">Thanks for participating!</h1>
-                                    <h2 style="margin: 0 0 10px 0; font-family: sans-serif; font-size: 30px; line-height: 35px; color: #54494B; font-weight: normal;">You participated in WS10 #<%= @event.number %></h2>
-                                    <% if @event.description.present? %>
-                                    <div style="margin: 0 0 15px 0; padding: 12px; background: #FDF4F7; border-left: 4px solid #DB2955; border-radius: 4px;">
-                                      <%= sanitize @event.description %>
-                                    </div>
-                                    <% end %>
-                                    <p style="margin: 0 0 10px 0;">Thanks <%= @user.name %>, for participating in your <%= @result_count.ordinalize %> Western Sydney 10 <% if @result_count > 1 %> and your <%= @location_count.ordinalize %> <% end %> at <%= @event.location %> this morning (<%= @event.date.strftime("%A, %-d %B %Y") %>). You were one of <%= @event.results.count %> participants.</p>
-                                    <p style="margin: 0;">We recorded your participation but not a time which usually means you either didn't complete the event or didn't complete it in the available time. If that's not correct, please reply to this email to let me know!</p>
+                                    <h1 style="margin: 0 0 10px 0; font-family: sans-serif; font-size: 40px; line-height: 45px; color: #54494B;">Thank you!</h1>
+                                    <h2 style="margin: 0 0 10px 0; font-family: sans-serif; font-size: 30px; line-height: 35px; color: #54494B; font-weight: normal;">You volunteered at WS10 #<%= @event.number %></h2>
+                                    <p style="margin: 0 0 10px 0;">Thank you <%= @user.name %> for volunteering your time as <%= @volunteer.role %> at <%= @event.location %> this morning (<%= @event.date.strftime("%A, %-d %B %Y") %>). This was your <%= @volunteer_count.ordinalize %> time volunteering at a Western Sydney 10 event.</p>
+                                    <p style="margin: 0;">Thanks to volunteers like you, we had <%= @event.results.count %> runners participate in today's event. The WS10 simply wouldn't be possible without our amazing volunteer team.</p>
                                 </td>
                             </tr>
                             <% if @newly_earned_badges.any? %>
@@ -308,11 +303,11 @@
                             </tr>
                             <tr>
                                 <td style="padding: 20px; font-family: sans-serif; font-size: 18px; line-height: 20px; color: #555555;">
-                                    <p style="margin: 5px 0 10px 0;">If you enjoyed this event, please:</p>
+                                    <p style="margin: 5px 0 10px 0;">We'd love to see you again:</p>
                                     <ul style="padding: 0; margin: 0 0 10px 0; list-style-type: disc;">
-                                      <li style="margin:0 0 10px 30px;" class="list-item-first">Come along to the <a href="<%= courses_url %>" style="color: #DB2955;">next event</a></li>
-                                      <li style="margin:0 0 10px 30px;">Tell a friend (or running foe) about it</li>
-                                      <li style="margin:0 0 10px 30px;">Share your participation on Strava or social media</li>
+                                      <li style="margin:0 0 10px 30px;" class="list-item-first">Volunteer at the <a href="<%= courses_url %>" style="color: #DB2955;">next event</a></li>
+                                      <li style="margin:0 0 10px 30px;">Tell a friend about volunteering opportunities</li>
+                                      <li style="margin:0 0 10px 30px;">Share your volunteer experience on social media</li>
                                       <li style="margin: 0 0 0 30px;" class="list-item-last">Consider <a href="<%= support_url %>" style="color: #DB2955;">supporting WS10 financially</a></li>
                                     </ul>
                                 </td>
@@ -330,7 +325,7 @@
                     <td style="padding: 20px; font-family: sans-serif; font-size: 12px; line-height: 15px; text-align: center; color: #ffffff;">
             Western Sydney 10<br><span class="unstyle-auto-detected-links">16 Lloyd St, Blacktown NSW 2148, Australia</span>
                         <br><br>
-                        You received this transactional email because you registered as a runner at <a href="https://ws10.run" style="color: #54494B;">ws10.run</a> and participated in an event. This is not a marketing email so there is no unsubscribe option.
+                        You received this transactional email because you registered at <a href="https://ws10.run" style="color: #54494B;">ws10.run</a> and volunteered at an event. This is not a marketing email so there is no unsubscribe option.
                     </td>
                 </tr>
             </table>
