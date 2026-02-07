@@ -59,6 +59,27 @@ class User < ApplicationRecord
     order("#{sort_sql} #{sort_direction}")
   }
 
+  scope :never_confirmed, -> {
+    where(confirmed_at: nil)
+      .where("created_at < ?", 30.days.ago)
+  }
+
+  scope :confirmed_but_inactive, -> {
+    cutoff_date = 12.months.ago
+
+    where("confirmed_at IS NOT NULL")
+      .where("confirmed_at < ?", cutoff_date)
+      .where.not(id: User.joins("LEFT JOIN results ON results.user_id = users.id")
+                           .joins("LEFT JOIN volunteers ON volunteers.user_id = users.id")
+                           .joins("LEFT JOIN check_ins ON check_ins.user_id = users.id")
+                           .joins("LEFT JOIN events AS result_events ON result_events.id = results.event_id")
+                           .joins("LEFT JOIN events AS volunteer_events ON volunteer_events.id = volunteers.event_id")
+                           .joins("LEFT JOIN events AS checkin_events ON checkin_events.id = check_ins.event_id")
+                           .where("result_events.date >= ? OR volunteer_events.date >= ? OR check_ins.checked_in_at >= ?",
+                                  cutoff_date, cutoff_date, cutoff_date)
+                           .select("users.id"))
+  }
+
   def admin?
     roles.any? { |r| r.name == "Administrator" }
   end

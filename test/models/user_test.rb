@@ -240,4 +240,107 @@ class UserTest < ActiveSupport::TestCase
       User.find_by_barcode!("A999999")
     end
   end
+
+  test "never_confirmed scope returns users not confirmed after 30+ days" do
+    old_unconfirmed_user = User.create!(
+      email_address: "old_unconfirmed@example.com",
+      name: "Old Unconfirmed",
+      password: "password123",
+      created_at: 31.days.ago,
+      confirmed_at: nil
+    )
+
+    recent_unconfirmed_user = User.create!(
+      email_address: "recent_unconfirmed@example.com",
+      name: "Recent Unconfirmed",
+      password: "password123",
+      created_at: 29.days.ago,
+      confirmed_at: nil
+    )
+
+    confirmed_user = User.create!(
+      email_address: "confirmed@example.com",
+      name: "Confirmed",
+      password: "password123",
+      created_at: 31.days.ago,
+      confirmed_at: 30.days.ago
+    )
+
+    never_confirmed_users = User.never_confirmed
+
+    assert_includes never_confirmed_users, old_unconfirmed_user
+    assert_not_includes never_confirmed_users, recent_unconfirmed_user
+    assert_not_includes never_confirmed_users, confirmed_user
+  end
+
+  test "confirmed_but_inactive scope returns confirmed users with no activity in 12+ months" do
+    location = locations(:bungarribee)
+
+    inactive_user = User.create!(
+      email_address: "inactive@example.com",
+      name: "Inactive User",
+      password: "password123",
+      confirmed_at: 13.months.ago
+    )
+
+    active_user = User.create!(
+      email_address: "active@example.com",
+      name: "Active User",
+      password: "password123",
+      confirmed_at: 13.months.ago
+    )
+
+    recent_event = Event.create!(date: 1.month.ago, location: location, number: 200, status: "finalised")
+    Result.create!(user: active_user, event: recent_event, time: 2000)
+
+    unconfirmed_user = User.create!(
+      email_address: "unconfirmed@example.com",
+      name: "Unconfirmed",
+      password: "password123",
+      confirmed_at: nil,
+      created_at: 13.months.ago
+    )
+
+    confirmed_but_inactive_users = User.confirmed_but_inactive
+
+    assert_includes confirmed_but_inactive_users, inactive_user
+    assert_not_includes confirmed_but_inactive_users, active_user
+    assert_not_includes confirmed_but_inactive_users, unconfirmed_user
+  end
+
+  test "confirmed_but_inactive scope excludes users with volunteer activity in past 12 months" do
+    location = locations(:bungarribee)
+
+    inactive_user = User.create!(
+      email_address: "volunteer@example.com",
+      name: "Volunteer User",
+      password: "password123",
+      confirmed_at: 13.months.ago
+    )
+
+    recent_event = Event.create!(date: 1.month.ago, location: location, number: 201, status: "finalised")
+    Volunteer.create!(user: inactive_user, event: recent_event)
+
+    confirmed_but_inactive_users = User.confirmed_but_inactive
+
+    assert_not_includes confirmed_but_inactive_users, inactive_user
+  end
+
+  test "confirmed_but_inactive scope excludes users with check-in activity in past 12 months" do
+    location = locations(:bungarribee)
+
+    inactive_user = User.create!(
+      email_address: "checkin@example.com",
+      name: "CheckIn User",
+      password: "password123",
+      confirmed_at: 13.months.ago
+    )
+
+    recent_event = Event.create!(date: 1.month.ago, location: location, number: 202, status: "finalised")
+    CheckIn.create!(user: inactive_user, event: recent_event, checked_in_at: 1.month.ago)
+
+    confirmed_but_inactive_users = User.confirmed_but_inactive
+
+    assert_not_includes confirmed_but_inactive_users, inactive_user
+  end
 end

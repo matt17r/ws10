@@ -1,0 +1,147 @@
+<div class="mx-auto w-full max-w-7xl p-8">
+  <div class="flex justify-between items-center mb-8">
+    <h1 class="text-3xl font-bold text-primary">User Cleanup</h1>
+  </div>
+
+  <!-- Never Confirmed Users Section -->
+  <div class="bg-white shadow rounded-lg overflow-hidden mb-8">
+    <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
+      <h2 class="text-xl font-semibold text-gray-900">Never Confirmed (30+ days old)</h2>
+      <p class="mt-1 text-sm text-gray-500">Users who registered but never confirmed their email address</p>
+    </div>
+
+    <% if @never_confirmed_users.any? %>
+      <%= form_with url: send_reminders_admin_users_cleanup_index_path, method: :post do |form| %>
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <input type="checkbox" id="select-all-never-confirmed" class="rounded border-gray-300 text-primary focus:ring-primary">
+              </th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <% @never_confirmed_users.each do |user| %>
+              <tr class="hover:bg-gray-50">
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <%= check_box_tag "user_ids[]", user.id, false, class: "never-confirmed-checkbox rounded border-gray-300 text-primary focus:ring-primary" %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm font-medium text-gray-900"><%= user.name %></div>
+                  <div class="text-sm text-gray-500"><%= user.email_address %></div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <%= time_ago_in_words(user.created_at) %> ago
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+
+        <div class="px-6 py-4 bg-gray-50 border-t border-gray-200 flex gap-2">
+          <%= form.submit "Send Reminder Emails", class: "inline-flex items-center gap-x-1.5 rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-primary-hover" %>
+          <%= button_to "Delete Selected", bulk_delete_admin_users_cleanup_index_path, method: :delete, params: { user_ids: [] }, form: { id: "delete-never-confirmed-form" }, class: "inline-flex items-center gap-x-1.5 rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-red-700", data: { confirm: "Are you sure you want to delete the selected users? This action cannot be undone." } %>
+        </div>
+      <% end %>
+    <% else %>
+      <div class="text-center py-12">
+        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <h3 class="mt-2 text-sm font-medium text-gray-900">No unconfirmed users</h3>
+        <p class="mt-1 text-sm text-gray-500">All users have confirmed their accounts or are less than 30 days old.</p>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Confirmed But Inactive Users Section -->
+  <div class="bg-white shadow rounded-lg overflow-hidden mb-8">
+    <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
+      <h2 class="text-xl font-semibold text-gray-900">Confirmed But Inactive (12+ months)</h2>
+      <p class="mt-1 text-sm text-gray-500">Users who confirmed their email but haven't attended any events in over 12 months</p>
+    </div>
+
+    <% if @confirmed_but_inactive_users.any? %>
+      <%= form_with url: send_reminders_admin_users_cleanup_index_path, method: :post do |form| %>
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <input type="checkbox" id="select-all-inactive" class="rounded border-gray-300 text-primary focus:ring-primary">
+              </th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Confirmed</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <% @confirmed_but_inactive_users.each do |user| %>
+              <tr class="hover:bg-gray-50">
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <%= check_box_tag "user_ids[]", user.id, false, class: "inactive-checkbox rounded border-gray-300 text-primary focus:ring-primary" %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm font-medium text-gray-900"><%= user.name %></div>
+                  <div class="text-sm text-gray-500"><%= user.email_address %></div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <%= time_ago_in_words(user.confirmed_at) %> ago
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+
+        <div class="px-6 py-4 bg-gray-50 border-t border-gray-200 flex gap-2">
+          <%= form.submit "Send Reminder Emails", class: "inline-flex items-center gap-x-1.5 rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-primary-hover" %>
+          <%= button_to "Delete Selected", bulk_delete_admin_users_cleanup_index_path, method: :delete, params: { user_ids: [] }, form: { id: "delete-inactive-form" }, class: "inline-flex items-center gap-x-1.5 rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-red-700", data: { confirm: "Are you sure you want to delete the selected users? This action cannot be undone." } %>
+        </div>
+      <% end %>
+    <% else %>
+      <div class="text-center py-12">
+        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <h3 class="mt-2 text-sm font-medium text-gray-900">No inactive users</h3>
+        <p class="mt-1 text-sm text-gray-500">All confirmed users have recent activity within the past 12 months.</p>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<script>
+  document.getElementById('select-all-never-confirmed')?.addEventListener('change', function(e) {
+    document.querySelectorAll('.never-confirmed-checkbox').forEach(checkbox => {
+      checkbox.checked = e.target.checked;
+    });
+  });
+
+  document.getElementById('select-all-inactive')?.addEventListener('change', function(e) {
+    document.querySelectorAll('.inactive-checkbox').forEach(checkbox => {
+      checkbox.checked = e.target.checked;
+    });
+  });
+
+  document.getElementById('delete-never-confirmed-form')?.addEventListener('submit', function(e) {
+    const checkboxes = document.querySelectorAll('.never-confirmed-checkbox:checked');
+    checkboxes.forEach(checkbox => {
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = 'user_ids[]';
+      input.value = checkbox.value;
+      this.appendChild(input);
+    });
+  });
+
+  document.getElementById('delete-inactive-form')?.addEventListener('submit', function(e) {
+    const checkboxes = document.querySelectorAll('.inactive-checkbox:checked');
+    checkboxes.forEach(checkbox => {
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = 'user_ids[]';
+      input.value = checkbox.value;
+      this.appendChild(input);
+    });
+  });
+</script>

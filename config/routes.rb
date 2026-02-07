@@ -53,6 +53,12 @@ Rails.application.routes.draw do
           get :print
         end
       end
+      resources :users_cleanup, controller: "admin/users_cleanup", only: [ :index ] do
+        collection do
+          post :send_reminders
+          delete :bulk_delete
+        end
+      end
     end
     scope :admin do
       post :user_import, to: "admin/users#import"
