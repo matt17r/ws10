@@ -54,13 +54,16 @@ module HomeStatistics
 
         sorted_times = times.sort
         total_participants = location.events.joins(:results).count + location.events.joins(:volunteers).count
+        events_count = location.events.finalised.count
 
         {
           location: location,
           quickest_time: sorted_times.first,
           average_time: (times.sum.to_f / times.size).round,
           median_time: sorted_times[sorted_times.size / 2],
-          total_participants: total_participants
+          total_participants: total_participants,
+          events_count: events_count,
+          average_participants: events_count.positive? ? (total_participants.to_f / events_count).round : 0
         }
       end.compact
     end
