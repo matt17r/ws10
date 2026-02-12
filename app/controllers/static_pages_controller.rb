@@ -1,5 +1,5 @@
 class StaticPagesController < ApplicationController
-  allow_unauthenticated_access(only: [ :about, :home, :results, :support ])
+  allow_unauthenticated_access(only: [ :about, :home, :results ])
 
   def about
   end

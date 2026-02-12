@@ -16,7 +16,8 @@ If you enjoyed this event, please:
  - Come along to the next event (<%= courses_url %>)
  - Tell a friend (or running foe) about it
  - Share your result on Strava or social media
- - Consider supporting WS10 financially (<%= support_url %>)
+<% if @result_count >= 3 %> - Consider supporting WS10 financially (<%= support_url %>)
+<% end %>
 
 Western Sydney 10 is a young event and we're still learning. If you've got any suggestions for how to improve the events, the website or these results emails, simply reply to this email to let me know!
 

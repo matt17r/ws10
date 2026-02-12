@@ -307,8 +307,10 @@
                                     <ul style="padding: 0; margin: 0 0 10px 0; list-style-type: disc;">
                                       <li style="margin:0 0 10px 30px;" class="list-item-first">Come along to the <a href="<%= courses_url %>" style="color: #DB2955;">next event</a></li>
                                       <li style="margin:0 0 10px 30px;">Tell a friend (or running foe) about it</li>
-                                      <li style="margin:0 0 10px 30px;">Share your participation on Strava or social media</li>
+                                      <li style="margin:<%= @result_count >= 3 ? '0 0 10px 30px' : '0 0 0 30px' %>;" class="<%= @result_count >= 3 ? '' : 'list-item-last' %>">Share your participation on Strava or social media</li>
+                                      <% if @result_count >= 3 %>
                                       <li style="margin: 0 0 0 30px;" class="list-item-last">Consider <a href="<%= support_url %>" style="color: #DB2955;">supporting WS10 financially</a></li>
+                                      <% end %>
                                     </ul>
                                 </td>
                             </tr>

@@ -19,4 +19,8 @@ module ApplicationHelper
 
     parts.join(" ")
   end
+
+  def repeat_runner?
+    authenticated? && Current.user.results.count >= 3
+  end
 end

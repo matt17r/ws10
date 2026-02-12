@@ -80,7 +80,9 @@
         </div>
         <div class="text-center space-x-4">
           <%= link_to "Find out more", about_path, class: "inline-flex items-center justify-center px-4 py-[calc(theme(spacing.2)-1px)] rounded-full border border-transparent bg-primary shadow-md whitespace-nowrap text-base font-medium text-white hover:bg-primary-hover" %>
-          <%= link_to "Support WS10", support_path, class: "inline-flex items-center justify-center px-4 py-2 rounded-full border border-primary whitespace-nowrap text-base font-medium text-primary hover:bg-primary-bg" %>
+          <% if repeat_runner? %>
+            <%= link_to "Support WS10", support_path, class: "inline-flex items-center justify-center px-4 py-2 rounded-full border border-primary whitespace-nowrap text-base font-medium text-primary hover:bg-primary-bg" %>
+          <% end %>
         </div>
       </div>
     </section>

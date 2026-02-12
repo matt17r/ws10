@@ -45,10 +45,11 @@
         <p class="mt-2 text-gray-700"><%= sanitize @event.description %></p>
       <% end %>
 
-      <% if @event.finalised? %>
+      <% if @event.finalised? && repeat_runner? %>
         <div class="text-center my-4">
-          <span class="text-base text-gray-600 mr-3">Enjoyed the event?</span>
-          <%= link_to "Support WS10", support_path, class: "font-medium text-primary underline underline-offset-3 hover:text-primary-hover hover:no-underline" %>
+          <span class="text-base text-gray-600">Enjoyed the event? You might like to
+          </span>
+          <%= link_to "support WS10", support_path, class: "font-medium text-primary underline underline-offset-3 hover:text-primary-hover hover:no-underline" %>
         </div>
       <% end %>
 

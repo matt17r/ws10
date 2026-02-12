@@ -45,15 +45,16 @@
               <li>Come along and participate! Having a friendly group of people makes it worth organising.</li>
               <li>Invite others! Bring along some friendly, enthusiastic people to run with us.</li>
               <li>Volunteer occasionally! Perhaps you can do the timing one month? Or bring an esky and some water bottles? Let me know if you're keen to help and we can figure something out!</li>
-              <li><%= link_to "Support financially!", support_path, class: "font-medium text-brand-brown hover:text-brand-grey underline underline-offset-3 hover:no-underline" %> Your contribution helps improve the event for everyone.</li>
+              <% if repeat_runner? %>
+                <li><%= link_to "Support financially!", support_path, class: "font-medium text-brand-brown hover:text-brand-grey underline underline-offset-3 hover:no-underline" %> Your contribution helps improve the event for everyone.</li>
+              <% end %>
             </ol>
           </dd>
         </div>
 
         <div>
           <dt class="text-xl/7 font-medium text-gray-900" id="why-free">How much does it cost to participate?</dt>
-          <dd class="mt-2 text-xl/7 text-gray-600">The event is free but <%= link_to "voluntary contributions are welcome", support_path, class: "font-medium text-brand-brown hover:text-brand-grey underline underline-offset-3 hover:no-underline" %>.</dd>
-          <dd class="mt-2 text-xl/7 text-gray-600">In 2025 I was able to keep WS10 free by keeping costs super low but the event is growing and I'm keen to improve it. If you're able to chip in $5 per event you take part in or $25 for the whole year I'd be grateful.</dd>
+          <dd class="mt-2 text-xl/7 text-gray-600">The event is completely free! Contributions from regular attendees are gratefully received, get in touch if you'd like to know more.</dd>
         </div>
 
         <div>
