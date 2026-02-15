@@ -23,6 +23,7 @@ class Event < ApplicationRecord
   validates :number, numericality: { only_integer: true, greater_than: 0 }
   validates :facebook_url, format: { with: URI::DEFAULT_PARSER.make_regexp, allow_blank: true }
   validates :strava_url, format: { with: URI::DEFAULT_PARSER.make_regexp, allow_blank: true }
+  validate :cannot_finalise_without_results
 
   def self.next_event
     where("date >= ?", Date.today).order(:date).first
@@ -95,6 +96,12 @@ class Event < ApplicationRecord
   def invalidate_statistics_cache_if_finalised
     if saved_change_to_status? && finalised?
       Event.invalidate_home_statistics_cache
+    end
+  end
+
+  def cannot_finalise_without_results
+    if status == "finalised" && results.empty?
+      errors.add(:status, "cannot be finalised without any results")
     end
   end
 end

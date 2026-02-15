@@ -129,13 +129,41 @@ class EventTest < ActiveSupport::TestCase
     end
   end
 
-  test "should handle events with no results when marking finalised" do
+  test "should not allow finalising events with no results" do
+    event = events(:draft_event)
+    event.results.destroy_all
+    event.status = "finalised"
+
+    assert_not event.valid?
+    assert_includes event.errors[:status], "cannot be finalised without any results"
+  end
+
+  test "should allow finalising events with at least one result" do
+    event = events(:draft_event)
+    event.results.destroy_all
+    event.results.create!(user: users(:one))
+
+    event.status = "finalised"
+    assert event.valid?
+  end
+
+  test "should allow transitioning to cancelled without results" do
+    event = events(:draft_event)
+    event.results.destroy_all
+    event.status = "abandoned"
+    assert event.valid?
+    event.save!
+
+    event.status = "cancelled"
+    assert event.valid?
+  end
+
+  test "should allow transitioning to abandoned without results" do
     event = events(:draft_event)
     event.results.destroy_all
 
-    assert_enqueued_jobs 1 do  # Only AwardBadgesJob, no email jobs
-      event.update!(status: "finalised")
-    end
+    event.status = "abandoned"
+    assert event.valid?
   end
 
   test "should handle large event numbers" do
