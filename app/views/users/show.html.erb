@@ -66,7 +66,7 @@
           <p class="-mt-3"><%= @user.barcode_string %></p>
         </div>
       <% end %>
-      <div class="grid grid-cols-3 md:grid-cols-1 text-center">
+      <div class="grid grid-cols-2 md:grid-cols-1 text-center">
         <div class="mb-0 md:mb-4">
           <p class="font-bold text-gray-700 text-3xl"><%= @user.personal_best&.time_string || "—" %></p>
           <p class="text-gray-500">Personal Best</p>
@@ -74,6 +74,10 @@
         <div class="mb-0 md:mb-4">
           <p class="font-bold text-gray-700 text-3xl"><%= @user.results.where.not(time: nil).size %></p>
           <p class="text-gray-500">Runs Completed</p>
+        </div>
+        <div class="mb-0 md:mb-4">
+          <p class="font-bold text-gray-700 text-3xl"><%= @user.results.where(time: nil).size %></p>
+          <p class="text-gray-500">Participations</p>
         </div>
         <div class="mb-0 md:mb-4">
           <p class="font-bold text-gray-700 text-3xl"><%= @user.volunteers.size %></p>
