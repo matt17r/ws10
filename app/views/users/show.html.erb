@@ -72,7 +72,7 @@
           <p class="text-gray-500">Personal Best</p>
         </div>
         <div class="mb-0 md:mb-4">
-          <p class="font-bold text-gray-700 text-3xl"><%= @user.results.size %></p>
+          <p class="font-bold text-gray-700 text-3xl"><%= @user.results.where.not(time: nil).size %></p>
           <p class="text-gray-500">Runs Completed</p>
         </div>
         <div class="mb-0 md:mb-4">

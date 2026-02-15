@@ -194,7 +194,7 @@ class BadgeEligibilityChecker
   end
 
   def eligible_for_centurion?(badge)
-    count = @user.results.count
+    count = @user.results.where.not(time: nil).count
     completed_cycles = @user.user_badges.joins(:badge)
       .where(badges: { badge_family: "centurion", level: "gold" })
       .count
@@ -388,7 +388,7 @@ class BadgeEligibilityChecker
 
     threshold += (completed_cycles * 40)
 
-    result = @user.results.joins(:event).order("events.number").offset(threshold - 1).first
+    result = @user.results.where.not(time: nil).joins(:event).order("events.number").offset(threshold - 1).first
     result&.event_id || fallback_event_id
   end
 
