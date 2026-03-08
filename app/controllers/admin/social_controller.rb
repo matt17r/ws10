@@ -34,7 +34,7 @@ class Admin::SocialController < ApplicationController
     end
 
     unless facebook_configured?
-      redirect_to admin_social_path, alert: "Facebook is not configured. Add facebook.access_token to credentials."
+      redirect_to admin_social_path, alert: "Facebook is not configured. Add facebook.page_id and facebook.page_token to credentials."
       return
     end
 
@@ -83,37 +83,19 @@ class Admin::SocialController < ApplicationController
   end
 
   def facebook_configured?
-    Rails.application.credentials.facebook&.access_token.present?
-  end
-
-  def fetch_facebook_page
-    require "net/http"
-    require "json"
-
-    token = Rails.application.credentials.facebook&.access_token
-    uri = URI("https://graph.facebook.com/v21.0/me/accounts")
-    uri.query = URI.encode_www_form(access_token: token, fields: "id,name,access_token")
-
-    response = Net::HTTP.get_response(uri)
-    body = JSON.parse(response.body)
-
-    return nil unless response.is_a?(Net::HTTPSuccess) && body["data"]&.any?
-
-    page = body["data"].first
-    { id: page["id"], token: page["access_token"] }
-  rescue => e
-    nil
+    Rails.application.credentials.facebook&.page_id.present? &&
+      Rails.application.credentials.facebook&.page_token.present?
   end
 
   def post_to_facebook(message)
     require "net/http"
     require "json"
 
-    page = fetch_facebook_page
-    return { success: false, error: "Could not retrieve Facebook page details." } unless page
+    page_id = Rails.application.credentials.facebook.page_id
+    token = Rails.application.credentials.facebook.page_token
 
-    uri = URI("https://graph.facebook.com/v21.0/#{page[:id]}/feed")
-    response = Net::HTTP.post_form(uri, { "message" => message, "access_token" => page[:token] })
+    uri = URI("https://graph.facebook.com/v21.0/#{page_id}/feed")
+    response = Net::HTTP.post_form(uri, { "message" => message, "access_token" => token })
     body = JSON.parse(response.body)
 
     if response.is_a?(Net::HTTPSuccess) && body["id"]
