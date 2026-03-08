@@ -20,7 +20,7 @@
         <div class="px-6 py-4">
           <label class="block text-sm font-medium text-gray-700 mb-1">Message</label>
           <div data-controller="clipboard">
-            <%= form_with url: admin_social_facebook_path, method: :post do |f| %>
+            <%= form_with url: admin_social_facebook_preview_path, method: :post do |f| %>
               <%= f.text_area :message,
                     value: @pre_event_message,
                     data: { clipboard_target: "source" },
@@ -28,7 +28,7 @@
                     class: "block w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary font-mono" %>
 
               <div class="mt-3 flex flex-wrap items-center gap-3">
-                <%= f.submit "Post to Facebook",
+                <%= f.submit "Preview post",
                       class: "rounded-md px-4 py-2 text-sm font-medium text-white cursor-pointer #{@facebook_configured ? "bg-blue-600 hover:bg-blue-700" : "bg-gray-400 cursor-not-allowed"}",
                       disabled: !@facebook_configured %>
 
@@ -69,7 +69,7 @@
         <div class="px-6 py-4">
           <label class="block text-sm font-medium text-gray-700 mb-1">Message</label>
           <div data-controller="clipboard">
-            <%= form_with url: admin_social_facebook_path, method: :post do |f| %>
+            <%= form_with url: admin_social_facebook_preview_path, method: :post do |f| %>
               <%= f.text_area :message,
                     value: @post_event_message,
                     data: { clipboard_target: "source" },
@@ -77,7 +77,7 @@
                     class: "block w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary font-mono" %>
 
               <div class="mt-3 flex flex-wrap items-center gap-3">
-                <%= f.submit "Post to Facebook",
+                <%= f.submit "Preview post",
                       class: "rounded-md px-4 py-2 text-sm font-medium text-white cursor-pointer #{@facebook_configured ? "bg-blue-600 hover:bg-blue-700" : "bg-gray-400 cursor-not-allowed"}",
                       disabled: !@facebook_configured %>
 

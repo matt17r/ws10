@@ -54,6 +54,7 @@ Rails.application.routes.draw do
         end
       end
       get "social", to: "admin/social#show", as: :social
+      post "social/facebook/preview", to: "admin/social#preview_facebook", as: :social_facebook_preview
       post "social/facebook", to: "admin/social#post_facebook", as: :social_facebook
     end
     scope :admin do

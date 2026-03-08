@@ -1,0 +1,25 @@
+<div class="mt-16 px-6 lg:px-8">
+  <div class="mx-auto max-w-2xl lg:max-w-4xl mb-8">
+    <h1 class="text-pretty text-4xl font-medium tracking-tight text-gray-950 mb-6">Preview Facebook post</h1>
+
+    <div class="rounded-lg border border-gray-200 bg-white shadow-sm mb-6">
+      <div class="border-b border-gray-200 px-6 py-4">
+        <h2 class="text-xl font-medium text-gray-950">Message</h2>
+        <p class="text-sm text-gray-500 mt-1">This is exactly what will be posted to the Western Sydney 10 Facebook page.</p>
+      </div>
+      <div class="px-6 py-4">
+        <p class="whitespace-pre-wrap text-sm text-gray-900"><%= @message %></p>
+      </div>
+    </div>
+
+    <div class="flex flex-wrap items-center gap-3">
+      <%= form_with url: admin_social_facebook_path, method: :post do |f| %>
+        <%= f.hidden_field :message, value: @message %>
+        <%= f.submit "Post to Facebook",
+              class: "rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 cursor-pointer" %>
+      <% end %>
+
+      <%= link_to "Back", admin_social_path, class: "rounded-md bg-white px-4 py-2 text-sm font-medium text-gray-700 border border-gray-300 hover:bg-gray-50" %>
+    </div>
+  </div>
+</div>

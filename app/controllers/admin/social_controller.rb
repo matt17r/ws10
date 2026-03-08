@@ -25,6 +25,14 @@ class Admin::SocialController < ApplicationController
     @strava_club_url = STRAVA_CLUB_URL
   end
 
+  def preview_facebook
+    @message = params[:message].to_s.strip
+
+    if @message.blank?
+      redirect_to admin_social_path, alert: "Message cannot be blank."
+    end
+  end
+
   def post_facebook
     message = params[:message].to_s.strip
 
