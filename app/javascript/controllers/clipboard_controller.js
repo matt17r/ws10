@@ -8,7 +8,8 @@ export default class extends Controller {
   }
 
   copy() {
-    const text = this.sourceTarget.textContent.trim()
+    const target = this.sourceTarget
+    const text = ("value" in target ? target.value : target.textContent).trim()
     navigator.clipboard.writeText(text).then(() => {
       const originalText = this.buttonTarget.textContent
       this.buttonTarget.textContent = this.successTextValue

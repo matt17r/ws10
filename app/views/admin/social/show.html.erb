@@ -1,0 +1,104 @@
+<div class="mt-16 px-6 lg:px-8">
+  <div class="mx-auto max-w-2xl lg:max-w-4xl mb-8">
+    <h1 class="text-pretty text-4xl font-medium tracking-tight text-gray-950 mb-6">Social media</h1>
+
+    <% unless @facebook_configured %>
+      <div class="mb-6 rounded-md bg-yellow-50 border border-yellow-200 p-4 text-sm text-yellow-800">
+        Facebook is not configured. Add <code class="font-mono bg-yellow-100 px-1 rounded">facebook_page_id</code> and <code class="font-mono bg-yellow-100 px-1 rounded">facebook_page_token</code> to Rails credentials to enable posting.
+      </div>
+    <% end %>
+
+    <% if @upcoming_event %>
+      <div class="mb-8 rounded-lg border border-gray-200 bg-white shadow-sm">
+        <div class="border-b border-gray-200 px-6 py-4">
+          <h2 class="text-xl font-medium text-gray-950">Upcoming event</h2>
+          <p class="text-sm text-gray-500 mt-1">
+            WS10 <%= @upcoming_event.number %> &mdash; <%= @upcoming_event.location.name %> &mdash; <%= @upcoming_event.date.strftime("%A, %-d %B") %>
+          </p>
+        </div>
+
+        <div class="px-6 py-4">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Message</label>
+          <div data-controller="clipboard">
+            <%= form_with url: admin_social_facebook_path, method: :post do |f| %>
+              <%= f.text_area :message,
+                    value: @pre_event_message,
+                    data: { clipboard_target: "source" },
+                    rows: 6,
+                    class: "block w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary font-mono" %>
+
+              <div class="mt-3 flex flex-wrap items-center gap-3">
+                <%= f.submit "Post to Facebook",
+                      class: "rounded-md px-4 py-2 text-sm font-medium text-white cursor-pointer #{@facebook_configured ? "bg-blue-600 hover:bg-blue-700" : "bg-gray-400 cursor-not-allowed"}",
+                      disabled: !@facebook_configured %>
+
+                <button type="button"
+                        data-clipboard-target="button"
+                        data-action="click->clipboard#copy"
+                        class="rounded-md bg-orange-500 px-4 py-2 text-sm font-medium text-white hover:bg-orange-600 cursor-pointer">
+                  Copy for Strava
+                </button>
+
+                <%= link_to "Open Strava club →", @strava_club_url, target: "_blank",
+                      class: "text-sm font-medium text-orange-600 hover:text-orange-700 underline" %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    <% else %>
+      <div class="mb-8 rounded-lg border border-gray-200 bg-white shadow-sm px-6 py-4 text-sm text-gray-500">
+        No upcoming event scheduled.
+      </div>
+    <% end %>
+
+    <% if @recent_event %>
+      <div class="rounded-lg border border-gray-200 bg-white shadow-sm">
+        <div class="border-b border-gray-200 px-6 py-4">
+          <h2 class="text-xl font-medium text-gray-950">Post-event summary</h2>
+          <p class="text-sm text-gray-500 mt-1">
+            WS10 <%= @recent_event.number %> &mdash; <%= @recent_event.location.name %> &mdash; <%= @recent_event.date.strftime("%A, %-d %B") %>
+          </p>
+          <% unless @recent_event.description.present? %>
+            <p class="mt-1 text-sm text-yellow-700">
+              No event description set. <%= link_to "Edit event #{@recent_event.number}", edit_admin_event_path(@recent_event.number), class: "underline" %> to add one before posting.
+            </p>
+          <% end %>
+        </div>
+
+        <div class="px-6 py-4">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Message</label>
+          <div data-controller="clipboard">
+            <%= form_with url: admin_social_facebook_path, method: :post do |f| %>
+              <%= f.text_area :message,
+                    value: @post_event_message,
+                    data: { clipboard_target: "source" },
+                    rows: 6,
+                    class: "block w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary font-mono" %>
+
+              <div class="mt-3 flex flex-wrap items-center gap-3">
+                <%= f.submit "Post to Facebook",
+                      class: "rounded-md px-4 py-2 text-sm font-medium text-white cursor-pointer #{@facebook_configured ? "bg-blue-600 hover:bg-blue-700" : "bg-gray-400 cursor-not-allowed"}",
+                      disabled: !@facebook_configured %>
+
+                <button type="button"
+                        data-clipboard-target="button"
+                        data-action="click->clipboard#copy"
+                        class="rounded-md bg-orange-500 px-4 py-2 text-sm font-medium text-white hover:bg-orange-600 cursor-pointer">
+                  Copy for Strava
+                </button>
+
+                <%= link_to "Open Strava club →", @strava_club_url, target: "_blank",
+                      class: "text-sm font-medium text-orange-600 hover:text-orange-700 underline" %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    <% else %>
+      <div class="rounded-lg border border-gray-200 bg-white shadow-sm px-6 py-4 text-sm text-gray-500">
+        No finalised events yet.
+      </div>
+    <% end %>
+  </div>
+</div>

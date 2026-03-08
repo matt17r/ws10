@@ -53,6 +53,8 @@ Rails.application.routes.draw do
           get :print
         end
       end
+      get "social", to: "admin/social#show", as: :social
+      post "social/facebook", to: "admin/social#post_facebook", as: :social_facebook
     end
     scope :admin do
       post :user_import, to: "admin/users#import"
