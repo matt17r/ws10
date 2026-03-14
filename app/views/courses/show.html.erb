@@ -51,10 +51,12 @@
               <% elsif event.finalised? %>
                 <div class="mt-1 text-3xl font-semibold tracking-tight text-gray-500 line-through"><%= event.date.strftime("%-d %B") %></div>
               <% else %>
-                <div class="mt-1 text-3xl font-semibold tracking-tight text-gray-900"><%= event.date.strftime("%-d %B") %></div>
-                <% if event.notice.present? %>
-                  <span class="mt-2 inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary"><%= event.notice %></span>
-                <% end %>
+                <div class="mt-1 flex items-center gap-2 flex-wrap">
+                  <span class="text-3xl font-semibold tracking-tight text-gray-900"><%= event.date.strftime("%-d %B") %></span>
+                  <% if event.notice.present? %>
+                    <span class="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary"><%= event.notice %></span>
+                  <% end %>
+                </div>
               <% end %>
             </div>
           <% end %>

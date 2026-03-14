@@ -1,5 +1,5 @@
 class StaticPagesController < ApplicationController
-  allow_unauthenticated_access(only: [ :about, :home, :results ])
+  allow_unauthenticated_access(only: [ :about, :home ])
 
   def about
   end
@@ -19,9 +19,6 @@ class StaticPagesController < ApplicationController
       @current_user_checked_in = active_event.check_ins.exists?(user: Current.session.user)
       @active_event_token = CheckIn.token_for_event(active_event.number)
     end
-  end
-
-  def results
   end
 
   def invalidate_statistics_cache
