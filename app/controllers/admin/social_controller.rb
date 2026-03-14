@@ -3,8 +3,10 @@ class Admin::SocialController < ApplicationController
 
   STRAVA_CLUB_URL = "https://www.strava.com/clubs/ws10"
   SITE_BASE_URL = "https://ws10.run"
+  SCHEDULE_DELAY_MINUTES = 15
 
   def show
+    @default_scheduled_at = SCHEDULE_DELAY_MINUTES.minutes.from_now
     @upcoming_event = Event
       .joins(:location)
       .where("date >= ?", Date.today)
@@ -21,17 +23,14 @@ class Admin::SocialController < ApplicationController
 
     @pre_event_message = pre_event_message(@upcoming_event) if @upcoming_event
     @post_event_message = post_event_message(@recent_event) if @recent_event
+    @message = case params[:template]
+    when "pre_event" then @pre_event_message
+    when "post_event" then @post_event_message
+    end
     @facebook_configured = facebook_configured?
     @strava_club_url = STRAVA_CLUB_URL
   end
 
-  def preview_facebook
-    @message = params[:message].to_s.strip
-
-    if @message.blank?
-      redirect_to admin_social_path, alert: "Message cannot be blank."
-    end
-  end
 
   def post_facebook
     message = params[:message].to_s.strip
@@ -46,12 +45,25 @@ class Admin::SocialController < ApplicationController
       return
     end
 
-    result = post_to_facebook(message)
+    scheduled_at = Time.zone.parse(params[:scheduled_at].to_s)
+    scheduled_at = SCHEDULE_DELAY_MINUTES.minutes.from_now if scheduled_at.nil? || scheduled_at < SCHEDULE_DELAY_MINUTES.minutes.from_now
 
-    if result[:success]
-      redirect_to admin_social_path, notice: "Posted to Facebook successfully!"
-    else
-      redirect_to admin_social_path, alert: "Facebook post failed: #{result[:error]}"
+    result = post_to_facebook(message, scheduled_at)
+
+    respond_to do |format|
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.update("facebook_result",
+          partial: "admin/social/facebook_result",
+          locals: { result: result }),
+          status: result[:success] ? :ok : :unprocessable_entity
+      end
+      format.html do
+        if result[:success]
+          redirect_to admin_social_path, notice: "Post scheduled successfully (ID: #{result[:id]})."
+        else
+          redirect_to admin_social_path, alert: "Facebook post failed: #{result[:error]}"
+        end
+      end
     end
   end
 
@@ -65,7 +77,7 @@ class Admin::SocialController < ApplicationController
     lines = [
       "WS10 #{event.number} is this #{date_str} at #{location.name}. We'd love to see you there!",
       "",
-      "For more details, visit the course page on our website: #{course_url}"
+      "For more details, visit the course page on the website: #{course_url}"
     ]
 
     lines << "Facebook event: #{event.facebook_url}" if event.facebook_url.present?
@@ -85,7 +97,7 @@ class Admin::SocialController < ApplicationController
     lines << "Thank you to #{volunteer_names.to_sentence} for volunteering!" if volunteer_names.any?
     lines << "" if volunteer_names.any?
 
-    lines << "Full results at #{results_url}"
+    lines << "Full results on the website: #{results_url}"
 
     lines.join("\n")
   end
@@ -95,20 +107,28 @@ class Admin::SocialController < ApplicationController
       Rails.application.credentials.facebook&.page_token.present?
   end
 
-  def post_to_facebook(message)
+  def post_to_facebook(message, scheduled_at)
     require "net/http"
     require "json"
 
     page_id = Rails.application.credentials.facebook.page_id
     token = Rails.application.credentials.facebook.page_token
+    scheduled_time = scheduled_at.to_i
 
     uri = URI("https://graph.facebook.com/v21.0/#{page_id}/feed")
-    response = Net::HTTP.post_form(uri, { "message" => message, "access_token" => token })
+    response = Net::HTTP.post_form(uri, {
+      "message" => message,
+      "access_token" => token,
+      "published" => "false",
+      "scheduled_publish_time" => scheduled_time
+    })
     body = JSON.parse(response.body)
 
     if response.is_a?(Net::HTTPSuccess) && body["id"]
+      Rails.logger.info "Facebook post scheduled: #{body["id"]}"
       { success: true, id: body["id"] }
     else
+      Rails.logger.error "Facebook post failed: #{body}"
       { success: false, error: body.dig("error", "message") || "Unknown error" }
     end
   rescue => e

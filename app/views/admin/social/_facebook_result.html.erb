@@ -1,0 +1,13 @@
+<% if result[:success] %>
+  <div class="mb-6 rounded-md bg-green-50 border border-green-200 p-4 text-sm text-green-800">
+    Post scheduled successfully (ID: <code class="font-mono bg-green-100 px-1 rounded"><%= result[:id] %></code>).
+    <%= link_to "Review in Meta Business Suite →",
+          "https://business.facebook.com/latest/posts/scheduled",
+          target: "_blank",
+          class: "font-medium underline" %>
+  </div>
+<% else %>
+  <div class="mb-6 rounded-md bg-red-50 border border-red-200 p-4 text-sm text-red-800">
+    Facebook post failed: <%= result[:error] %>
+  </div>
+<% end %>
