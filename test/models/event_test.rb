@@ -13,6 +13,23 @@ class EventTest < ActiveSupport::TestCase
     assert event.save
   end
 
+  test "notice is optional" do
+    event = Event.new(number: 10, date: Date.current, location: locations(:bungarribee))
+    assert event.valid?
+  end
+
+  test "notice can be set to a custom message" do
+    event = Event.new(number: 10, date: Date.current, location: locations(:bungarribee), notice: "Date Change")
+    assert event.valid?
+    assert_equal "Date Change", event.notice
+  end
+
+  test "notice is normalised from blank to nil" do
+    event = Event.new(number: 10, date: Date.current, location: locations(:bungarribee), notice: "")
+    assert event.valid?
+    assert_nil event.notice
+  end
+
   test "should have associations" do
     event = events(:one)
     assert_respond_to event, :results

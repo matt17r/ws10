@@ -42,7 +42,7 @@ class EventsController < ApplicationController
     if @event.save
       redirect_to dashboard_path, notice: "Event #{@event} created."
     else
-      render :new
+      render :new, status: :unprocessable_entity
     end
   end
 
@@ -53,7 +53,7 @@ class EventsController < ApplicationController
     if @event.update(event_params)
       redirect_to event_path(@event), notice: "Event #{@event} updated."
     else
-      render :edit
+      render :edit, status: :unprocessable_entity
     end
   end
 
@@ -94,6 +94,6 @@ class EventsController < ApplicationController
   end
 
   def event_params
-    params.expect(event: [ :number, :date, :location_id, :description, :status, :facebook_url, :strava_url, :cancellation_reason ])
+    params.expect(event: [ :number, :date, :location_id, :description, :notice, :status, :facebook_url, :strava_url, :cancellation_reason ])
   end
 end

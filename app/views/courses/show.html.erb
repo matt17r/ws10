@@ -40,8 +40,8 @@
             <div class="relative overflow-hidden rounded-lg bg-white px-4 py-5 shadow-sm sm:p-6">
               <% if event == @next_event %>
                 <div class="absolute top-0 right-0 w-16 h-16">
-                  <div class="bg-primary absolute transform rotate-45 text-center text-white font-semibold py-1 right-[-60px] top-[20px] w-[190px]">
-                    Next Event
+                  <div class="bg-primary absolute transform rotate-45 text-center text-white font-semibold py-1 text-xs right-[-50px] top-[26px] w-[180px]">
+                    <%= event.notice.presence || "Next Event" %>
                   </div>
                 </div>
                 <div class="mt-1 text-3xl font-semibold tracking-tight text-primary"><%= event.date.strftime("%-d %B") %></div>
@@ -52,6 +52,9 @@
                 <div class="mt-1 text-3xl font-semibold tracking-tight text-gray-500 line-through"><%= event.date.strftime("%-d %B") %></div>
               <% else %>
                 <div class="mt-1 text-3xl font-semibold tracking-tight text-gray-900"><%= event.date.strftime("%-d %B") %></div>
+                <% if event.notice.present? %>
+                  <span class="mt-2 inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary"><%= event.notice %></span>
+                <% end %>
               <% end %>
             </div>
           <% end %>

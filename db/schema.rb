@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_17_192022) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_14_030000) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -80,6 +80,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_17_192022) do
     t.string "description"
     t.string "facebook_url"
     t.integer "location_id", null: false
+    t.string "notice"
     t.integer "number", null: false
     t.string "status", default: "draft", null: false
     t.string "strava_url"

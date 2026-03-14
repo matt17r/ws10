@@ -71,6 +71,22 @@ class EventsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "Updated description", event.description
   end
 
+  test "admin should be able to set and clear notice on event" do
+    admin_user = users(:one)
+    sign_in_as(admin_user)
+    event = events(:one)
+
+    patch admin_event_url(number: event.number), params: { event: { notice: "Date Change" } }
+    assert_redirected_to event_url(number: event.number)
+    event.reload
+    assert_equal "Date Change", event.notice
+
+    patch admin_event_url(number: event.number), params: { event: { notice: "" } }
+    assert_redirected_to event_url(number: event.number)
+    event.reload
+    assert_nil event.notice
+  end
+
   test "should require admin for destroy" do
     event = events(:one)
 

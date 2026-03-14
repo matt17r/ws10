@@ -19,7 +19,7 @@
               </div>
             <% else %>
               <div class="bg-primary absolute transform rotate-45 text-center text-white font-semibold py-1 right-[-40px] top-[32px] w-[170px]">
-                Next Event
+                <%= event.notice.presence || "Next Event" %>
               </div>
             <% end %>
           <% end %>

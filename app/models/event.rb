@@ -16,12 +16,15 @@ class Event < ApplicationRecord
   has_many :checked_in_users, through: :check_ins, source: :user
 
   scope :not_finalised, -> { where.not(status: [ "finalised", "abandoned", "cancelled" ]) }
-  scope :upcoming_for_home, -> { where.not(status: [ "finalised", "cancelled" ]) }
   scope :public_visible, -> { where(status: [ "in_progress", "finalised", "abandoned", "cancelled" ]) }
+  scope :upcoming_for_home, -> { where.not(status: [ "finalised", "cancelled" ]) }
+
+  normalizes :notice, with: -> { _1.presence }
 
   validates :date, presence: true
-  validates :number, numericality: { only_integer: true, greater_than: 0 }
   validates :facebook_url, format: { with: URI::DEFAULT_PARSER.make_regexp, allow_blank: true }
+  validates :notice, presence: true, allow_nil: true
+  validates :number, numericality: { only_integer: true, greater_than: 0 }
   validates :strava_url, format: { with: URI::DEFAULT_PARSER.make_regexp, allow_blank: true }
 
   def self.next_event
