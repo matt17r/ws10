@@ -30,7 +30,11 @@ Rails.application.routes.draw do
 
   resources :courses, only: [ :index, :show ], param: :slug
   resources :events, param: :number, only: [ :index, :show ]
-  resource :user, only: [ :show, :edit, :update ], path: "profile"
+  resource :user, only: [ :show, :edit, :update ], path: "profile" do
+    member do
+      patch :newsletter_subscription
+    end
+  end
   get "profile/results", to: "users#my_results", as: :my_results
   resources :users, only: [ :index ], path: "participants", param: :barcode
   get "participants/:barcode/results", to: "users#results", as: :user_results
@@ -79,6 +83,9 @@ Rails.application.routes.draw do
           patch :confirm
           post :assign_role
           delete :remove_role
+        end
+        collection do
+          post :kit_sync
         end
       end
     end

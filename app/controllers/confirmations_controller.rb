@@ -9,6 +9,7 @@ class ConfirmationsController < ApplicationController
   def show
     user = User.find_by_token_for(:user_confirmation, params[:token])
     if user.present? && user.confirm!
+      NewsletterSubscribeJob.perform_later(user.id) if user.newsletter_opt_in?
       start_new_session_for user
       redirect_to user_path, notice: "Thanks for confirming your address!"
     else

@@ -61,6 +61,15 @@
       <% end %>
     </div>
 
+    <div class="my-5">
+      <div class="flex items-start gap-3">
+        <%= form.check_box :newsletter_opt_in, class: "mt-1 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary" %>
+        <%= form.label :newsletter_opt_in, class: "text-sm text-gray-700" do %>
+          Subscribe to the WS10 newsletter for event updates and news
+        <% end %>
+      </div>
+    </div>
+
     <div class="flex justify-center my-5">
       <%= cloudflare_turnstile %>
     </div>

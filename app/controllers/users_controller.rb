@@ -1,7 +1,7 @@
 class UsersController < ApplicationController
   allow_unauthenticated_access only: [ :index, :results ]
 
-  before_action :set_current_user, only: [ :show, :edit, :update, :my_results ]
+  before_action :set_current_user, only: [ :show, :edit, :update, :my_results, :newsletter_subscription ]
   before_action :set_user, only: [ :results ]
 
   def index
@@ -48,6 +48,18 @@ class UsersController < ApplicationController
         @pb_result_ids << result.id
         best_time = result.time
       end
+    end
+  end
+
+  def newsletter_subscription
+    if @user.newsletter_subscribed?
+      NewsletterUnsubscribeJob.perform_later(@user.id)
+      @user.update!(newsletter_opt_in: false)
+      redirect_to user_path, notice: "You've been unsubscribed from the newsletter."
+    else
+      NewsletterSubscribeJob.perform_later(@user.id)
+      @user.update!(newsletter_opt_in: true)
+      redirect_to user_path, notice: "You've been subscribed to the newsletter."
     end
   end
 

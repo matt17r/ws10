@@ -1,6 +1,9 @@
 <div class="mx-auto w-full max-w-7xl p-8">
   <div class="flex justify-between items-center mb-8">
     <h1 class="text-3xl font-bold text-primary">User Management</h1>
+    <%= button_to "Sync Kit Newsletter", kit_sync_admin_users_path, method: :post,
+          class: "inline-flex items-center gap-x-1.5 rounded-md bg-gray-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-gray-500",
+          data: { confirm: "Trigger a Kit newsletter sync? This will update subscription statuses and tag non-WS10 subscribers." } %>
   </div>
 
   <!-- CSV Import Section -->
@@ -48,6 +51,7 @@
           <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
           <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden xl:table-cell">Roles</th>
           <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">Activity</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden xl:table-cell">Newsletter</th>
           <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">Actions</th>
         </tr>
       </thead>
@@ -87,6 +91,15 @@
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden lg:table-cell">
               <div><%= pluralize(user.results.count, 'run') %></div>
               <div><%= pluralize(user.volunteers.count, 'volunteer session') %></div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm hidden xl:table-cell">
+              <% if user.newsletter_subscribed? %>
+                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Subscribed</span>
+              <% elsif user.newsletter_opt_in? %>
+                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">Opted in</span>
+              <% else %>
+                <span class="text-gray-400 text-xs">—</span>
+              <% end %>
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium hidden md:table-cell">
               <div class="flex justify-end gap-2">

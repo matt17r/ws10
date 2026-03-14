@@ -149,6 +149,19 @@
             <%= @user.emoji %>
         </li>
       </ul>
+      <h2 class="text-2xl font-semibold text-primary mb-2 mt-8">Newsletter</h2>
+      <p class="text-lg text-gray-700 mb-4">
+        <% if @user.newsletter_subscribed? %>
+          You're subscribed to the WS10 newsletter.
+        <% else %>
+          You're not currently subscribed to the WS10 newsletter.
+        <% end %>
+      </p>
+      <%= button_to @user.newsletter_subscribed? ? "Unsubscribe from newsletter" : "Subscribe to newsletter",
+            newsletter_subscription_user_path,
+            method: :patch,
+            class: "mb-8 inline-flex items-center gap-x-1.5 rounded-md #{@user.newsletter_subscribed? ? 'bg-gray-600 hover:bg-gray-500' : 'bg-primary hover:bg-primary-hover'} px-3 py-2 text-sm font-semibold text-white shadow-xs" %>
+
       <%= link_to edit_user_path, class:"inline-flex items-center gap-x-1.5 rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" do %>
         Edit profile (or password)
         <svg class="-mr-0.5 size-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
