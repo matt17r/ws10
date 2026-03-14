@@ -44,7 +44,9 @@ max_attempts=10
 wait_seconds=15
 
 for ((attempt=1; attempt<=max_attempts; attempt++)); do
-  result=$(gh api "/repos/$repo/commits/$sha/check-runs" 2>&1)
+  # Filter to workflow runs triggered by a push to the expected branch only,
+  # excluding pull_request runs (e.g. from Dependabot rebases on the same SHA).
+  result=$(gh run list --repo "$repo" --commit "$sha" --branch "$EXPECTED_BRANCH" --event push --json status,conclusion,name 2>&1)
 
   if [[ $? -ne 0 ]]; then
     echo -e "${RED}ERROR: Failed to check CI status${NC}" >&2
@@ -52,8 +54,7 @@ for ((attempt=1; attempt<=max_attempts; attempt++)); do
     exit 1
   fi
 
-  check_runs=$(echo "$result" | jq -r '.check_runs')
-  total_checks=$(echo "$check_runs" | jq 'length')
+  total_checks=$(echo "$result" | jq 'length')
 
   if [[ "$total_checks" -eq 0 ]]; then
     echo -e "${RED}ERROR: No CI checks found for ${sha:0:7}${NC}" >&2
@@ -61,15 +62,15 @@ for ((attempt=1; attempt<=max_attempts; attempt++)); do
     exit 1
   fi
 
-  completed=$(echo "$check_runs" | jq '[.[] | select(.status == "completed")] | length')
-  failed=$(echo "$check_runs" | jq '[.[] | select(.conclusion == "failure" or .conclusion == "timed_out" or .conclusion == "cancelled" or .conclusion == "action_required" or .conclusion == "stale")] | length')
+  completed=$(echo "$result" | jq '[.[] | select(.status == "completed")] | length')
+  failed=$(echo "$result" | jq '[.[] | select(.conclusion == "failure" or .conclusion == "timed_out" or .conclusion == "cancelled" or .conclusion == "action_required" or .conclusion == "stale")] | length')
 
   if [[ "$completed" -eq "$total_checks" ]] && [[ "$failed" -eq 0 ]]; then
     echo -e "${GREEN}✓ CI passed for ${sha:0:7} ($total_checks check(s))${NC}" >&2
     break
   elif [[ "$failed" -gt 0 ]]; then
     echo -e "${RED}✗ CI failed for commit ${sha:0:7}${NC}" >&2
-    echo "$check_runs" | jq -r '.[] | select(.conclusion == "failure" or .conclusion == "timed_out" or .conclusion == "cancelled" or .conclusion == "action_required" or .conclusion == "stale") | "  - \(.name): \(.conclusion)"' >&2
+    echo "$result" | jq -r '.[] | select(.conclusion == "failure" or .conclusion == "timed_out" or .conclusion == "cancelled" or .conclusion == "action_required" or .conclusion == "stale") | "  - \(.name): \(.conclusion)"' >&2
     echo "View details: https://github.com/$repo/commit/$sha/checks" >&2
     echo "Deploy aborted: CI checks failed" >&2
     exit 1
