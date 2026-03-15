@@ -39,6 +39,13 @@
           <% end %>
         </p>
       <% end %>
+      <div class="mt-5 flex items-start gap-3">
+        <%= form.check_box :newsletter_opt_in, class: "mt-1 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary" %>
+        <div>
+          <%= form.label :newsletter_opt_in, "Email me about upcoming events or cancellations", class: "block text-sm font-medium text-gray-900" %>
+          <label for="user_newsletter_opt_in" class="text-sm text-gray-500">I typically send one or two emails per month.</label>
+        </div>
+      </div>
     </div>
 
     <div class="my-5">
@@ -59,16 +66,6 @@
           <%= @user.errors.full_messages_for(:password_confirmation).join(", ") %>
         </p>
       <% end %>
-    </div>
-
-    <div class="my-5">
-      <div class="flex items-start gap-3">
-        <%= form.check_box :newsletter_opt_in, class: "mt-1 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary" %>
-        <div>
-          <%= form.label :newsletter_opt_in, "Email me about upcoming events or cancellations", class: "block text-sm font-medium text-gray-900" %>
-          <p class="text-sm text-gray-500">I typically send one email per month.</p>
-        </div>
-      </div>
     </div>
 
     <div class="flex justify-center my-5">
