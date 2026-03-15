@@ -129,6 +129,24 @@
             </svg>
             <%= @user.email_address %>
         </li>
+        <li class="flex items-center">
+          <% if @user.newsletter_opt_in? != @user.newsletter_subscribed? %>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mr-2 text-gray-400" viewBox="0 0 24 24" fill="currentColor">
+              <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25ZM12.75 6a.75.75 0 0 0-1.5 0v6c0 .414.336.75.75.75h4.5a.75.75 0 0 0 0-1.5h-3.75V6Z" clip-rule="evenodd" />
+            </svg>
+            <span class="text-gray-400">Updating subscription...</span>
+          <% elsif @user.newsletter_subscribed? %>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mr-2 text-primary" viewBox="0 0 24 24" fill="currentColor">
+              <path fill-rule="evenodd" d="M5.25 9a6.75 6.75 0 0 1 13.5 0v.75c0 2.123.8 4.057 2.118 5.52a.75.75 0 0 1-.297 1.206c-1.544.57-3.16.99-4.831 1.243a3.75 3.75 0 1 1-7.48 0 24.585 24.585 0 0 1-4.831-1.244.75.75 0 0 1-.298-1.205A8.217 8.217 0 0 0 5.25 9.75V9Zm4.502 8.9a2.25 2.25 0 1 0 4.496 0 25.057 25.057 0 0 1-4.496 0Z" clip-rule="evenodd" />
+            </svg>
+            Subscribed to event notification emails
+          <% else %>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mr-2 text-gray-400" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M3.53 2.47a.75.75 0 0 0-1.06 1.06l18 18a.75.75 0 1 0 1.06-1.06l-18-18ZM6.96 5.9l1.06 1.06A6.75 6.75 0 0 0 5.25 9.75V9a6.726 6.726 0 0 1 1.71-4.5V5.9Zm10.54 0v-.19A6.75 6.75 0 0 1 18.75 9v.75a8.217 8.217 0 0 0 2.118 5.52.75.75 0 0 1-.297 1.206 24.52 24.52 0 0 1-3.373.99l-1.056-1.056c1.188-.253 2.353-.6 3.473-1.028A9.717 9.717 0 0 1 17.25 9.75V9a5.25 5.25 0 0 0-.563-2.374L17.5 5.9ZM12 5.25a3.75 3.75 0 0 0-3.537 2.51l-1.061-1.06A5.25 5.25 0 0 1 17.25 9v.75c0 2.123.8 4.057 2.118 5.52a.75.75 0 0 1-.297 1.206 24.585 24.585 0 0 1-4.831 1.243 3.75 3.75 0 0 1-7.39-.73l-1.5-1.5a24.645 24.645 0 0 1-2.47-.76.75.75 0 0 1-.298-1.205A8.217 8.217 0 0 0 5.25 9.75V9A6.75 6.75 0 0 1 12 2.25Z" />
+            </svg>
+            <span class="text-gray-400">Not subscribed to event notification emails</span>
+          <% end %>
+        </li>
       </ul>
       <h2 class="text-2xl font-semibold text-primary mb-2">Public Information</h2>
       <p class="text-lg text-gray-700 mb-2">
@@ -149,20 +167,7 @@
             <%= @user.emoji %>
         </li>
       </ul>
-      <h2 class="text-2xl font-semibold text-primary mb-2 mt-8">Newsletter</h2>
-      <p class="text-lg text-gray-700 mb-4">
-        <% if @user.newsletter_subscribed? %>
-          You're subscribed to the WS10 newsletter.
-        <% else %>
-          You're not currently subscribed to the WS10 newsletter.
-        <% end %>
-      </p>
-      <%= button_to @user.newsletter_subscribed? ? "Unsubscribe from newsletter" : "Subscribe to newsletter",
-            newsletter_subscription_user_path,
-            method: :patch,
-            class: "mb-8 inline-flex items-center gap-x-1.5 rounded-md #{@user.newsletter_subscribed? ? 'bg-gray-600 hover:bg-gray-500' : 'bg-primary hover:bg-primary-hover'} px-3 py-2 text-sm font-semibold text-white shadow-xs" %>
-
-      <%= link_to edit_user_path, class:"inline-flex items-center gap-x-1.5 rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" do %>
+<%= link_to edit_user_path, class:"inline-flex items-center gap-x-1.5 rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" do %>
         Edit profile (or password)
         <svg class="-mr-0.5 size-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
           <path d="m5.433 13.917 1.262-3.155A4 4 0 0 1 7.58 9.42l6.92-6.918a2.121 2.121 0 0 1 3 3l-6.92 6.918c-.383.383-.84.685-1.343.886l-3.154 1.262a.5.5 0 0 1-.65-.65Z" />

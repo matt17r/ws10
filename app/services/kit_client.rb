@@ -1,6 +1,8 @@
 class KitClient
   BASE_URL = "https://api.kit.com/v4"
 
+  class RateLimitError < StandardError; end
+
   def subscribe(email:, name:)
     body = { email_address: email, first_name: name.split.first }
     response = post("/subscribers", body)
@@ -8,8 +10,7 @@ class KitClient
   end
 
   def unsubscribe(subscriber_id:)
-    response = delete("/subscribers/#{subscriber_id}")
-    response
+    post("/subscribers/#{subscriber_id}/unsubscribe", {})
   end
 
   def find_subscriber(email:)
@@ -38,7 +39,19 @@ class KitClient
   end
 
   def add_tag(subscriber_id:, tag_id:)
-    post("/tags/#{tag_id}/subscribers", { subscriber_id: subscriber_id })
+    post("/tags/#{tag_id}/subscribers/#{subscriber_id}", {})
+  end
+
+  def list_webhooks
+    get("/webhooks")
+  end
+
+  def create_webhook(event:, url:)
+    post("/webhooks", { target_url: url, event: { name: event } })
+  end
+
+  def delete_webhook(webhook_id:)
+    post("/webhooks/#{webhook_id}/delete", {})
   end
 
   private
@@ -57,25 +70,20 @@ class KitClient
     perform(uri, request)
   end
 
-  def delete(path)
-    uri = URI("#{BASE_URL}#{path}")
-    request = Net::HTTP::Delete.new(uri)
-    perform(uri, request)
-  end
-
   def perform(uri, request)
-    request["Authorization"] = "Bearer #{api_secret}"
+    request["X-Kit-Api-Key"] = api_key
     request["Content-Type"] = "application/json"
     request["Accept"] = "application/json"
 
     Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) do |http|
       response = http.request(request)
+      raise RateLimitError, "Kit API rate limit exceeded" if response.code == "429"
       JSON.parse(response.body) if response.body.present?
     end
   end
 
-  def api_secret
-    Rails.application.credentials.kit&.fetch(:api_secret) ||
-      raise("Kit API secret not configured")
+  def api_key
+    Rails.application.credentials.kit&.fetch(:api_key) ||
+      raise("Kit API key not configured")
   end
 end

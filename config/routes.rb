@@ -3,6 +3,8 @@ Rails.application.routes.draw do
   # Can be used by load balancers and uptime monitors to verify that the app is live.
   get "up", to: "rails/health#show", as: :rails_health_check
 
+  post "webhooks/kit/:token", to: "webhooks/kit#create", as: :kit_webhook
+
   # Defines the root path route ("/")
   root "static_pages#home"
 
@@ -30,11 +32,7 @@ Rails.application.routes.draw do
 
   resources :courses, only: [ :index, :show ], param: :slug
   resources :events, param: :number, only: [ :index, :show ]
-  resource :user, only: [ :show, :edit, :update ], path: "profile" do
-    member do
-      patch :newsletter_subscription
-    end
-  end
+  resource :user, only: [ :show, :edit, :update ], path: "profile"
   get "profile/results", to: "users#my_results", as: :my_results
   resources :users, only: [ :index ], path: "participants", param: :barcode
   get "participants/:barcode/results", to: "users#results", as: :user_results

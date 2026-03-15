@@ -64,9 +64,10 @@
     <div class="my-5">
       <div class="flex items-start gap-3">
         <%= form.check_box :newsletter_opt_in, class: "mt-1 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary" %>
-        <%= form.label :newsletter_opt_in, class: "text-sm text-gray-700" do %>
-          Subscribe to the WS10 newsletter for event updates and news
-        <% end %>
+        <div>
+          <%= form.label :newsletter_opt_in, "Email me about upcoming events or cancellations", class: "block text-sm font-medium text-gray-900" %>
+          <p class="text-sm text-gray-500">I typically send one email per month.</p>
+        </div>
       </div>
     </div>
 

@@ -1,5 +1,6 @@
 class NewsletterUnsubscribeJob < ApplicationJob
   queue_as :default
+  retry_on KitClient::RateLimitError, wait: 30.seconds, attempts: 5
 
   def perform(user_id)
     user = User.find(user_id)

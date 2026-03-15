@@ -45,6 +45,15 @@
         <% end %>
       </div>
 
+      <h2 class="mt-10 text-base/7 font-semibold text-gray-900">Newsletter</h2>
+      <div class="my-5 flex items-start gap-3">
+        <%= form.check_box :newsletter_opt_in, class: "mt-1 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary" %>
+        <div>
+          <%= form.label :newsletter_opt_in, "Email me about upcoming events or cancellations", class: "block text-sm font-medium text-gray-900" %>
+          <p class="text-sm text-gray-500">I typically send one email per month.</p>
+        </div>
+      </div>
+
       <div data-controller="password-toggle">
         <h2 class="mt-10 text-base/7 font-semibold text-gray-900">Password change (optional)</h2>
         <%= check_box_tag "change_password", "1", @show_password_fields, data: { action: "change->password-toggle#toggle", password_toggle_target: "checkbox" } %>
