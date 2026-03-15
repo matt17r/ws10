@@ -65,6 +65,11 @@ class Admin::UsersController < ApplicationController
     redirect_to admin_user_path(@user), notice: "#{@role.name} role removed from #{@user.name}."
   end
 
+  def kit_sync
+    KitSyncJob.perform_later
+    redirect_to admin_users_path, notice: "Kit newsletter sync has been enqueued."
+  end
+
   def import
     if params[:file].present?
       created = 0

@@ -47,6 +47,22 @@
             <label class="block text-sm font-medium text-gray-500">Member Since</label>
             <p class="mt-1 text-sm text-gray-900"><%= @user.created_at.strftime("%B %d, %Y") %></p>
           </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-500">Newsletter Opt-in</label>
+            <p class="mt-1 text-sm text-gray-900">
+              <%= @user.newsletter_opt_in? ? "Yes" : "No" %>
+            </p>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-500">Newsletter Subscribed</label>
+            <p class="mt-1 text-sm text-gray-900">
+              <% if @user.newsletter_subscribed? %>
+                <span class="text-green-600">✓ Subscribed</span>
+              <% else %>
+                <span class="text-gray-500">Not subscribed</span>
+              <% end %>
+            </p>
+          </div>
         </div>
       </div>
 

@@ -67,7 +67,17 @@ class UsersController < ApplicationController
       end
     end
 
+    newsletter_opt_in_changed = @user.newsletter_opt_in_changed?
+    newsletter_opting_in = @user.newsletter_opt_in?
+
     if @user.save
+      if newsletter_opt_in_changed
+        if newsletter_opting_in
+          NewsletterSubscribeJob.perform_later(@user.id)
+        else
+          NewsletterUnsubscribeJob.perform_later(@user.id)
+        end
+      end
       redirect_to user_path, notice: "Profile updated"
     else
       flash.now[:alert] = "An error prevented your profile from being saved"
@@ -82,7 +92,7 @@ class UsersController < ApplicationController
   end
 
   def user_params
-    params.require(:user).permit(:name, :email_address, :display_name, :emoji, :current_password, :password, :password_confirmation)
+    params.require(:user).permit(:name, :email_address, :display_name, :emoji, :current_password, :password, :password_confirmation, :newsletter_opt_in)
   end
 
   def set_user
