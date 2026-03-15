@@ -2,10 +2,6 @@ default: &default
   dispatchers:
     - polling_interval: 1
       batch_size: 500
-      recurring_tasks:
-        kit_sync:
-          class: KitSyncJob
-          schedule: every week on Monday at 3am
   workers:
     - queues: "*"
       threads: 3
