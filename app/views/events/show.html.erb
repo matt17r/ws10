@@ -1,11 +1,14 @@
 <% if @event.finalised? %>
   <% content_for :head do %>
     <% og_title = "WS10 Event ##{@event.number} – #{l @event.date, format: :long} – #{@event.location}" %>
+    <% og_description = og_event_description(@event) %>
     <meta property="og:type" content="website" />
     <meta property="og:title" content="<%= og_title %>" />
+    <meta property="og:description" content="<%= og_description %>" />
     <meta property="og:url" content="<%= event_url(@event.number) %>" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="<%= og_title %>" />
+    <meta name="twitter:description" content="<%= og_description %>" />
     <% if @event.og_image.attached? %>
       <meta property="og:image" content="<%= rails_blob_url(@event.og_image) %>" />
       <meta property="og:image:width" content="1200" />
