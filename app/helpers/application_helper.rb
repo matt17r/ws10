@@ -23,4 +23,21 @@ module ApplicationHelper
   def repeat_runner?
     authenticated? && Current.user.results.count >= 3
   end
+
+  def og_event_description(event)
+    return "This event was cancelled." if event.cancelled?
+
+    s = OgImageGeneratorService.new(event).stats
+    parts = [ "#{s[:participant_count]} #{'finisher'.pluralize(s[:participant_count])}" ]
+    parts << "#{s[:first_timer_count]} first #{'timer'.pluralize(s[:first_timer_count])}" if s[:first_timer_count] > 0
+    parts << "#{s[:pb_count]} personal #{'best'.pluralize(s[:pb_count])}" if s[:pb_count] > 0
+    if s[:new_ws10_record]
+      parts << "New WS10 record: #{s[:fastest_time_str]}"
+    elsif s[:new_course_record]
+      parts << "New course record: #{s[:fastest_time_str]}"
+    elsif s[:fastest_time_str]
+      parts << "First finisher: #{s[:fastest_time_str]}"
+    end
+    parts.join(" · ")
+  end
 end
