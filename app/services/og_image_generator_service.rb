@@ -91,10 +91,10 @@ class OgImageGeneratorService
         #{stat_card(x: 820, value: s[:pb_count],          label: "PERSONAL BESTS", icon: ICON_BELL)}
 
         <!-- Bottom panels -->
-        <rect x="40"  y="432" width="530" height="162" rx="12" fill="#{PANEL_BG}"/>
-        <rect x="40"  y="432" width="530" height="5"   rx="12" fill="url(#accentGrad)"/>
-        <rect x="630" y="432" width="530" height="162" rx="12" fill="#{PANEL_BG}"/>
-        <rect x="630" y="432" width="530" height="5"   rx="12" fill="url(#accentGrad)"/>
+        <rect x="40"  y="417" width="530" height="185" rx="12" fill="#{PANEL_BG}"/>
+        <rect x="40"  y="417" width="530" height="5"   rx="12" fill="url(#accentGrad)"/>
+        <rect x="630" y="417" width="530" height="185" rx="12" fill="#{PANEL_BG}"/>
+        <rect x="630" y="417" width="530" height="5"   rx="12" fill="url(#accentGrad)"/>
 
         #{records_section(s)}
         #{badges_section(s)}
@@ -162,59 +162,58 @@ class OgImageGeneratorService
   def stat_card(x:, value:, label:, icon:)
     cx = x + 170  # card centre x
     icon_size = 52
-    # Vertical centre of the icon+number row
-    icon_cy = 216 + 100
-    icon_x  = cx - 66  # right edge of icon leaves a 10 px gap before number
+    icon_cy = 216 + 93   # vertically centred in 185px card
+    icon_x  = cx - 66   # right edge of icon leaves a 10 px gap before number
     icon_y  = icon_cy - icon_size / 2
     num_y   = icon_cy + 24   # baseline aligned to mid-cap of font-size 64
     <<~SVG
-      <rect x="#{x}" y="216" width="340" height="200" rx="12" fill="#{PANEL_BG}"/>
+      <rect x="#{x}" y="216" width="340" height="185" rx="12" fill="#{PANEL_BG}"/>
       <rect x="#{x}" y="216" width="340" height="5" rx="12" fill="#{ACCENT_RED}"/>
       <svg x="#{icon_x}" y="#{icon_y}" width="#{icon_size}" height="#{icon_size}" viewBox="0 0 24 24" fill="none" stroke="#{ACCENT_RED}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
         <path d="#{icon}"/>
       </svg>
       <text x="#{cx - 4}" y="#{num_y}" font-family="sans-serif" font-weight="900" font-size="64" fill="#{ACCENT_RED}" text-anchor="start">#{value}</text>
-      <text x="#{cx}" y="#{216 + 178}" font-family="sans-serif" font-size="17" fill="#7E8287" text-anchor="middle" letter-spacing="2">#{label}</text>
+      <text x="#{cx}" y="#{216 + 169}" font-family="sans-serif" font-size="17" fill="#7E8287" text-anchor="middle" letter-spacing="2">#{label}</text>
     SVG
   end
 
-  # Panel: x=40, w=530, centre=305. Content area: y=437–562, heading at y=578.
+  # Panel: x=40, w=530, centre=305. Content area: y=422–570, heading at y=586.
   def records_section(s)
-    base_x   = 52
-    heading_y = 578   # bottom of panel, matching stat card label position
+    heading_y = 586   # 16px from panel bottom (417+185=602, 602-16=586)
     svg = +""
 
-    svg << "<text x=\"305\" y=\"#{heading_y}\" font-family=\"sans-serif\" font-size=\"15\" fill=\"#9DA39A\" letter-spacing=\"3\" text-anchor=\"middle\">FIRST FINISHER</text>\n"
+    svg << "<text x=\"305\" y=\"#{heading_y}\" font-family=\"sans-serif\" font-size=\"17\" fill=\"#7E8287\" letter-spacing=\"2\" text-anchor=\"middle\">FIRST FINISHER</text>\n"
 
     if s[:new_ws10_record]
-      svg << "<text x=\"305\" y=\"476\" font-family=\"sans-serif\" font-weight=\"bold\" font-size=\"22\" fill=\"#{ACCENT_RED}\" text-anchor=\"middle\">★★ NEW WS10 RECORD ★★</text>\n"
-      svg << "<text x=\"305\" y=\"530\" font-family=\"sans-serif\" font-weight=\"900\" font-size=\"52\" fill=\"#{ACCENT_RED}\" text-anchor=\"middle\">#{escape s[:fastest_time_str]}</text>\n"
+      # Record block shifted slightly lower so it feels weighted towards the centre
+      svg << "<text x=\"305\" y=\"482\" font-family=\"sans-serif\" font-weight=\"bold\" font-size=\"22\" fill=\"#{ACCENT_RED}\" text-anchor=\"middle\">★★ NEW WS10 RECORD ★★</text>\n"
+      svg << "<text x=\"305\" y=\"542\" font-family=\"sans-serif\" font-weight=\"900\" font-size=\"64\" fill=\"#{ACCENT_RED}\" text-anchor=\"middle\">#{escape s[:fastest_time_str]}</text>\n"
     elsif s[:new_course_record]
-      svg << "<text x=\"305\" y=\"476\" font-family=\"sans-serif\" font-weight=\"bold\" font-size=\"22\" fill=\"#{ACCENT_RED}\" text-anchor=\"middle\">★ NEW COURSE RECORD ★</text>\n"
-      svg << "<text x=\"305\" y=\"530\" font-family=\"sans-serif\" font-weight=\"900\" font-size=\"52\" fill=\"#{ACCENT_RED}\" text-anchor=\"middle\">#{escape s[:fastest_time_str]}</text>\n"
+      svg << "<text x=\"305\" y=\"482\" font-family=\"sans-serif\" font-weight=\"bold\" font-size=\"22\" fill=\"#{ACCENT_RED}\" text-anchor=\"middle\">★ NEW COURSE RECORD ★</text>\n"
+      svg << "<text x=\"305\" y=\"542\" font-family=\"sans-serif\" font-weight=\"900\" font-size=\"64\" fill=\"#{ACCENT_RED}\" text-anchor=\"middle\">#{escape s[:fastest_time_str]}</text>\n"
     elsif s[:fastest_time_str]
-      svg << "<text x=\"305\" y=\"530\" font-family=\"sans-serif\" font-weight=\"900\" font-size=\"52\" fill=\"#54494B\" text-anchor=\"middle\">#{escape s[:fastest_time_str]}</text>\n"
+      svg << "<text x=\"305\" y=\"520\" font-family=\"sans-serif\" font-weight=\"900\" font-size=\"64\" fill=\"#54494B\" text-anchor=\"middle\">#{escape s[:fastest_time_str]}</text>\n"
     else
-      svg << "<text x=\"305\" y=\"490\" font-family=\"sans-serif\" font-size=\"22\" fill=\"#54494B\" text-anchor=\"middle\">First event here.</text>\n"
-      svg << "<text x=\"305\" y=\"530\" font-family=\"sans-serif\" font-size=\"22\" fill=\"#9DA39A\" text-anchor=\"middle\">Go set a benchmark!</text>\n"
+      svg << "<text x=\"305\" y=\"488\" font-family=\"sans-serif\" font-size=\"22\" fill=\"#54494B\" text-anchor=\"middle\">First event here.</text>\n"
+      svg << "<text x=\"305\" y=\"520\" font-family=\"sans-serif\" font-size=\"22\" fill=\"#9DA39A\" text-anchor=\"middle\">Go set a benchmark!</text>\n"
     end
 
     svg
   end
 
-  # Panel: x=630, w=530, centre=895. Badge circles centred vertically. Heading at y=578.
+  # Panel: x=630, w=530, centre=895. Badge circles centred vertically. Heading at y=586.
   def badges_section(s)
     panel_x = 630
     panel_w = 530
-    heading_y = 578
-    badge_y   = 464   # centres 72px circles in the content area above the heading
+    heading_y = 586   # 16px from panel bottom (417+185=602, 602-16=586)
+    badge_y   = 460   # centres 72px circles in content area (422–570)
     svg = +""
-    svg << "<text x=\"895\" y=\"#{heading_y}\" font-family=\"sans-serif\" font-size=\"15\" fill=\"#9DA39A\" letter-spacing=\"3\" text-anchor=\"middle\">BADGES AWARDED</text>\n"
+    svg << "<text x=\"895\" y=\"#{heading_y}\" font-family=\"sans-serif\" font-size=\"17\" fill=\"#7E8287\" letter-spacing=\"2\" text-anchor=\"middle\">BADGES AWARDED</text>\n"
 
     stacks = s[:badge_stacks]
     if stacks.empty?
-      svg << "<text x=\"895\" y=\"494\" font-family=\"sans-serif\" font-size=\"22\" fill=\"#54494B\" text-anchor=\"middle\">Keep running —</text>\n"
-      svg << "<text x=\"895\" y=\"530\" font-family=\"sans-serif\" font-size=\"22\" fill=\"#9DA39A\" text-anchor=\"middle\">your badge is coming!</text>\n"
+      svg << "<text x=\"895\" y=\"488\" font-family=\"sans-serif\" font-size=\"22\" fill=\"#54494B\" text-anchor=\"middle\">Keep running —</text>\n"
+      svg << "<text x=\"895\" y=\"520\" font-family=\"sans-serif\" font-size=\"22\" fill=\"#9DA39A\" text-anchor=\"middle\">your badge is coming!</text>\n"
     else
       render_badge_stacks(svg, stacks, panel_x, panel_w, badge_y)
     end
