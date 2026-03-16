@@ -12,5 +12,7 @@ class AwardBadgesJob < ApplicationJob
     User.where(id: user_ids).find_each do |user|
       BadgeEligibilityChecker.new(user, event_id: event_id).check_and_award_all
     end
+
+    GenerateOgImageJob.perform_later(event_id)
   end
 end

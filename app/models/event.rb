@@ -11,9 +11,11 @@ class Event < ApplicationRecord
   has_many :finish_times
   has_many :finished_users, through: :finish_positions, source: :user
   has_many :results
+  has_many :user_badges
   has_many :volunteers
   has_many :check_ins
   has_many :checked_in_users, through: :check_ins, source: :user
+  has_one_attached :og_image
 
   scope :not_finalised, -> { where.not(status: [ "finalised", "abandoned", "cancelled" ]) }
   scope :public_visible, -> { where(status: [ "in_progress", "finalised", "abandoned", "cancelled" ]) }
@@ -81,7 +83,7 @@ class Event < ApplicationRecord
 
   def send_results_emails_if_finalised
     if saved_change_to_status? && finalised?
-      # Award badges FIRST (background job)
+      # Award badges FIRST, then generate OG image (chained from AwardBadgesJob)
       AwardBadgesJob.perform_later(id)
 
       # Then queue emails
