@@ -55,6 +55,8 @@ class OgImageGeneratorService
   end
 
   def build_svg
+    return cancelled_svg if @event.cancelled?
+
     s = stats
     <<~SVG
       <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="#{WIDTH}" height="#{HEIGHT}" viewBox="0 0 #{WIDTH} #{HEIGHT}">
@@ -104,6 +106,49 @@ class OgImageGeneratorService
   end
 
   private
+
+  def cancelled_svg
+    date_str     = @event.date.strftime("%-d %B %Y")
+    location_name = escape(@event.location.name)
+    event_number  = escape(@event.number.to_s)
+    <<~SVG
+      <svg xmlns="http://www.w3.org/2000/svg" width="#{WIDTH}" height="#{HEIGHT}" viewBox="0 0 #{WIDTH} #{HEIGHT}">
+        <defs>
+          <linearGradient id="headerGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#9DA39A"/>
+            <stop offset="45%" stop-color="#B98389"/>
+            <stop offset="100%" stop-color="#DB2955"/>
+          </linearGradient>
+          <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#DB2955"/>
+            <stop offset="100%" stop-color="#B91E47"/>
+          </linearGradient>
+        </defs>
+
+        <!-- Background -->
+        <rect width="#{WIDTH}" height="#{HEIGHT}" fill="#FFFFFF"/>
+
+        <!-- Header -->
+        <rect width="#{WIDTH}" height="200" fill="url(#headerGrad)"/>
+        <rect y="194" width="#{WIDTH}" height="6" fill="url(#accentGrad)"/>
+
+        <!-- Header: brand + event -->
+        <text x="52" y="90" font-family="sans-serif" font-weight="900" font-size="58" fill="white" letter-spacing="-1">Western Sydney 10</text>
+        <text x="1148" y="90" font-family="sans-serif" font-weight="900" font-size="58" fill="white" text-anchor="end" letter-spacing="-1">Event ##{event_number}</text>
+        <text x="52" y="150" font-family="sans-serif" font-size="28" fill="rgba(255,255,255,0.88)">#{escape date_str}</text>
+        <text x="1148" y="150" font-family="sans-serif" font-size="28" fill="rgba(255,255,255,0.88)" text-anchor="end">#{location_name}</text>
+
+        <!-- Cancelled stamp, rotated slightly -->
+        <g transform="rotate(-9, 600, 415)">
+          <rect x="90" y="320" width="1020" height="190" rx="10" fill="none" stroke="#CC0000" stroke-width="10" opacity="0.88"/>
+          <text x="600" y="458" font-family="Impact, 'Arial Black', sans-serif" font-weight="900" font-size="178" fill="#CC0000" text-anchor="middle" letter-spacing="12" opacity="0.88">CANCELLED</text>
+        </g>
+
+        <!-- Footer -->
+        <text x="600" y="618" font-family="sans-serif" font-size="20" fill="#9DA39A" text-anchor="middle" letter-spacing="2">ws10.run</text>
+      </svg>
+    SVG
+  end
 
   def render_png
     require "vips"

@@ -165,6 +165,18 @@ class OgImageGeneratorServiceTest < ActiveSupport::TestCase
     assert_includes svg, "PERSONAL BESTS"
   end
 
+  test "build_svg returns cancelled stamp for cancelled events" do
+    cancelled_event = Event.create!(number: 98, date: 2.weeks.ago, location: locations(:bungarribee), status: "cancelled")
+
+    svg = OgImageGeneratorService.new(cancelled_event).build_svg
+
+    assert_includes svg, "CANCELLED"
+    assert_includes svg, "Western Sydney 10"
+    assert_includes svg, "Event #98"
+    assert_not_includes svg, "PARTICIPANTS"
+    assert_not_includes svg, "FIRST FINISHER"
+  end
+
   test "build_svg includes new course record text when applicable" do
     location = locations(:nepean)
     user = users(:one)
