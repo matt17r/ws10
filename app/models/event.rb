@@ -77,6 +77,7 @@ class Event < ApplicationRecord
   def archive_as_cancelled!
     raise "Can only archive abandoned events" unless abandoned?
     update!(status: "cancelled")
+    GenerateOgImageJob.perform_later(id)
   end
 
   private

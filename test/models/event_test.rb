@@ -396,6 +396,15 @@ class EventTest < ActiveSupport::TestCase
     assert event.reload.cancelled?
   end
 
+  test "archive_as_cancelled! enqueues OG image generation" do
+    event = events(:draft_event)
+    event.update!(status: "abandoned")
+
+    assert_enqueued_with(job: GenerateOgImageJob, args: [ event.id ]) do
+      event.archive_as_cancelled!
+    end
+  end
+
   test "archive_as_cancelled! fails for non-abandoned events" do
     event = events(:draft_event)
     event.update!(status: "draft")
