@@ -25,6 +25,8 @@ module ApplicationHelper
   end
 
   def og_event_description(event)
+    return "This event was cancelled." if event.cancelled?
+
     s = OgImageGeneratorService.new(event).stats
     parts = [ "#{s[:participant_count]} #{'finisher'.pluralize(s[:participant_count])}" ]
     parts << "#{s[:first_timer_count]} first #{'timer'.pluralize(s[:first_timer_count])}" if s[:first_timer_count] > 0

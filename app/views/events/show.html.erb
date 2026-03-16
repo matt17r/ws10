@@ -1,4 +1,4 @@
-<% if @event.finalised? %>
+<% if @event.finalised? || @event.cancelled? %>
   <% content_for :head do %>
     <% og_title = "WS10 Event ##{@event.number} – #{l @event.date, format: :long} – #{@event.location}" %>
     <% og_description = og_event_description(@event) %>

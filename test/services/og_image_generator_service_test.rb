@@ -182,6 +182,9 @@ class OgImageGeneratorServiceTest < ActiveSupport::TestCase
     user = users(:one)
     user.results.destroy_all
 
+    faster_elsewhere = Event.create!(number: 94, date: 2.weeks.ago, location: locations(:bungarribee), status: "finalised")
+    Result.create!(user: user, event: faster_elsewhere, time: 1600)
+
     record_event = Event.create!(number: 95, date: 1.week.ago, location: location, status: "finalised")
     Result.create!(user: user, event: record_event, time: 1800)
 
@@ -190,5 +193,6 @@ class OgImageGeneratorServiceTest < ActiveSupport::TestCase
 
     assert_includes svg, "FIRST FINISHER"
     assert_includes svg, "★ NEW COURSE RECORD ★"
+    assert_not_includes svg, "NEW WS10 RECORD"
   end
 end
