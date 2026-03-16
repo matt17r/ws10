@@ -133,45 +133,47 @@ class OgImageGeneratorService
     SVG
   end
 
+  # Panel: x=40, w=530, centre=305. Content area: y=437–562, heading at y=578.
   def records_section(s)
-    base_x = 52
-    label_y = 464
+    base_x   = 52
+    heading_y = 578   # bottom of panel, matching stat card label position
     svg = +""
 
     if s[:new_ws10_record]
-      svg << "<text x=\"#{base_x}\" y=\"#{label_y}\" font-family=\"sans-serif\" font-size=\"15\" fill=\"#9DA39A\" letter-spacing=\"3\">RECORDS</text>\n"
-      svg << "<text x=\"#{base_x}\" y=\"#{label_y + 36}\" font-family=\"sans-serif\" font-weight=\"bold\" font-size=\"22\" fill=\"#{ACCENT_RED}\">★  NEW WS10 RECORD</text>\n"
-      svg << "<text x=\"#{base_x}\" y=\"#{label_y + 88}\" font-family=\"sans-serif\" font-weight=\"900\" font-size=\"52\" fill=\"#54494B\">#{escape s[:fastest_time_str]}</text>\n"
+      svg << "<text x=\"305\" y=\"#{heading_y}\" font-family=\"sans-serif\" font-size=\"15\" fill=\"#9DA39A\" letter-spacing=\"3\" text-anchor=\"middle\">RECORDS</text>\n"
+      svg << "<text x=\"#{base_x}\" y=\"476\" font-family=\"sans-serif\" font-weight=\"bold\" font-size=\"22\" fill=\"#{ACCENT_RED}\">★  NEW WS10 RECORD</text>\n"
+      svg << "<text x=\"#{base_x}\" y=\"530\" font-family=\"sans-serif\" font-weight=\"900\" font-size=\"52\" fill=\"#54494B\">#{escape s[:fastest_time_str]}</text>\n"
     elsif s[:new_course_record]
-      svg << "<text x=\"#{base_x}\" y=\"#{label_y}\" font-family=\"sans-serif\" font-size=\"15\" fill=\"#9DA39A\" letter-spacing=\"3\">RECORDS</text>\n"
-      svg << "<text x=\"#{base_x}\" y=\"#{label_y + 36}\" font-family=\"sans-serif\" font-weight=\"bold\" font-size=\"22\" fill=\"#{ACCENT_RED}\">★  NEW COURSE RECORD</text>\n"
-      svg << "<text x=\"#{base_x}\" y=\"#{label_y + 88}\" font-family=\"sans-serif\" font-weight=\"900\" font-size=\"52\" fill=\"#54494B\">#{escape s[:fastest_time_str]}</text>\n"
+      svg << "<text x=\"305\" y=\"#{heading_y}\" font-family=\"sans-serif\" font-size=\"15\" fill=\"#9DA39A\" letter-spacing=\"3\" text-anchor=\"middle\">RECORDS</text>\n"
+      svg << "<text x=\"#{base_x}\" y=\"476\" font-family=\"sans-serif\" font-weight=\"bold\" font-size=\"22\" fill=\"#{ACCENT_RED}\">★  NEW COURSE RECORD</text>\n"
+      svg << "<text x=\"#{base_x}\" y=\"530\" font-family=\"sans-serif\" font-weight=\"900\" font-size=\"52\" fill=\"#54494B\">#{escape s[:fastest_time_str]}</text>\n"
     elsif s[:fastest_time_str]
-      svg << "<text x=\"#{base_x}\" y=\"#{label_y}\" font-family=\"sans-serif\" font-size=\"15\" fill=\"#9DA39A\" letter-spacing=\"3\">FIRST FINISHER</text>\n"
-      svg << "<text x=\"#{base_x}\" y=\"#{label_y + 88}\" font-family=\"sans-serif\" font-weight=\"900\" font-size=\"52\" fill=\"#54494B\">#{escape s[:fastest_time_str]}</text>\n"
+      svg << "<text x=\"305\" y=\"#{heading_y}\" font-family=\"sans-serif\" font-size=\"15\" fill=\"#9DA39A\" letter-spacing=\"3\" text-anchor=\"middle\">FIRST FINISHER</text>\n"
+      svg << "<text x=\"305\" y=\"530\" font-family=\"sans-serif\" font-weight=\"900\" font-size=\"52\" fill=\"#54494B\" text-anchor=\"middle\">#{escape s[:fastest_time_str]}</text>\n"
     else
-      svg << "<text x=\"#{base_x}\" y=\"#{label_y}\" font-family=\"sans-serif\" font-size=\"15\" fill=\"#9DA39A\" letter-spacing=\"3\">RECORDS</text>\n"
-      svg << "<text x=\"#{base_x}\" y=\"#{label_y + 40}\" font-family=\"sans-serif\" font-size=\"22\" fill=\"#54494B\">First event here.</text>\n"
-      svg << "<text x=\"#{base_x}\" y=\"#{label_y + 76}\" font-family=\"sans-serif\" font-size=\"22\" fill=\"#9DA39A\">Go set a benchmark!</text>\n"
+      svg << "<text x=\"305\" y=\"#{heading_y}\" font-family=\"sans-serif\" font-size=\"15\" fill=\"#9DA39A\" letter-spacing=\"3\" text-anchor=\"middle\">RECORDS</text>\n"
+      svg << "<text x=\"305\" y=\"490\" font-family=\"sans-serif\" font-size=\"22\" fill=\"#54494B\" text-anchor=\"middle\">First event here.</text>\n"
+      svg << "<text x=\"305\" y=\"530\" font-family=\"sans-serif\" font-size=\"22\" fill=\"#9DA39A\" text-anchor=\"middle\">Go set a benchmark!</text>\n"
     end
 
     svg
   end
 
+  # Panel: x=630, w=530, centre=895. Badge circles centred vertically. Heading at y=578.
   def badges_section(s)
-    base_x  = 642
+    panel_x = 630
     panel_w = 530
-    label_y = 464
-    badge_y = label_y + 16
+    heading_y = 578
+    badge_y   = 464   # centres 72px circles in the content area above the heading
     svg = +""
-    svg << "<text x=\"#{base_x}\" y=\"#{label_y}\" font-family=\"sans-serif\" font-size=\"15\" fill=\"#9DA39A\" letter-spacing=\"3\">BADGES AWARDED</text>\n"
+    svg << "<text x=\"895\" y=\"#{heading_y}\" font-family=\"sans-serif\" font-size=\"15\" fill=\"#9DA39A\" letter-spacing=\"3\" text-anchor=\"middle\">BADGES AWARDED</text>\n"
 
     stacks = s[:badge_stacks]
     if stacks.empty?
-      svg << "<text x=\"#{base_x}\" y=\"#{label_y + 42}\" font-family=\"sans-serif\" font-size=\"22\" fill=\"#54494B\">Keep running —</text>\n"
-      svg << "<text x=\"#{base_x}\" y=\"#{label_y + 74}\" font-family=\"sans-serif\" font-size=\"22\" fill=\"#9DA39A\">your badge is coming!</text>\n"
+      svg << "<text x=\"895\" y=\"494\" font-family=\"sans-serif\" font-size=\"22\" fill=\"#54494B\" text-anchor=\"middle\">Keep running —</text>\n"
+      svg << "<text x=\"895\" y=\"530\" font-family=\"sans-serif\" font-size=\"22\" fill=\"#9DA39A\" text-anchor=\"middle\">your badge is coming!</text>\n"
     else
-      render_badge_stacks(svg, stacks, base_x, panel_w, badge_y)
+      render_badge_stacks(svg, stacks, panel_x, panel_w, badge_y)
     end
 
     svg
@@ -209,7 +211,7 @@ class OgImageGeneratorService
       dx = (i - 1) * BADGE_PEEK_X
       cx = gx + dx + BADGE_RADIUS
       cy = gy + BADGE_RADIUS
-      svg << "<circle cx=\"#{cx}\" cy=\"#{cy}\" r=\"#{BADGE_RADIUS}\" fill=\"#{PANEL_BG}\" stroke=\"#{color}\" stroke-width=\"2.5\"/>\n"
+      svg << "<circle cx=\"#{cx}\" cy=\"#{cy}\" r=\"#{BADGE_RADIUS}\" fill=\"white\" stroke=\"#{color}\" stroke-width=\"3.5\"/>\n"
       svg << "<image href=\"#{img_uri}\" x=\"#{gx + dx + img_pad}\" y=\"#{gy + img_pad}\" width=\"#{BADGE_IMG}\" height=\"#{BADGE_IMG}\"/>\n"
     end
   end
