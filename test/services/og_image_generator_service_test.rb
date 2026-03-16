@@ -102,7 +102,6 @@ class OgImageGeneratorServiceTest < ActiveSupport::TestCase
     s = service.stats
 
     assert_not s[:new_course_record]
-    assert_equal "28:20", s[:course_record_str]
   end
 
   test "stats detects new course record but not ws10 record when a faster time exists elsewhere" do
@@ -133,6 +132,25 @@ class OgImageGeneratorServiceTest < ActiveSupport::TestCase
     s = service.stats
 
     assert s[:badge_count] >= 1
+    assert_kind_of Array, s[:badge_stacks]
+    assert s[:badge_stacks].any? { |stack| stack[:family] == "centurion" && stack[:level] == "bronze" }
+  end
+
+  test "build_svg shows first finisher heading when no record is set" do
+    location = locations(:nepean)
+    user = users(:one)
+    user.results.destroy_all
+
+    previous_event = Event.create!(number: 96, date: 3.weeks.ago, location: location, status: "finalised")
+    Result.create!(user: user, event: previous_event, time: 1700)
+
+    slower_event = Event.create!(number: 97, date: 2.weeks.ago, location: location, status: "finalised")
+    Result.create!(user: user, event: slower_event, time: 2000)
+
+    svg = OgImageGeneratorService.new(slower_event).build_svg
+
+    assert_includes svg, "FIRST FINISHER"
+    assert_includes svg, "33:20"
   end
 
   test "build_svg returns svg string with event details" do

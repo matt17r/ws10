@@ -2,7 +2,7 @@ class OgImageGeneratorService
   WIDTH = 1200
   HEIGHT = 630
 
-  BADGE_LEVELS = %w[gold silver bronze singular].freeze
+  BADGE_LEVEL_ORDER = { "singular" => 4, "gold" => 3, "silver" => 2, "bronze" => 1 }.freeze
   BADGE_COLORS = {
     "gold" => "#FFD700",
     "silver" => "#C0C0C0",
@@ -123,18 +123,20 @@ class OgImageGeneratorService
     base_x = 52
     label_y = 464
     svg = +""
-    svg << "<text x=\"#{base_x}\" y=\"#{label_y}\" font-family=\"sans-serif\" font-size=\"15\" fill=\"#9DA39A\" letter-spacing=\"3\">RECORDS</text>\n"
 
     if s[:new_ws10_record]
+      svg << "<text x=\"#{base_x}\" y=\"#{label_y}\" font-family=\"sans-serif\" font-size=\"15\" fill=\"#9DA39A\" letter-spacing=\"3\">RECORDS</text>\n"
       svg << "<text x=\"#{base_x}\" y=\"#{label_y + 36}\" font-family=\"sans-serif\" font-weight=\"bold\" font-size=\"22\" fill=\"#DB2955\">★  NEW WS10 RECORD</text>\n"
       svg << "<text x=\"#{base_x}\" y=\"#{label_y + 88}\" font-family=\"sans-serif\" font-weight=\"900\" font-size=\"52\" fill=\"#54494B\">#{escape s[:fastest_time_str]}</text>\n"
     elsif s[:new_course_record]
+      svg << "<text x=\"#{base_x}\" y=\"#{label_y}\" font-family=\"sans-serif\" font-size=\"15\" fill=\"#9DA39A\" letter-spacing=\"3\">RECORDS</text>\n"
       svg << "<text x=\"#{base_x}\" y=\"#{label_y + 36}\" font-family=\"sans-serif\" font-weight=\"bold\" font-size=\"22\" fill=\"#DB2955\">★  NEW COURSE RECORD</text>\n"
       svg << "<text x=\"#{base_x}\" y=\"#{label_y + 88}\" font-family=\"sans-serif\" font-weight=\"900\" font-size=\"52\" fill=\"#54494B\">#{escape s[:fastest_time_str]}</text>\n"
-    elsif s[:course_record_str]
-      svg << "<text x=\"#{base_x}\" y=\"#{label_y + 36}\" font-family=\"sans-serif\" font-size=\"20\" fill=\"#7E8287\">Course best to beat:</text>\n"
-      svg << "<text x=\"#{base_x}\" y=\"#{label_y + 88}\" font-family=\"sans-serif\" font-weight=\"900\" font-size=\"52\" fill=\"#54494B\">#{escape s[:course_record_str]}</text>\n"
+    elsif s[:fastest_time_str]
+      svg << "<text x=\"#{base_x}\" y=\"#{label_y}\" font-family=\"sans-serif\" font-size=\"15\" fill=\"#9DA39A\" letter-spacing=\"3\">FIRST FINISHER</text>\n"
+      svg << "<text x=\"#{base_x}\" y=\"#{label_y + 88}\" font-family=\"sans-serif\" font-weight=\"900\" font-size=\"52\" fill=\"#54494B\">#{escape s[:fastest_time_str]}</text>\n"
     else
+      svg << "<text x=\"#{base_x}\" y=\"#{label_y}\" font-family=\"sans-serif\" font-size=\"15\" fill=\"#9DA39A\" letter-spacing=\"3\">RECORDS</text>\n"
       svg << "<text x=\"#{base_x}\" y=\"#{label_y + 40}\" font-family=\"sans-serif\" font-size=\"22\" fill=\"#54494B\">First event here.</text>\n"
       svg << "<text x=\"#{base_x}\" y=\"#{label_y + 76}\" font-family=\"sans-serif\" font-size=\"22\" fill=\"#9DA39A\">Go set a benchmark!</text>\n"
     end
@@ -142,37 +144,58 @@ class OgImageGeneratorService
     svg
   end
 
+  # Each unique (family, level) combination is a "stack". Duplicates peek out
+  # from behind the front badge to give a sense of count without cluttering.
+  BADGE_CARD_SIZE = 68
+  BADGE_IMG_INSET = 3  # padding inside the card rect
+  BADGE_PEEK_X    = 8  # how far each duplicate peeks to the right
+  BADGE_PEEK_Y    = 3  # slight downward offset for depth
+  BADGE_STACK_GAP = 16 # horizontal gap between different stacks
+
   def badges_section(s)
     base_x = 642
     label_y = 464
+    badge_y = label_y + 14
     svg = +""
     svg << "<text x=\"#{base_x}\" y=\"#{label_y}\" font-family=\"sans-serif\" font-size=\"15\" fill=\"#9DA39A\" letter-spacing=\"3\">BADGES AWARDED</text>\n"
 
-    counts = s[:badge_counts_by_level]
-    active_levels = BADGE_LEVELS.select { |lvl| counts[lvl].to_i > 0 }
-
-    if active_levels.empty?
+    stacks = s[:badge_stacks]
+    if stacks.empty?
       svg << "<text x=\"#{base_x}\" y=\"#{label_y + 42}\" font-family=\"sans-serif\" font-size=\"22\" fill=\"#54494B\">Keep running —</text>\n"
       svg << "<text x=\"#{base_x}\" y=\"#{label_y + 74}\" font-family=\"sans-serif\" font-size=\"22\" fill=\"#9DA39A\">your badge is coming!</text>\n"
     else
-      group_w = 500 / [ active_levels.size, 3 ].min
-      active_levels.first(3).each_with_index do |level, i|
-        gx = base_x + i * group_w
-        gy = label_y + 14
-        count = counts[level]
-        color = BADGE_COLORS[level]
-        img_uri = badge_data_uri(level)
-        svg << "<image href=\"#{img_uri}\" x=\"#{gx}\" y=\"#{gy}\" width=\"54\" height=\"54\"/>\n"
-        svg << "<text x=\"#{gx + 62}\" y=\"#{gy + 40}\" font-family=\"sans-serif\" font-weight=\"900\" font-size=\"44\" fill=\"#{color}\">#{count}</text>\n"
-        svg << "<text x=\"#{gx}\" y=\"#{gy + 78}\" font-family=\"sans-serif\" font-size=\"16\" fill=\"#9DA39A\" letter-spacing=\"1\">#{level.upcase}</text>\n"
+      gx = base_x
+      stacks.each do |stack|
+        gx = render_badge_stack(svg, stack, gx, badge_y)
+        gx += BADGE_STACK_GAP
       end
     end
 
     svg
   end
 
-  def badge_data_uri(level)
-    png_name = level == "singular" ? "founding-member-singular" : "consistent-#{level}"
+  # Renders a stack of badges at position (gx, gy), returns the x position after the stack.
+  def render_badge_stack(svg, stack, gx, gy)
+    family = stack[:family]
+    level  = stack[:level]
+    count  = stack[:count]
+    color  = BADGE_COLORS[level]
+    img_uri = badge_data_uri(family, level)
+    img_size = BADGE_CARD_SIZE - BADGE_IMG_INSET * 2
+
+    # Draw from back to front so the front badge ends up on top (SVG z-order)
+    count.downto(1) do |i|
+      dx = (i - 1) * BADGE_PEEK_X
+      dy = (i - 1) * BADGE_PEEK_Y
+      svg << "<rect x=\"#{gx + dx}\" y=\"#{gy + dy}\" width=\"#{BADGE_CARD_SIZE}\" height=\"#{BADGE_CARD_SIZE}\" rx=\"10\" fill=\"white\" stroke=\"#{color}\" stroke-width=\"2\"/>\n"
+      svg << "<image href=\"#{img_uri}\" x=\"#{gx + dx + BADGE_IMG_INSET}\" y=\"#{gy + dy + BADGE_IMG_INSET}\" width=\"#{img_size}\" height=\"#{img_size}\"/>\n"
+    end
+
+    gx + BADGE_CARD_SIZE + (count - 1) * BADGE_PEEK_X
+  end
+
+  def badge_data_uri(family, level)
+    png_name = "#{family}-#{level}"
     path = Rails.root.join("public/badges/#{png_name}.png")
     encoded = Base64.strict_encode64(File.binread(path))
     "data:image/png;base64,#{encoded}"
@@ -196,8 +219,7 @@ class OgImageGeneratorService
     new_ws10_record = fastest_time && (ws10_record.nil? || fastest_time < ws10_record)
 
     badge_records = UserBadge.where(event_id: @event.id).includes(:badge)
-    badge_families = badge_records.map { |ub| ub.badge.badge_family }.uniq.sort
-    badge_counts_by_level = badge_records.group_by { |ub| ub.badge.level }.transform_values(&:count)
+    badge_stacks = build_badge_stacks(badge_records)
 
     {
       event_number: @event.number,
@@ -207,13 +229,25 @@ class OgImageGeneratorService
       first_timer_count: first_timer_count,
       pb_count: pb_count,
       fastest_time_str: fastest_time_str,
-      course_record_str: course_record ? format_time(course_record) : nil,
       new_course_record: new_course_record,
       new_ws10_record: new_ws10_record,
       badge_count: badge_records.count,
-      badge_families: badge_families,
-      badge_counts_by_level: badge_counts_by_level
+      badge_stacks: badge_stacks
     }
+  end
+
+  # Groups badge records into stacks sorted by family (highest-level family first),
+  # then within each family by level descending (gold before silver before bronze).
+  def build_badge_stacks(badge_records)
+    grouped = badge_records.group_by { |ub| [ ub.badge.badge_family, ub.badge.level ] }
+    stacks = grouped.map do |(family, level), records|
+      { family: family, level: level, level_order: BADGE_LEVEL_ORDER[level] || 0, count: records.size }
+    end
+
+    family_max_order = stacks.group_by { |s| s[:family] }
+                             .transform_values { |ss| ss.map { |s| s[:level_order] }.max }
+
+    stacks.sort_by { |s| [ -family_max_order[s[:family]], s[:family], -s[:level_order] ] }
   end
 
   def course_record_time
