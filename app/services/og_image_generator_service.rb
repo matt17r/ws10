@@ -2,13 +2,22 @@ class OgImageGeneratorService
   WIDTH = 1200
   HEIGHT = 630
 
+  PANEL_BG    = "#FDF4F7"
+  ACCENT_RED  = "#DB2955"
+
   BADGE_LEVEL_ORDER = { "singular" => 4, "gold" => 3, "silver" => 2, "bronze" => 1 }.freeze
   BADGE_COLORS = {
-    "gold" => "#FFD700",
-    "silver" => "#C0C0C0",
-    "bronze" => "#CD7F32",
+    "gold"     => "#FFD700",
+    "silver"   => "#C0C0C0",
+    "bronze"   => "#CD7F32",
     "singular" => "#DB2955"
   }.freeze
+
+  # Badge circle dimensions
+  BADGE_DIAM    = 72   # outer circle diameter
+  BADGE_RADIUS  = 36
+  BADGE_IMG     = 52   # badge image size (centered inside circle)
+  BADGE_PEEK_X  = 10   # how far each duplicate circle peeks to the right (horizontal only)
 
   ICON_USER_GROUP = "M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 " \
     "3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 " \
@@ -75,15 +84,15 @@ class OgImageGeneratorService
         <text x="1148" y="150" font-family="sans-serif" font-size="28" fill="rgba(255,255,255,0.88)" text-anchor="end">#{escape s[:location_name]}</text>
 
         <!-- Stat cards -->
-        #{stat_card(x: 40,  value: s[:participant_count], label: "RUNNERS",        color: "#DB2955", bg: "#FDF4F7", icon: ICON_USER_GROUP)}
-        #{stat_card(x: 430, value: s[:first_timer_count], label: "FIRST TIMERS",   color: "#DB2955", bg: "#FDF4F7", icon: ICON_ROCKET)}
-        #{stat_card(x: 820, value: s[:pb_count],          label: "PERSONAL BESTS", color: "#B98389", bg: "#FBF7F7", icon: ICON_BELL)}
+        #{stat_card(x: 40,  value: s[:participant_count], label: "PARTICIPANTS",   icon: ICON_USER_GROUP)}
+        #{stat_card(x: 430, value: s[:first_timer_count], label: "FIRST TIMERS",   icon: ICON_ROCKET)}
+        #{stat_card(x: 820, value: s[:pb_count],          label: "PERSONAL BESTS", icon: ICON_BELL)}
 
         <!-- Bottom panels -->
-        <rect x="40"  y="432" width="530" height="162" rx="12" fill="#F8F9FA"/>
+        <rect x="40"  y="432" width="530" height="162" rx="12" fill="#{PANEL_BG}"/>
         <rect x="40"  y="432" width="530" height="5"   rx="12" fill="url(#accentGrad)"/>
-        <rect x="630" y="432" width="530" height="162" rx="12" fill="#F8F9FA"/>
-        <rect x="630" y="432" width="530" height="5"   rx="12" fill="#9DA39A"/>
+        <rect x="630" y="432" width="530" height="162" rx="12" fill="#{PANEL_BG}"/>
+        <rect x="630" y="432" width="530" height="5"   rx="12" fill="url(#accentGrad)"/>
 
         #{records_section(s)}
         #{badges_section(s)}
@@ -104,18 +113,23 @@ class OgImageGeneratorService
     img.write_to_buffer(".png")
   end
 
-  def stat_card(x:, value:, label:, color:, bg:, icon:)
-    cx = x + 170
-    y = 216
+  # Icon sits to the left of the number, both vertically centred in the card.
+  def stat_card(x:, value:, label:, icon:)
+    cx = x + 170  # card centre x
+    icon_size = 52
+    # Vertical centre of the icon+number row
+    icon_cy = 216 + 100
+    icon_x  = cx - 66  # right edge of icon leaves a 10 px gap before number
+    icon_y  = icon_cy - icon_size / 2
+    num_y   = icon_cy + 24   # baseline aligned to mid-cap of font-size 64
     <<~SVG
-      <rect x="#{x}" y="#{y}" width="340" height="200" rx="12" fill="#{bg}"/>
-      <rect x="#{x}" y="#{y}" width="340" height="5" rx="12" fill="#{color}"/>
-      <circle cx="#{cx}" cy="#{y + 58}" r="28" fill="white" opacity="0.7"/>
-      <svg x="#{cx - 18}" y="#{y + 40}" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#{color}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="#{x}" y="216" width="340" height="200" rx="12" fill="#{PANEL_BG}"/>
+      <rect x="#{x}" y="216" width="340" height="5" rx="12" fill="#{ACCENT_RED}"/>
+      <svg x="#{icon_x}" y="#{icon_y}" width="#{icon_size}" height="#{icon_size}" viewBox="0 0 24 24" fill="none" stroke="#{ACCENT_RED}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
         <path d="#{icon}"/>
       </svg>
-      <text x="#{cx}" y="#{y + 132}" font-family="sans-serif" font-weight="900" font-size="64" fill="#{color}" text-anchor="middle">#{value}</text>
-      <text x="#{cx}" y="#{y + 178}" font-family="sans-serif" font-size="17" fill="#7E8287" text-anchor="middle" letter-spacing="2">#{label}</text>
+      <text x="#{cx - 4}" y="#{num_y}" font-family="sans-serif" font-weight="900" font-size="64" fill="#{ACCENT_RED}" text-anchor="start">#{value}</text>
+      <text x="#{cx}" y="#{216 + 178}" font-family="sans-serif" font-size="17" fill="#7E8287" text-anchor="middle" letter-spacing="2">#{label}</text>
     SVG
   end
 
@@ -126,11 +140,11 @@ class OgImageGeneratorService
 
     if s[:new_ws10_record]
       svg << "<text x=\"#{base_x}\" y=\"#{label_y}\" font-family=\"sans-serif\" font-size=\"15\" fill=\"#9DA39A\" letter-spacing=\"3\">RECORDS</text>\n"
-      svg << "<text x=\"#{base_x}\" y=\"#{label_y + 36}\" font-family=\"sans-serif\" font-weight=\"bold\" font-size=\"22\" fill=\"#DB2955\">★  NEW WS10 RECORD</text>\n"
+      svg << "<text x=\"#{base_x}\" y=\"#{label_y + 36}\" font-family=\"sans-serif\" font-weight=\"bold\" font-size=\"22\" fill=\"#{ACCENT_RED}\">★  NEW WS10 RECORD</text>\n"
       svg << "<text x=\"#{base_x}\" y=\"#{label_y + 88}\" font-family=\"sans-serif\" font-weight=\"900\" font-size=\"52\" fill=\"#54494B\">#{escape s[:fastest_time_str]}</text>\n"
     elsif s[:new_course_record]
       svg << "<text x=\"#{base_x}\" y=\"#{label_y}\" font-family=\"sans-serif\" font-size=\"15\" fill=\"#9DA39A\" letter-spacing=\"3\">RECORDS</text>\n"
-      svg << "<text x=\"#{base_x}\" y=\"#{label_y + 36}\" font-family=\"sans-serif\" font-weight=\"bold\" font-size=\"22\" fill=\"#DB2955\">★  NEW COURSE RECORD</text>\n"
+      svg << "<text x=\"#{base_x}\" y=\"#{label_y + 36}\" font-family=\"sans-serif\" font-weight=\"bold\" font-size=\"22\" fill=\"#{ACCENT_RED}\">★  NEW COURSE RECORD</text>\n"
       svg << "<text x=\"#{base_x}\" y=\"#{label_y + 88}\" font-family=\"sans-serif\" font-weight=\"900\" font-size=\"52\" fill=\"#54494B\">#{escape s[:fastest_time_str]}</text>\n"
     elsif s[:fastest_time_str]
       svg << "<text x=\"#{base_x}\" y=\"#{label_y}\" font-family=\"sans-serif\" font-size=\"15\" fill=\"#9DA39A\" letter-spacing=\"3\">FIRST FINISHER</text>\n"
@@ -144,18 +158,11 @@ class OgImageGeneratorService
     svg
   end
 
-  # Each unique (family, level) combination is a "stack". Duplicates peek out
-  # from behind the front badge to give a sense of count without cluttering.
-  BADGE_CARD_SIZE = 68
-  BADGE_IMG_INSET = 3  # padding inside the card rect
-  BADGE_PEEK_X    = 8  # how far each duplicate peeks to the right
-  BADGE_PEEK_Y    = 3  # slight downward offset for depth
-  BADGE_STACK_GAP = 16 # horizontal gap between different stacks
-
   def badges_section(s)
-    base_x = 642
+    base_x  = 642
+    panel_w = 530
     label_y = 464
-    badge_y = label_y + 14
+    badge_y = label_y + 16
     svg = +""
     svg << "<text x=\"#{base_x}\" y=\"#{label_y}\" font-family=\"sans-serif\" font-size=\"15\" fill=\"#9DA39A\" letter-spacing=\"3\">BADGES AWARDED</text>\n"
 
@@ -164,39 +171,51 @@ class OgImageGeneratorService
       svg << "<text x=\"#{base_x}\" y=\"#{label_y + 42}\" font-family=\"sans-serif\" font-size=\"22\" fill=\"#54494B\">Keep running —</text>\n"
       svg << "<text x=\"#{base_x}\" y=\"#{label_y + 74}\" font-family=\"sans-serif\" font-size=\"22\" fill=\"#9DA39A\">your badge is coming!</text>\n"
     else
-      gx = base_x
-      stacks.each do |stack|
-        gx = render_badge_stack(svg, stack, gx, badge_y)
-        gx += BADGE_STACK_GAP
-      end
+      render_badge_stacks(svg, stacks, base_x, panel_w, badge_y)
     end
 
     svg
   end
 
-  # Renders a stack of badges at position (gx, gy), returns the x position after the stack.
-  def render_badge_stack(svg, stack, gx, gy)
-    family = stack[:family]
-    level  = stack[:level]
-    count  = stack[:count]
-    color  = BADGE_COLORS[level]
-    img_uri = badge_data_uri(family, level)
-    img_size = BADGE_CARD_SIZE - BADGE_IMG_INSET * 2
+  # Distributes stacks evenly across the panel width, centred.
+  def render_badge_stacks(svg, stacks, panel_x, panel_w, badge_y)
+    ideal_gap = 22
+    stack_widths = stacks.map { |s| BADGE_DIAM + (s[:count] - 1) * BADGE_PEEK_X }
+    total_stacks_w = stack_widths.sum
+    gap = if stacks.size > 1
+      [ ideal_gap, (panel_w - total_stacks_w) / (stacks.size - 1) ].min
+    else
+      0
+    end
+    total_w = total_stacks_w + (stacks.size - 1) * gap
+    gx = panel_x + (panel_w - total_w) / 2
 
-    # Draw from back to front so the front badge ends up on top (SVG z-order)
+    stacks.each_with_index do |stack, i|
+      render_badge_stack(svg, stack, gx, badge_y)
+      gx += stack_widths[i] + gap
+    end
+  end
+
+  # Draws a single stack: back-to-front so the front badge is on top.
+  def render_badge_stack(svg, stack, gx, gy)
+    family  = stack[:family]
+    level   = stack[:level]
+    count   = stack[:count]
+    color   = BADGE_COLORS[level]
+    img_uri = badge_data_uri(family, level)
+    img_pad = (BADGE_DIAM - BADGE_IMG) / 2
+
     count.downto(1) do |i|
       dx = (i - 1) * BADGE_PEEK_X
-      dy = (i - 1) * BADGE_PEEK_Y
-      svg << "<rect x=\"#{gx + dx}\" y=\"#{gy + dy}\" width=\"#{BADGE_CARD_SIZE}\" height=\"#{BADGE_CARD_SIZE}\" rx=\"10\" fill=\"white\" stroke=\"#{color}\" stroke-width=\"2\"/>\n"
-      svg << "<image href=\"#{img_uri}\" x=\"#{gx + dx + BADGE_IMG_INSET}\" y=\"#{gy + dy + BADGE_IMG_INSET}\" width=\"#{img_size}\" height=\"#{img_size}\"/>\n"
+      cx = gx + dx + BADGE_RADIUS
+      cy = gy + BADGE_RADIUS
+      svg << "<circle cx=\"#{cx}\" cy=\"#{cy}\" r=\"#{BADGE_RADIUS}\" fill=\"#{PANEL_BG}\" stroke=\"#{color}\" stroke-width=\"2.5\"/>\n"
+      svg << "<image href=\"#{img_uri}\" x=\"#{gx + dx + img_pad}\" y=\"#{gy + img_pad}\" width=\"#{BADGE_IMG}\" height=\"#{BADGE_IMG}\"/>\n"
     end
-
-    gx + BADGE_CARD_SIZE + (count - 1) * BADGE_PEEK_X
   end
 
   def badge_data_uri(family, level)
-    png_name = "#{family}-#{level}"
-    path = Rails.root.join("public/badges/#{png_name}.png")
+    path = Rails.root.join("public/badges/#{family}-#{level}.png")
     encoded = Base64.strict_encode64(File.binread(path))
     "data:image/png;base64,#{encoded}"
   end

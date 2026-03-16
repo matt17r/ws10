@@ -160,7 +160,7 @@ class OgImageGeneratorServiceTest < ActiveSupport::TestCase
     assert_includes svg, "Western Sydney 10"
     assert_includes svg, "Event ##{@event.number}"
     assert_includes svg, "ws10.run"
-    assert_includes svg, "RUNNERS"
+    assert_includes svg, "PARTICIPANTS"
     assert_includes svg, "FIRST TIMERS"
     assert_includes svg, "PERSONAL BESTS"
   end
