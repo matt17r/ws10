@@ -139,19 +139,17 @@ class OgImageGeneratorService
     heading_y = 578   # bottom of panel, matching stat card label position
     svg = +""
 
+    svg << "<text x=\"305\" y=\"#{heading_y}\" font-family=\"sans-serif\" font-size=\"15\" fill=\"#9DA39A\" letter-spacing=\"3\" text-anchor=\"middle\">FIRST FINISHER</text>\n"
+
     if s[:new_ws10_record]
-      svg << "<text x=\"305\" y=\"#{heading_y}\" font-family=\"sans-serif\" font-size=\"15\" fill=\"#9DA39A\" letter-spacing=\"3\" text-anchor=\"middle\">RECORDS</text>\n"
-      svg << "<text x=\"#{base_x}\" y=\"476\" font-family=\"sans-serif\" font-weight=\"bold\" font-size=\"22\" fill=\"#{ACCENT_RED}\">★  NEW WS10 RECORD</text>\n"
-      svg << "<text x=\"#{base_x}\" y=\"530\" font-family=\"sans-serif\" font-weight=\"900\" font-size=\"52\" fill=\"#54494B\">#{escape s[:fastest_time_str]}</text>\n"
+      svg << "<text x=\"305\" y=\"476\" font-family=\"sans-serif\" font-weight=\"bold\" font-size=\"22\" fill=\"#{ACCENT_RED}\" text-anchor=\"middle\">★★ NEW WS10 RECORD ★★</text>\n"
+      svg << "<text x=\"305\" y=\"530\" font-family=\"sans-serif\" font-weight=\"900\" font-size=\"52\" fill=\"#{ACCENT_RED}\" text-anchor=\"middle\">#{escape s[:fastest_time_str]}</text>\n"
     elsif s[:new_course_record]
-      svg << "<text x=\"305\" y=\"#{heading_y}\" font-family=\"sans-serif\" font-size=\"15\" fill=\"#9DA39A\" letter-spacing=\"3\" text-anchor=\"middle\">RECORDS</text>\n"
-      svg << "<text x=\"#{base_x}\" y=\"476\" font-family=\"sans-serif\" font-weight=\"bold\" font-size=\"22\" fill=\"#{ACCENT_RED}\">★  NEW COURSE RECORD</text>\n"
-      svg << "<text x=\"#{base_x}\" y=\"530\" font-family=\"sans-serif\" font-weight=\"900\" font-size=\"52\" fill=\"#54494B\">#{escape s[:fastest_time_str]}</text>\n"
+      svg << "<text x=\"305\" y=\"476\" font-family=\"sans-serif\" font-weight=\"bold\" font-size=\"22\" fill=\"#{ACCENT_RED}\" text-anchor=\"middle\">★ NEW COURSE RECORD ★</text>\n"
+      svg << "<text x=\"305\" y=\"530\" font-family=\"sans-serif\" font-weight=\"900\" font-size=\"52\" fill=\"#{ACCENT_RED}\" text-anchor=\"middle\">#{escape s[:fastest_time_str]}</text>\n"
     elsif s[:fastest_time_str]
-      svg << "<text x=\"305\" y=\"#{heading_y}\" font-family=\"sans-serif\" font-size=\"15\" fill=\"#9DA39A\" letter-spacing=\"3\" text-anchor=\"middle\">FIRST FINISHER</text>\n"
       svg << "<text x=\"305\" y=\"530\" font-family=\"sans-serif\" font-weight=\"900\" font-size=\"52\" fill=\"#54494B\" text-anchor=\"middle\">#{escape s[:fastest_time_str]}</text>\n"
     else
-      svg << "<text x=\"305\" y=\"#{heading_y}\" font-family=\"sans-serif\" font-size=\"15\" fill=\"#9DA39A\" letter-spacing=\"3\" text-anchor=\"middle\">RECORDS</text>\n"
       svg << "<text x=\"305\" y=\"490\" font-family=\"sans-serif\" font-size=\"22\" fill=\"#54494B\" text-anchor=\"middle\">First event here.</text>\n"
       svg << "<text x=\"305\" y=\"530\" font-family=\"sans-serif\" font-size=\"22\" fill=\"#9DA39A\" text-anchor=\"middle\">Go set a benchmark!</text>\n"
     end

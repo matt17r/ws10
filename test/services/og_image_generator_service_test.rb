@@ -176,7 +176,7 @@ class OgImageGeneratorServiceTest < ActiveSupport::TestCase
     service = OgImageGeneratorService.new(record_event)
     svg = service.build_svg
 
-    assert_includes svg, "NEW"
-    assert_includes svg, "RECORD"
+    assert_includes svg, "FIRST FINISHER"
+    assert_includes svg, "★ NEW COURSE RECORD ★"
   end
 end
