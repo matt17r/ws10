@@ -1,15 +1,10 @@
 require "test_helper"
 
 class GenerateOgImageJobTest < ActiveJob::TestCase
-  test "calls OgImageGeneratorService for the event" do
+  test "is enqueued from AwardBadgesJob after badges are awarded" do
     event = events(:one)
-    mock_service = Minitest::Mock.new
-    mock_service.expect(:generate_and_attach, nil)
-
-    OgImageGeneratorService.stub(:new, ->(e) { assert_equal event, e; mock_service }) do
-      GenerateOgImageJob.perform_now(event.id)
+    assert_enqueued_with(job: GenerateOgImageJob) do
+      AwardBadgesJob.perform_now(event.id)
     end
-
-    mock_service.verify
   end
 end

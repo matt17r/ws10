@@ -19,16 +19,6 @@ class OgImageGeneratorService
     @stats ||= compute_stats
   end
 
-  private
-
-  def render_png
-    require "vips"
-    svg = build_svg
-    img = Vips::Image.svgload_buffer(svg.b, dpi: 144)
-    img = img.flatten(background: [ 255, 255, 255 ])
-    img.write_to_buffer(".png")
-  end
-
   def build_svg
     s = stats
     <<~SVG
@@ -81,6 +71,16 @@ class OgImageGeneratorService
         <text x="600" y="618" font-family="sans-serif" font-size="20" fill="#9DA39A" text-anchor="middle" letter-spacing="2">ws10.run</text>
       </svg>
     SVG
+  end
+
+  private
+
+  def render_png
+    require "vips"
+    svg = build_svg
+    img = Vips::Image.svgload_buffer(svg.b, dpi: 144)
+    img = img.flatten(background: [ 255, 255, 255 ])
+    img.write_to_buffer(".png")
   end
 
   def stat_card(x:, label:, value:, color:, bg:)
