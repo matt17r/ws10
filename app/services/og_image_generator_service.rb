@@ -5,7 +5,7 @@ class OgImageGeneratorService
   PANEL_BG    = "#FDF4F7"
   ACCENT_RED  = "#DB2955"
 
-  BADGE_LEVEL_ORDER = { "singular" => 4, "gold" => 3, "silver" => 2, "bronze" => 1 }.freeze
+  BADGE_LEVEL_ORDER = { "gold" => 3, "silver" => 2, "bronze" => 1, "singular" => 0 }.freeze
   BADGE_COLORS = {
     "gold"     => "#FFD700",
     "silver"   => "#C0C0C0",
@@ -140,8 +140,8 @@ class OgImageGeneratorService
 
         <!-- Cancelled stamp, rotated slightly -->
         <g transform="rotate(-9, 600, 415)">
-          <rect x="90" y="320" width="1020" height="190" rx="10" fill="none" stroke="#CC0000" stroke-width="10" opacity="0.88"/>
-          <text x="600" y="458" font-family="Impact, 'Arial Black', sans-serif" font-weight="900" font-size="178" fill="#CC0000" text-anchor="middle" letter-spacing="12" opacity="0.88">CANCELLED</text>
+          <rect x="90" y="358" width="1020" height="134" rx="10" fill="none" stroke="#CC0000" stroke-width="10" opacity="0.88"/>
+          <text x="600" y="458" font-family="Impact, 'Arial Black', sans-serif" font-weight="900" font-size="110" fill="#CC0000" text-anchor="middle" textLength="900" lengthAdjust="spacingAndGlyphs" opacity="0.88">CANCELLED</text>
         </g>
 
         <!-- Footer -->
@@ -223,26 +223,38 @@ class OgImageGeneratorService
   end
 
   # Distributes stacks evenly across the panel width, centred.
+  # Reduces intra-stack peek first if needed, then gaps, always keeping min_padding on each edge.
   def render_badge_stacks(svg, stacks, panel_x, panel_w, badge_y)
-    ideal_gap = 22
-    stack_widths = stacks.map { |s| BADGE_DIAM + (s[:count] - 1) * BADGE_PEEK_X }
+    min_padding = 16
+    available_w = panel_w - 2 * min_padding
+    ideal_gap   = 18
+
+    total_extra = stacks.sum { |s| s[:count] - 1 }
+    peek = if total_extra > 0
+      [ BADGE_PEEK_X, (available_w - stacks.size * BADGE_DIAM) / total_extra ].min.clamp(0, BADGE_PEEK_X)
+    else
+      BADGE_PEEK_X
+    end
+
+    stack_widths   = stacks.map { |s| BADGE_DIAM + (s[:count] - 1) * peek }
     total_stacks_w = stack_widths.sum
     gap = if stacks.size > 1
-      [ ideal_gap, (panel_w - total_stacks_w) / (stacks.size - 1) ].min
+      [ ideal_gap, (available_w - total_stacks_w) / (stacks.size - 1) ].min.clamp(0, ideal_gap)
     else
       0
     end
+
     total_w = total_stacks_w + (stacks.size - 1) * gap
-    gx = panel_x + (panel_w - total_w) / 2
+    gx = panel_x + min_padding + (available_w - total_w) / 2
 
     stacks.each_with_index do |stack, i|
-      render_badge_stack(svg, stack, gx, badge_y)
+      render_badge_stack(svg, stack, gx, badge_y, peek)
       gx += stack_widths[i] + gap
     end
   end
 
   # Draws a single stack: back-to-front so the front badge is on top.
-  def render_badge_stack(svg, stack, gx, gy)
+  def render_badge_stack(svg, stack, gx, gy, peek = BADGE_PEEK_X)
     family  = stack[:family]
     level   = stack[:level]
     count   = stack[:count]
@@ -251,7 +263,7 @@ class OgImageGeneratorService
     img_pad = (BADGE_DIAM - BADGE_IMG) / 2
 
     count.downto(1) do |i|
-      dx = (i - 1) * BADGE_PEEK_X
+      dx = (i - 1) * peek
       cx = gx + dx + BADGE_RADIUS
       cy = gy + BADGE_RADIUS
       svg << "<circle cx=\"#{cx}\" cy=\"#{cy}\" r=\"#{BADGE_RADIUS}\" fill=\"white\" stroke=\"#{color}\" stroke-width=\"3.5\"/>\n"
