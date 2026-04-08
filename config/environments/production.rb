@@ -28,7 +28,7 @@ Rails.application.configure do
   config.assume_ssl = true
 
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
-  config.force_ssl = false
+  config.force_ssl = true
 
   # Skip http-to-https redirect for the default health check endpoint.
   # config.ssl_options = { redirect: { exclude: ->(request) { request.path == "/up" } } }
@@ -79,6 +79,17 @@ Rails.application.configure do
 
   # Only use :id for inspections in production.
   config.active_record.attributes_for_inspect = [ :id ]
+
+  # Remove legacy X-XSS-Protection header (0 disables an exploitable browser feature;
+  # Content-Security-Policy is the modern replacement).
+  config.action_dispatch.default_headers.delete("X-XSS-Protection")
+
+  # Add security headers not covered by Rails defaults.
+  config.action_dispatch.default_headers.merge!(
+    "Permissions-Policy" => "camera=(), microphone=(), geolocation=(), payment=(), usb=()",
+    "Cross-Origin-Opener-Policy" => "same-origin",
+    "Cross-Origin-Resource-Policy" => "same-origin"
+  )
 
   # Enable DNS rebinding protection and other `Host` header attacks.
   # config.hosts = [
