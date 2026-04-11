@@ -8,7 +8,10 @@ gem "bootsnap", require: false
 gem "chunky_png"
 gem "csv"
 gem "importmap-rails"
-gem "kamal", require: false
+gem "capistrano", require: false
+gem "capistrano-rbenv", require: false
+gem "capistrano-rails", require: false
+gem "capistrano-bundler", require: false
 gem "propshaft"
 gem "puma"
 gem "rails_cloudflare_turnstile"
@@ -18,7 +21,6 @@ gem "solid_queue"
 gem "sqlite3"
 gem "stimulus-rails"
 gem "tailwindcss-rails"
-gem "thruster", require: false
 gem "turbo-rails"
 gem "tzinfo-data", platforms: %i[ windows jruby ]
 gem "ruby-vips", require: false

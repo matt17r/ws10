@@ -21,8 +21,8 @@ test:
   database: storage/test.sqlite3
 
 
-# Store production database in the storage/ directory, which by default
-# is mounted as a persistent Docker volume in config/deploy.yml.
+# Store production database in the storage/ directory, which is a Capistrano
+# linked_dir persisted across releases in shared/storage/.
 production:
   primary:
     <<: *default
