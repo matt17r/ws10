@@ -9,6 +9,7 @@ gem "chunky_png"
 gem "csv"
 gem "importmap-rails"
 gem "capistrano", require: false
+gem "capistrano-rbenv", require: false
 gem "capistrano-rails", require: false
 gem "capistrano-bundler", require: false
 gem "propshaft"
