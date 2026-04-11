@@ -50,8 +50,7 @@ namespace :deploy do
 
   after :restart_puma, :check_health do
     on roles(:web) do
-      sleep 3
-      execute "curl -sf http://localhost:3010/up > /dev/null"
+      execute "for i in $(seq 1 15); do curl -sf http://localhost:3010/up > /dev/null && exit 0; sleep 1; done; exit 1"
     end
   end
 end
