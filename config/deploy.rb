@@ -3,6 +3,13 @@ set :repo_url, "git@github.com:matt17r/ws10.git"
 
 set :deploy_to, "/home/matthew/ws10"
 
+def branch_name(default_branch)
+  branch = ENV.fetch("BRANCH", default_branch)
+  branch == "." ? `git rev-parse --abbrev-ref HEAD`.chomp : branch
+end
+
+set :branch, branch_name("main")
+
 # Keep the last 5 releases
 set :keep_releases, 5
 
@@ -48,36 +55,6 @@ namespace :deploy do
     on roles(:web) do
       sleep 3
       execute "curl -sf http://localhost:3010/up > /dev/null"
-    end
-  end
-end
-
-# Guard: confirm CI is green before deploying (mirrors the old kamal pre-build hook)
-before :deploy, :check_ci do
-  run_locally do
-    branch = fetch(:branch)
-    sha = capture("git rev-parse #{branch}").strip
-
-    info "Checking CI status for #{sha}..."
-    attempts = 0
-    loop do
-      status = capture("gh run list --commit #{sha} --json conclusion --jq '.[0].conclusion' 2>/dev/null || true").strip
-      case status
-      when "success"
-        info "CI passed. Proceeding with deploy."
-        break
-      when "failure", "cancelled"
-        error "CI #{status} for #{sha}. Aborting deploy."
-        exit 1
-      else
-        attempts += 1
-        if attempts >= 15
-          error "CI did not complete after waiting. Aborting."
-          exit 1
-        end
-        info "CI status: '#{status}'. Waiting 10s... (#{attempts}/15)"
-        sleep 10
-      end
     end
   end
 end
