@@ -1,0 +1,66 @@
+#!/usr/bin/env ruby
+# Exits 0 if this host's Cloudflare tunnel is the current DNS target for ws10.run.
+# Exits 1 otherwise (or if the API can't be reached).
+#
+# Used by the backup cron gate to self-demote a recovered passive host.
+
+require "net/http"
+require "json"
+
+SHARED_PATH = File.expand_path("../../shared", __dir__)
+ENV_FILE     = File.join(SHARED_PATH, "config", "cloudflare.env")
+UUID_GLOB    = "/etc/cloudflared/*-tunnel-uuid"
+HOSTNAME     = "ws10.run"
+
+def parse_env_file(path)
+  File.readlines(path, chomp: true).each_with_object({}) do |line, h|
+    next if line.strip.empty? || line.start_with?("#")
+    k, v = line.split("=", 2)
+    h[k.strip] = v&.strip
+  end
+end
+
+unless File.exist?(ENV_FILE)
+  warn "#{ENV_FILE} not found — assuming not active"
+  exit 1
+end
+
+env  = parse_env_file(ENV_FILE)
+uuid = Dir.glob(UUID_GLOB).map { |f| File.read(f).strip }.first
+
+unless uuid && !uuid.empty?
+  warn "Tunnel UUID file not found at #{UUID_GLOB}"
+  exit 1
+end
+
+my_target = "#{uuid}.cfargotunnel.com"
+
+record_id = env["CF_DNS_RECORD_IDS"]
+  &.split(",")
+  &.find { |r| r.start_with?("#{HOSTNAME}:") }
+  &.split(":", 2)
+  &.last
+
+unless record_id
+  warn "No CF_DNS_RECORD_IDS entry for #{HOSTNAME}"
+  exit 1
+end
+
+begin
+  uri = URI("https://api.cloudflare.com/client/v4/zones/#{env["CF_ZONE_ID"]}/dns_records/#{record_id}")
+  req = Net::HTTP::Get.new(uri)
+  req["Authorization"] = "Bearer #{env["CF_API_TOKEN"]}"
+  res  = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true, open_timeout: 5, read_timeout: 10) { |h| h.request(req) }
+  data = JSON.parse(res.body)
+  current_target = data.dig("result", "content")
+
+  if current_target == my_target
+    exit 0
+  else
+    warn "CF origin is #{current_target}, this host is #{my_target}"
+    exit 1
+  end
+rescue => e
+  warn "CF API check failed: #{e.message} — assuming not active (fail closed)"
+  exit 1
+end

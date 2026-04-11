@@ -1,0 +1,38 @@
+# User systemd unit for ws10's Puma server.
+#
+# Installation (once per server, as matthew):
+#   mkdir -p ~/.config/systemd/user
+#   cp /home/matthew/ws10/current/config/deploy/puma-ws10.service \
+#      ~/.config/systemd/user/puma-ws10.service
+#   systemctl --user enable puma-ws10
+#   systemctl --user start puma-ws10
+#   loginctl enable-linger matthew   # start on boot without login
+#
+# Capistrano restarts puma after each deploy via:
+#   systemctl --user restart puma-ws10
+
+[Unit]
+Description=Puma HTTP server (ws10)
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/matthew/ws10/current
+ExecStart=/home/matthew/.rbenv/shims/bundle exec puma -C config/puma.rb
+ExecReload=/bin/kill -USR1 $MAINPID
+Restart=on-failure
+RestartSec=5
+
+Environment=RAILS_ENV=production
+Environment=SOLID_QUEUE_IN_PUMA=true
+Environment=PORT=3010
+Environment=PIDFILE=/home/matthew/ws10/shared/tmp/pids/puma.pid
+# RAILS_MASTER_KEY is not needed here: Rails reads config/master.key automatically,
+# which Capistrano symlinks from shared/config/master.key on each deploy.
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=puma-ws10
+
+[Install]
+WantedBy=default.target

@@ -1,15 +1,16 @@
 {
   "permissions": {
     "allow": [
-      "Bash(bundle exec rake:*)",
       "Bash(bin/rails:*)",
       "Bash(bin/rubocop:*)",
-      "WebSearch",
-      "WebFetch(domain:docs.github.com)",
-      "Bash(for i in {1..10})",
+      "Bash(bundle exec rake:*)",
       "Bash(bundle info:*)",
       "Bash(done)",
-      "Bash(ls:*)"
+      "Bash(for i in {1..10})",
+      "Bash(grep:*)",
+      "Bash(ls:*)",
+      "WebFetch(domain:docs.github.com)",
+      "WebSearch"
     ],
     "deny": []
   }
