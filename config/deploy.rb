@@ -37,9 +37,6 @@ namespace :deploy do
       within release_path do
         with rails_env: fetch(:rails_env) do
           execute :rails, "db:prepare"
-          execute :rails, "db:prepare:cache"
-          execute :rails, "db:prepare:queue"
-          execute :rails, "db:prepare:cable"
         end
       end
     end
