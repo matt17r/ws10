@@ -217,4 +217,52 @@ class ResultsControllerTest < ActionDispatch::IntegrationTest
     end
     assert_response :not_found
   end
+
+  test "update with send_notification sends result_notification email when result has a time" do
+    sign_in_as users(:one)
+    result = results(:first)
+
+    assert result.time.present?
+
+    assert_emails 1 do
+      patch result_path(result), params: { result: { time_string: result.time_string, send_notification: "1" } }
+    end
+
+    email = ActionMailer::Base.deliveries.last
+    assert_equal [ result.user.email_address ], email.to
+    assert_match "Your result", email.subject
+  end
+
+  test "update with send_notification sends participation_notification email when result has no time" do
+    sign_in_as users(:one)
+    result = results(:first)
+    result.update!(time: nil)
+
+    assert_emails 1 do
+      patch result_path(result), params: { result: { time_string: "", send_notification: "1" } }
+    end
+
+    email = ActionMailer::Base.deliveries.last
+    assert_equal [ result.user.email_address ], email.to
+    assert_match "participated", email.subject
+  end
+
+  test "update without send_notification does not send email" do
+    sign_in_as users(:one)
+    result = results(:first)
+
+    assert_emails 0 do
+      patch result_path(result), params: { result: { time_string: result.time_string, send_notification: "0" } }
+    end
+  end
+
+  test "update with send_notification does not send email when result has no user" do
+    sign_in_as users(:one)
+    result = results(:first)
+    result.update_column(:user_id, nil)
+
+    assert_emails 0 do
+      patch result_path(result), params: { result: { time_string: result.time_string, send_notification: "1" } }
+    end
+  end
 end
