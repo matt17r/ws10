@@ -237,7 +237,9 @@ class BadgeEligibilityChecker
   def eligible_for_consistent?(badge)
     result_event_numbers = @user.results.joins(:event).pluck("events.number")
     volunteer_event_numbers = @user.volunteers.joins(:event).pluck("events.number")
-    event_numbers = (result_event_numbers + volunteer_event_numbers).uniq.sort
+    attended_event_numbers = (result_event_numbers + volunteer_event_numbers).to_set
+
+    non_cancelled_event_numbers = Event.where.not(status: :cancelled).order(:number).pluck(:number)
 
     completed_cycles = @user.user_badges.joins(:badge)
       .where(badges: { badge_family: "consistent", level: "gold" })
@@ -251,10 +253,10 @@ class BadgeEligibilityChecker
 
     required_consecutive = (completed_cycles * 8) + base_requirement
 
-    return false if event_numbers.length < required_consecutive
+    return false if non_cancelled_event_numbers.length < required_consecutive
 
-    event_numbers.each_cons(required_consecutive) do |sequence|
-      return true if sequence.each_cons(2).all? { |a, b| b == a + 1 }
+    non_cancelled_event_numbers.each_cons(required_consecutive) do |sequence|
+      return true if sequence.all? { |n| attended_event_numbers.include?(n) }
     end
 
     false
@@ -439,10 +441,12 @@ class BadgeEligibilityChecker
 
     result_event_numbers = @user.results.joins(:event).pluck("events.number")
     volunteer_event_numbers = @user.volunteers.joins(:event).pluck("events.number")
-    event_numbers = (result_event_numbers + volunteer_event_numbers).uniq.sort
+    attended_event_numbers = (result_event_numbers + volunteer_event_numbers).to_set
 
-    event_numbers.each_cons(required_consecutive) do |sequence|
-      if sequence.each_cons(2).all? { |a, b| b == a + 1 }
+    non_cancelled_event_numbers = Event.where.not(status: :cancelled).order(:number).pluck(:number)
+
+    non_cancelled_event_numbers.each_cons(required_consecutive) do |sequence|
+      if sequence.all? { |n| attended_event_numbers.include?(n) }
         last_event_number = sequence.last
         event = Event.find_by(number: last_event_number)
         return event.id if event

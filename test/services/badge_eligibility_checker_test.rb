@@ -80,20 +80,39 @@ class BadgeEligibilityCheckerTest < ActiveSupport::TestCase
     assert checker.eligible_for?(badge)
   end
 
-  test "user with non-consecutive events does not earn consistent badge" do
+  test "user who missed a finalised event does not earn consistent badge" do
     user = users(:one)
     badge = badges(:consistent_bronze)
 
     event1 = Event.create!(date: Date.today, location: locations(:bungarribee), number: 100, status: "finalised")
     event2 = Event.create!(date: Date.today + 7.days, location: locations(:bungarribee), number: 101, status: "finalised")
-    event3 = Event.create!(date: Date.today + 14.days, location: locations(:bungarribee), number: 103, status: "finalised")
+    event3 = Event.create!(date: Date.today + 14.days, location: locations(:bungarribee), number: 102, status: "finalised")
+    event4 = Event.create!(date: Date.today + 21.days, location: locations(:bungarribee), number: 103, status: "finalised")
+
+    Result.create!(user: user, event: event1)
+    Result.create!(user: user, event: event2)
+    # user did not attend event3 (event 102)
+    Result.create!(user: user, event: event4)
+
+    checker = BadgeEligibilityChecker.new(user, event_id: events(:one).id)
+    assert_not checker.eligible_for?(badge)
+  end
+
+  test "cancelled event does not break consecutive streak for consistent badge" do
+    user = users(:one)
+    badge = badges(:consistent_bronze)
+
+    event1 = Event.create!(date: Date.today, location: locations(:bungarribee), number: 100, status: "finalised")
+    event2 = Event.create!(date: Date.today + 7.days, location: locations(:bungarribee), number: 101, status: "finalised")
+    _cancelled = Event.create!(date: Date.today + 14.days, location: locations(:bungarribee), number: 102, status: "cancelled")
+    event3 = Event.create!(date: Date.today + 21.days, location: locations(:bungarribee), number: 103, status: "finalised")
 
     Result.create!(user: user, event: event1)
     Result.create!(user: user, event: event2)
     Result.create!(user: user, event: event3)
 
     checker = BadgeEligibilityChecker.new(user, event_id: events(:one).id)
-    assert_not checker.eligible_for?(badge)
+    assert checker.eligible_for?(badge)
   end
 
   # Simply the Best badge tests
@@ -186,10 +205,10 @@ class BadgeEligibilityCheckerTest < ActiveSupport::TestCase
     UserBadge.create!(user: user, badge: centurion_badge, event: event)
     UserBadge.create!(user: user, badge: traveller_badge, event: event)
 
-    # Still eligible for centurion and traveller, but not for other badges (use non-consecutive event numbers)
-    10.times do |i|
-      event = Event.create!(date: Date.today + i.days, location: locations(:bungarribee), number: (i * 10) + 100, status: "finalised")
-      Result.create!(user: user, event: event)
+    # Still eligible for centurion (10 events), but not consistent (skip every 3rd event so no 3-consecutive window is fully attended)
+    15.times do |i|
+      event = Event.create!(date: Date.today + i.days, location: locations(:bungarribee), number: 100 + i, status: "finalised")
+      Result.create!(user: user, event: event) unless (i + 1) % 3 == 0
     end
 
     checker = BadgeEligibilityChecker.new(user, event_id: events(:one).id)
