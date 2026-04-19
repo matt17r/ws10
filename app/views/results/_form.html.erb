@@ -25,11 +25,11 @@
     <p class="mt-1 text-xs text-gray-500">Leave blank for known participant who didn't finish</p>
   </div>
 
-  <% if result.persisted? && result.user.present? %>
+  <% if result.persisted? %>
     <div class="mb-4">
       <div class="flex items-center gap-2">
-        <%= f.check_box :send_notification, { unchecked_value: "0" }, class: "h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary" %>
-        <%= f.label :send_notification, "Send notification email to athlete", class: "text-sm font-medium text-gray-700" %>
+        <%= f.check_box :send_notification, { unchecked_value: "0", class: "h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary" } %>
+        <%= f.label :send_notification, "Send notification email to athlete (if known)", class: "text-sm font-medium text-gray-700" %>
       </div>
     </div>
   <% end %>
