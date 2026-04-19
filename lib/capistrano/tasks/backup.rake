@@ -22,7 +22,7 @@ namespace :backup do
     on roles(:web) do
       peer = fetch(:peer_host)
       storage_path = shared_path.join("storage")
-      incoming_path = "/home/matthew/apps/ws10/shared/backups/incoming"
+      incoming_path = "#{fetch(:deploy_to)}/shared/backups/incoming"
 
       enabled_flag = shared_path.join("config", "backup_enabled").to_s
       unless test("[ -f #{enabled_flag} ] && grep -q true #{enabled_flag}")
@@ -31,7 +31,7 @@ namespace :backup do
       end
 
       info "Verifying Cloudflare origin..."
-      unless test("#{current_path}/script/cf_active_check.rb 2>/dev/null")
+      unless test("#{current_path}/script/cf_active_check 2>/dev/null")
         info "This host is not the active CF origin — self-demoting and skipping backup."
         execute "echo false > #{enabled_flag}"
         next
@@ -83,7 +83,7 @@ namespace :backup do
       enabled = test("[ -f #{flag} ] && grep -q true #{flag}") ? "enabled" : "disabled"
       info "Backups on this host: #{enabled}"
 
-      incoming = "/home/matthew/apps/ws10/shared/backups/incoming"
+      incoming = "#{fetch(:deploy_to)}/shared/backups/incoming"
       PRODUCTION_DATABASES.each do |db_name|
         f = "#{incoming}/#{db_name}.sqlite3"
         if test("[ -f #{f} ]")
