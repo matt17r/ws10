@@ -28,7 +28,11 @@ class User < ApplicationRecord
       .joins("LEFT JOIN volunteers ON volunteers.user_id = users.id")
       .where("results.id IS NOT NULL OR volunteers.id IS NOT NULL")
       .select("users.*,
-               COUNT(DISTINCT COALESCE(results.event_id, volunteers.event_id)) as total_events_count,
+               (SELECT COUNT(*) FROM (
+                  SELECT event_id FROM results WHERE results.user_id = users.id
+                  UNION
+                  SELECT event_id FROM volunteers WHERE volunteers.user_id = users.id
+                )) as total_events_count,
                COUNT(DISTINCT results.id) as runs_count,
                COUNT(DISTINCT volunteers.id) as volunteers_count,
                MIN(CASE WHEN results.time IS NOT NULL THEN results.time END) as best_time,

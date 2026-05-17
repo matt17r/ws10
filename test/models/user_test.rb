@@ -153,6 +153,26 @@ class UserTest < ActiveSupport::TestCase
     assert_nil user.personal_best
   end
 
+  test "with_activity total_events_count counts events the user ran or volunteered at" do
+    user = users(:one)
+    user.results.destroy_all
+    user.volunteers.destroy_all
+    location = locations(:bungarribee)
+    run_event = Event.create!(date: Date.today, location: location, number: 100, status: "finalised")
+    volunteer_event = Event.create!(date: Date.today + 1.day, location: location, number: 101, status: "finalised")
+    shared_event = Event.create!(date: Date.today + 2.days, location: location, number: 102, status: "finalised")
+    Result.create!(user: user, event: run_event, time: 2000)
+    Result.create!(user: user, event: shared_event, time: 2100)
+    Volunteer.create!(user: user, event: volunteer_event, role: "Marshal")
+    Volunteer.create!(user: user, event: shared_event, role: "Timer")
+
+    loaded = User.with_activity.find { |u| u.id == user.id }
+
+    assert_equal 3, loaded.total_events_count.to_i
+    assert_equal 2, loaded.runs_count.to_i
+    assert_equal 2, loaded.volunteers_count.to_i
+  end
+
   test "barcode_string returns formatted barcode" do
     user = users(:one)
     expected = "A#{sprintf("%06d", user.id)}"
