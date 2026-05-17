@@ -206,6 +206,29 @@ class EventTest < ActiveSupport::TestCase
     assert_not event.active?
   end
 
+  test "not_finalised? returns true for draft and in_progress events" do
+    event = events(:draft_event)
+
+    event.update!(status: "draft")
+    assert event.not_finalised?
+
+    event.update!(status: "in_progress")
+    assert event.not_finalised?
+  end
+
+  test "not_finalised? returns false for finalised, abandoned and cancelled events" do
+    event = events(:draft_event)
+
+    event.update!(status: "finalised")
+    assert_not event.not_finalised?
+
+    event.update!(status: "abandoned")
+    assert_not event.not_finalised?
+
+    event.update!(status: "cancelled")
+    assert_not event.not_finalised?
+  end
+
   test "activate! sets status to in_progress" do
     event = events(:draft_event)
     event.update!(status: "draft")

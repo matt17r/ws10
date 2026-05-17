@@ -57,6 +57,10 @@ class Event < ApplicationRecord
     in_progress?
   end
 
+  def not_finalised?
+    draft? || in_progress?
+  end
+
   def activate!
     raise "Cannot activate an abandoned or cancelled event" if abandoned? || cancelled?
     Event.transaction do

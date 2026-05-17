@@ -22,12 +22,14 @@ class EventsController < ApplicationController
       return
     end
 
+    @interim_preview = @event.not_finalised? && Current.user&.admin?
     @results = @event.results.includes(user: { user_badges: :badge }).by_time
     @volunteers = @event.volunteers.includes(user: { user_badges: :badge }).by_role
   end
 
   def show_latest
     @event = Event.where(status: "finalised").order(number: :desc).first
+    @interim_preview = false
     @results = @event.results.includes(user: { user_badges: :badge }).by_time
     @volunteers = @event.volunteers.includes(user: { user_badges: :badge }).by_role
     render :show

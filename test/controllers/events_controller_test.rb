@@ -114,6 +114,30 @@ class EventsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test "admin viewing a non-finalised event sees an interim results preview" do
+    admin_user = users(:one)
+    sign_in_as(admin_user)
+    event = events(:draft_event)
+    event.update!(status: "in_progress")
+    Result.create!(event: event, user: users(:two), time: 2_000)
+
+    get event_url(event)
+    assert_response :success
+    assert_match "Interim results preview", response.body
+    assert_no_match(/Results are still being processed/, response.body)
+  end
+
+  test "non-admin viewing a non-finalised event does not see interim results" do
+    event = events(:draft_event)
+    event.update!(status: "in_progress")
+    Result.create!(event: event, user: users(:two), time: 2_000)
+
+    get event_url(event)
+    assert_response :success
+    assert_no_match(/Interim results preview/, response.body)
+    assert_match "Results are still being processed", response.body
+  end
+
   test "non-admin users can view in_progress events" do
     event = events(:draft_event)
     event.update!(status: "in_progress")

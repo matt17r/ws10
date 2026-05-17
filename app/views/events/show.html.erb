@@ -72,8 +72,14 @@
         </div>
       <% end %>
 
+      <% if @interim_preview %>
+        <div class="mb-6 p-4 bg-amber-50 border border-amber-300 rounded-lg text-center">
+          <p class="text-xl font-semibold text-amber-800">Interim results preview</p>
+          <p class="mt-1 text-amber-700">Visible to admins only. These results are not yet published and no emails have been sent. Finalise the event to publish them and notify participants.</p>
+        </div>
+      <% end %>
       <div class="mt-4 flow-root">
-        <% if @event.finalised? %>
+        <% if @event.finalised? || @interim_preview %>
           <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
             <div class="inline-block min-w-full py-2 align-middle px-0 sm:px-6 lg:px-8">
               <table class="table-fixed min-w-full divide-y divide-gray-300">
