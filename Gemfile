@@ -2,10 +2,8 @@ source "https://rubygems.org"
 
 gem "rails"
 
-gem "barby"
 gem "bcrypt"
 gem "bootsnap", require: false
-gem "chunky_png"
 gem "csv"
 gem "importmap-rails"
 gem "capistrano", require: false

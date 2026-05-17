@@ -1,8 +1,6 @@
 require "csv"
 
 class User < ApplicationRecord
-  include Barcodeable
-
   has_secure_password
   attr_accessor :current_password
 
