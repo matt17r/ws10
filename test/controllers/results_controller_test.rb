@@ -265,4 +265,15 @@ class ResultsControllerTest < ActionDispatch::IntegrationTest
       patch result_path(result), params: { result: { time_string: result.time_string, send_notification: "1" } }
     end
   end
+
+  test "non-admin cannot trigger send_notification email" do
+    sign_in_as users(:two)
+    result = results(:first)
+
+    assert_emails 0 do
+      patch result_path(result), params: { result: { time_string: result.time_string, send_notification: "1" } }
+    end
+
+    assert_response :not_found
+  end
 end
