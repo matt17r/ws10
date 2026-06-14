@@ -22,14 +22,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `bin/brakeman` - Run security analysis
 - `bin/rubocop` - Run Ruby style linter (uses rubocop-rails-omakase)
 
-### Deployment (Kamal)
+### Deployment (Capistrano)
 Let the user handle deployment, but here are the commands you might need to suggest to them.
 
-- `kamal setup` - Initial deployment setup
-- `kamal deploy` - Deploy application
-- `kamal console` - Access production Rails console
-- `kamal shell` - SSH into production container
-- `kamal logs` - View production logs
+Stages are `bert` and `ernie` (defined in `config/deploy/bert.rb` and `config/deploy/ernie.rb`).
+
+- `cap bert deploy` - Deploy to bert server
+- `cap ernie deploy` - Deploy to ernie server
 
 ## Application Architecture
 
@@ -75,10 +74,9 @@ Uses a custom authentication system (`app/controllers/concerns/authentication.rb
 - **Mailer Previews**: Located in `test/mailers/previews/`
 
 ### Deployment Notes
-- Uses Kamal for containerized deployment
-- Deployed to custom server (svr-02) with Cloudflare proxy
+- Uses Capistrano with standalone Puma running under a user systemd unit
+- Two servers: bert and ernie, with Cloudflare failover support
 - Assets are fingerprinted and served via Propshaft
-- Production uses persistent volumes for SQLite and Active Storage
 
 ## Common Patterns
 
