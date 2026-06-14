@@ -24,8 +24,12 @@ class ResultsController < ApplicationController
   end
 
   def update
-    if @result.update(result_params)
+    permitted = result_params
+    send_notification = permitted.delete(:send_notification) == "1"
+
+    if @result.update(permitted)
       user_name = @result.user_name
+      send_result_notification if send_notification && @result.user.present?
       redirect_to edit_results_admin_event_path(@result.event.number), notice: "Result updated for #{user_name}."
     else
       render :edit
@@ -112,6 +116,14 @@ class ResultsController < ApplicationController
   end
 
   def result_params
-    params.require(:result).permit(:user_id, :time_string)
+    params.require(:result).permit(:user_id, :time_string, :send_notification)
+  end
+
+  def send_result_notification
+    if @result.time.present?
+      EventMailer.result_notification(result: @result).deliver_later
+    else
+      EventMailer.participation_notification(result: @result).deliver_later
+    end
   end
 end
