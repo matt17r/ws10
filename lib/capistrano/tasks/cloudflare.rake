@@ -1,6 +1,6 @@
 # Cloudflare DNS management via the CF API.
 #
-# Requires the following on each server at /home/matthew/apps/ws10/shared/config/cloudflare.env:
+# Requires the following on each server at /home/matthew/ws10/shared/config/cloudflare.env:
 #   CF_API_TOKEN=<token with DNS:Edit on the ws10.run zone>
 #   CF_ZONE_ID=<zone ID for ws10.run>
 #   CF_DNS_RECORD_IDS=ws10.run:<record-id>,www.ws10.run:<record-id>

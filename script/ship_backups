@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+# Snapshot the 4 production SQLite DBs and rsync them + Active Storage
+# blobs to the peer host. Server-side equivalent of `cap <stage> backup:ship`,
+# run hourly by the ws10-backup systemd user timer.
+#
+# Gate: skips unless shared/config/backup_enabled is true AND this host is
+# the current Cloudflare origin (self-demotes if not, so a recovered passive
+# host can never clobber the active host's snapshots).
+set -euo pipefail
+
+DEPLOY_ROOT="$HOME/ws10"
+SHARED="$DEPLOY_ROOT/shared"
+STORAGE="$SHARED/storage"
+FLAG="$SHARED/config/backup_enabled"
+INCOMING="$SHARED/backups/incoming"
+
+case "$(hostname -s)" in
+  bert) PEER=ernie ;;
+  ernie) PEER=bert ;;
+  *) echo "Unknown host $(hostname -s) — refusing to guess peer" >&2; exit 1 ;;
+esac
+
+if ! { [ -f "$FLAG" ] && grep -q true "$FLAG"; }; then
+  echo "Backup not enabled on this host — skipping."
+  exit 0
+fi
+
+cf_status=0
+"$DEPLOY_ROOT/current/script/cf_active_check" || cf_status=$?
+case "$cf_status" in
+  0) ;;
+  1)
+    echo "Another host is the active CF origin — self-demoting and skipping backup."
+    echo false > "$FLAG"
+    exit 0
+    ;;
+  *)
+    echo "Cannot determine active CF origin (transient?) — skipping this run without demoting."
+    exit 0
+    ;;
+esac
+
+ssh "$PEER" "mkdir -p $INCOMING"
+
+for db in production production_cache production_queue production_cable; do
+  tmp="/tmp/ws10_backup_${db}.sqlite3"
+  echo "Snapshotting and shipping ${db}..."
+  sqlite3 "$STORAGE/${db}.sqlite3" ".backup $tmp"
+  rsync -az --partial "$tmp" "$PEER:$INCOMING/${db}.sqlite3.new"
+  ssh "$PEER" "mv $INCOMING/${db}.sqlite3.new $INCOMING/${db}.sqlite3"
+  rm -f "$tmp"
+done
+
+echo "Syncing Active Storage blobs to $PEER..."
+rsync -az --delete --exclude='*.sqlite3' "$STORAGE/" "$PEER:$INCOMING/blobs/"
+
+HEALTHCHECK_URL_FILE="$SHARED/config/healthcheck_url"
+if [ -f "$HEALTHCHECK_URL_FILE" ]; then
+  curl -fsS -m 10 --retry 3 "$(cat "$HEALTHCHECK_URL_FILE")" > /dev/null || echo "Healthcheck ping failed" >&2
+fi
+
+echo "Backup complete."

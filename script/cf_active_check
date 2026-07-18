@@ -1,13 +1,22 @@
 #!/usr/bin/env ruby
-# Exits 0 if this host's Cloudflare tunnel is the current DNS target for ws10.run.
-# Exits 1 otherwise (or if the API can't be reached).
+# Exit codes:
+#   0 — this host's Cloudflare tunnel is the current DNS target for ws10.run
+#   1 — another host is definitively the current DNS target
+#   2 — indeterminate (missing config, or the CF API can't be reached)
 #
-# Used by the backup cron gate to self-demote a recovered passive host.
+# Used by the backup gate: 1 self-demotes a recovered passive host; 2 must
+# NOT demote, so a transient API blip never permanently disables backups.
 
 require "net/http"
 require "json"
 
-SHARED_PATH = File.expand_path("../../shared", __dir__)
+# __dir__ resolves the Capistrano `current` symlink, so from a deployed
+# release this script lives at <deploy_to>/releases/<timestamp>/script
+# and shared/ is three levels up; from a plain checkout it is two.
+SHARED_PATH = [
+  File.expand_path("../../shared", __dir__),
+  File.expand_path("../../../shared", __dir__)
+].find { |path| Dir.exist?(path) } || File.expand_path("../../shared", __dir__)
 ENV_FILE     = File.join(SHARED_PATH, "config", "cloudflare.env")
 UUID_GLOB    = "/etc/cloudflared/*-tunnel-uuid"
 HOSTNAME     = "ws10.run"
@@ -21,8 +30,8 @@ def parse_env_file(path)
 end
 
 unless File.exist?(ENV_FILE)
-  warn "#{ENV_FILE} not found — assuming not active"
-  exit 1
+  warn "#{ENV_FILE} not found — cannot determine active host"
+  exit 2
 end
 
 env  = parse_env_file(ENV_FILE)
@@ -30,7 +39,7 @@ uuid = Dir.glob(UUID_GLOB).map { |f| File.read(f).strip }.first
 
 unless uuid && !uuid.empty?
   warn "Tunnel UUID file not found at #{UUID_GLOB}"
-  exit 1
+  exit 2
 end
 
 my_target = "#{uuid}.cfargotunnel.com"
@@ -43,7 +52,7 @@ record_id = env["CF_DNS_RECORD_IDS"]
 
 unless record_id
   warn "No CF_DNS_RECORD_IDS entry for #{HOSTNAME}"
-  exit 1
+  exit 2
 end
 
 begin
@@ -54,13 +63,16 @@ begin
   data = JSON.parse(res.body)
   current_target = data.dig("result", "content")
 
-  if current_target == my_target
+  if current_target.nil?
+    warn "CF API returned no record content (#{data["errors"]&.inspect}) — cannot determine active host"
+    exit 2
+  elsif current_target == my_target
     exit 0
   else
     warn "CF origin is #{current_target}, this host is #{my_target}"
     exit 1
   end
 rescue => e
-  warn "CF API check failed: #{e.message} — assuming not active (fail closed)"
-  exit 1
+  warn "CF API check failed: #{e.message} — cannot determine active host"
+  exit 2
 end

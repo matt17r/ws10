@@ -3,11 +3,9 @@
 # Backups are SQLite online snapshots (.backup) rsynced to the peer host.
 # Active Storage blob directories are rsynced directly (safe to copy live).
 #
-# The backup gate:
-#   1. Check shared/config/backup_enabled — exit silently if false/missing.
-#   2. Check Cloudflare DNS — if this host's tunnel isn't the current origin,
-#      self-demote (write backup_enabled=false) and exit.
-#   3. Proceed with backup.
+# The ship logic (including the backup_enabled + Cloudflare origin gate)
+# lives in script/ship_backups, which the ws10-backup systemd user timer
+# runs hourly on each host; backup:ship just invokes it remotely.
 
 PRODUCTION_DATABASES = %w[
   production
@@ -20,41 +18,7 @@ namespace :backup do
   desc "Snapshot the 4 SQLite DBs and rsync them + Active Storage to the peer host"
   task :ship do
     on roles(:web) do
-      peer = fetch(:peer_host)
-      storage_path = shared_path.join("storage")
-      incoming_path = "#{fetch(:deploy_to)}/shared/backups/incoming"
-
-      enabled_flag = shared_path.join("config", "backup_enabled").to_s
-      unless test("[ -f #{enabled_flag} ] && grep -q true #{enabled_flag}")
-        info "Backup not enabled on this host — skipping."
-        next
-      end
-
-      info "Verifying Cloudflare origin..."
-      unless test("#{current_path}/script/cf_active_check 2>/dev/null")
-        info "This host is not the active CF origin — self-demoting and skipping backup."
-        execute "echo false > #{enabled_flag}"
-        next
-      end
-
-      PRODUCTION_DATABASES.each do |db_name|
-        db_file = storage_path.join("#{db_name}.sqlite3")
-        tmp_bak = "/tmp/ws10_backup_#{db_name}.sqlite3"
-
-        info "Snapshotting #{db_name}..."
-        execute "sqlite3 #{db_file} \".backup #{tmp_bak}\""
-
-        info "Shipping #{db_name} to #{peer}..."
-        execute "rsync -az --partial #{tmp_bak} #{peer}:#{incoming_path}/#{db_name}.sqlite3.new"
-        execute "ssh #{peer} 'mv #{incoming_path}/#{db_name}.sqlite3.new #{incoming_path}/#{db_name}.sqlite3'"
-        execute "rm -f #{tmp_bak}"
-      end
-
-      info "Syncing Active Storage blobs to #{peer}..."
-      # Sync only the blob subdirectories (2-char hash dirs), not the SQLite files
-      execute "rsync -az --delete --exclude='*.sqlite3' #{storage_path}/ #{peer}:#{incoming_path}/blobs/"
-
-      info "Backup complete."
+      execute "#{current_path}/script/ship_backups"
     end
   end
 

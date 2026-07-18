@@ -1,0 +1,6 @@
+[Unit]
+Description=Ship ws10 SQLite snapshots and blobs to the peer host
+
+[Service]
+Type=oneshot
+ExecStart=%h/ws10/current/script/ship_backups

@@ -2,7 +2,7 @@ namespace :db do
   desc "Download production database as SQL dump to tmp/db.sql (defaults to bert, override with HOST=ernie)"
   task dump: :environment do
     host = ENV.fetch("HOST", "bert")
-    remote_db = "/home/matthew/apps/ws10/shared/storage/production.sqlite3"
+    remote_db = "/home/matthew/ws10/shared/storage/production.sqlite3"
     backup_file = "tmp/db.sql"
 
     puts "Creating SQL dump from #{host}..."

@@ -1,0 +1,10 @@
+[Unit]
+Description=Hourly ws10 backup ship (gated by backup_enabled + CF origin check)
+
+[Timer]
+OnCalendar=hourly
+RandomizedDelaySec=300
+Persistent=true
+
+[Install]
+WantedBy=timers.target
