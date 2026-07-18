@@ -51,7 +51,7 @@ class KitClient
   end
 
   def delete_webhook(webhook_id:)
-    post("/webhooks/#{webhook_id}/delete", {})
+    delete("/webhooks/#{webhook_id}")
   end
 
   private
@@ -68,6 +68,11 @@ class KitClient
     request = Net::HTTP::Post.new(uri)
     request.body = body.to_json
     perform(uri, request)
+  end
+
+  def delete(path)
+    uri = URI("#{BASE_URL}#{path}")
+    perform(uri, Net::HTTP::Delete.new(uri))
   end
 
   def perform(uri, request)
