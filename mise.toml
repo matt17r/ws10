@@ -1,4 +1,4 @@
 min_version = "2026.3.9"
 
 [tools]
-ruby = "{{ get_env(name='RUBY_VERSION', default='3.3.6') }}"
+ruby = "{{ get_env(name='RUBY_VERSION', default='4.0.2') }}"
