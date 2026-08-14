@@ -6,6 +6,11 @@
 # Gate: skips unless shared/config/backup_enabled is true AND this host is
 # the current Cloudflare origin (self-demotes if not, so a recovered passive
 # host can never clobber the active host's snapshots).
+#
+# Every run (active or passive) also sends a healthchecks.io /log ping with
+# this host's name and LAN IP — doesn't affect the check's up/down status,
+# just leaves a breadcrumb of each host's last-known IP for finding it if
+# Cloudflare is unreachable.
 set -euo pipefail
 
 DEPLOY_ROOT="$HOME/ws10"
@@ -19,6 +24,13 @@ case "$(hostname -s)" in
   ernie) PEER=bert ;;
   *) echo "Unknown host $(hostname -s) — refusing to guess peer" >&2; exit 1 ;;
 esac
+
+HEALTHCHECK_URL_FILE="$SHARED/config/healthcheck_url"
+if [ -f "$HEALTHCHECK_URL_FILE" ]; then
+  my_ip="$(ip -4 route get 1.1.1.1 2>/dev/null | awk '{for (i = 1; i <= NF; i++) if ($i == "src") print $(i + 1)}')"
+  curl -fsS -m 10 --retry 3 --data "host=$(hostname -s) ip=${my_ip:-unknown}" \
+    "$(cat "$HEALTHCHECK_URL_FILE")/log" > /dev/null || echo "Healthcheck log ping failed" >&2
+fi
 
 if ! { [ -f "$FLAG" ] && grep -q true "$FLAG"; }; then
   echo "Backup not enabled on this host — skipping."
@@ -54,7 +66,6 @@ done
 echo "Syncing Active Storage blobs to $PEER..."
 rsync -az --delete --exclude='*.sqlite3' "$STORAGE/" "$PEER:$INCOMING/blobs/"
 
-HEALTHCHECK_URL_FILE="$SHARED/config/healthcheck_url"
 if [ -f "$HEALTHCHECK_URL_FILE" ]; then
   curl -fsS -m 10 --retry 3 "$(cat "$HEALTHCHECK_URL_FILE")" > /dev/null || echo "Healthcheck ping failed" >&2
 fi
