@@ -46,7 +46,7 @@ namespace :cloudflare do
     env_file = File.join(shared_path_str, "config", "cloudflare.env")
     return false unless File.exist?(env_file)
 
-    env = parse_env_file(env_file)
+    env = parse_env_content(File.read(env_file))
     uuid_file = `cat /etc/cloudflared/*-tunnel-uuid 2>/dev/null`.strip
     return false if uuid_file.empty?
 
@@ -68,11 +68,11 @@ namespace :cloudflare do
 
   def load_cf_env(shared_path)
     env_file = shared_path.join("config", "cloudflare.env").to_s
-    parse_env_file(env_file)
+    parse_env_content(capture("cat #{env_file}"))
   end
 
-  def parse_env_file(path)
-    File.readlines(path, chomp: true).each_with_object({}) do |line, h|
+  def parse_env_content(content)
+    content.each_line(chomp: true).each_with_object({}) do |line, h|
       next if line.strip.empty? || line.start_with?("#")
       k, v = line.split("=", 2)
       h[k.strip] = v&.strip

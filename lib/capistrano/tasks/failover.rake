@@ -18,7 +18,7 @@ namespace :failover do
     invoke "backup:enable"
     invoke "cloudflare:flip_dns"
     invoke "deploy:check_health"
-    info "Failover complete. This host is now active."
+    run_locally { info "Failover complete. This host is now active." }
   end
 
   desc "Restore the latest incoming DB snapshots into shared/storage (stops puma during swap)"
@@ -57,11 +57,11 @@ desc "Make this host the active origin: flip CF DNS and enable backups"
 task :promote do
   invoke "backup:enable"
   invoke "cloudflare:flip_dns"
-  info "#{fetch(:stage)} is now promoted to active."
+  run_locally { info "#{fetch(:stage)} is now promoted to active." }
 end
 
 desc "Make this host passive: disable backups (CF DNS unchanged)"
 task :demote do
   invoke "backup:disable"
-  info "#{fetch(:stage)} is now passive."
+  run_locally { info "#{fetch(:stage)} is now passive." }
 end
