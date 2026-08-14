@@ -11,6 +11,11 @@
 # this host's name and LAN IP — doesn't affect the check's up/down status,
 # just leaves a breadcrumb of each host's last-known IP for finding it if
 # Cloudflare is unreachable.
+#
+# If a command fails, an ERR trap sends a second /log ping with the failing
+# line/command/exit code — still just a log entry, not a /fail. Grace-period
+# alerting on the plain success ping is what decides whether this pages
+# anyone; a bad run just leaves context in the log for when it does.
 set -euo pipefail
 
 DEPLOY_ROOT="$HOME/ws10"
@@ -26,6 +31,16 @@ case "$(hostname -s)" in
 esac
 
 HEALTHCHECK_URL_FILE="$SHARED/config/healthcheck_url"
+
+report_failure() {
+  local exit_code=$1 line=$2 command=$3
+  if [ -f "$HEALTHCHECK_URL_FILE" ]; then
+    curl -fsS -m 10 --retry 3 --data "host=$(hostname -s) FAILED line ${line} (exit ${exit_code}): ${command}" \
+      "$(cat "$HEALTHCHECK_URL_FILE")/log" > /dev/null || true
+  fi
+}
+trap 'report_failure $? $LINENO "$BASH_COMMAND"' ERR
+
 if [ -f "$HEALTHCHECK_URL_FILE" ]; then
   my_ip="$(ip -4 route get 1.1.1.1 2>/dev/null | awk '{for (i = 1; i <= NF; i++) if ($i == "src") print $(i + 1)}')"
   curl -fsS -m 10 --retry 3 --data "host=$(hostname -s) ip=${my_ip:-unknown}" \
