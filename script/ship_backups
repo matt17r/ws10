@@ -82,7 +82,8 @@ echo "Syncing Active Storage blobs to $PEER..."
 rsync -az --delete --exclude='*.sqlite3' "$STORAGE/" "$PEER:$INCOMING/blobs/"
 
 if [ -f "$HEALTHCHECK_URL_FILE" ]; then
-  curl -fsS -m 10 --retry 3 "$(cat "$HEALTHCHECK_URL_FILE")" > /dev/null || echo "Healthcheck ping failed" >&2
+  curl -fsS -m 10 --retry 3 --data "host=$(hostname -s) shipped to $PEER" \
+    "$(cat "$HEALTHCHECK_URL_FILE")" > /dev/null || echo "Healthcheck ping failed" >&2
 fi
 
 echo "Backup complete."
