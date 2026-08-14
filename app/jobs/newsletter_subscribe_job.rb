@@ -5,6 +5,6 @@ class NewsletterSubscribeJob < ApplicationJob
   def perform(user_id)
     user = User.find(user_id)
     subscriber = KitClient.new.subscribe(email: user.email_address, name: user.name)
-    user.update!(newsletter_subscribed: true) if subscriber
+    user.update!(newsletter_subscribed: subscriber["state"] == "active") if subscriber
   end
 end

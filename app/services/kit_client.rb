@@ -4,8 +4,8 @@ class KitClient
   class RateLimitError < StandardError; end
 
   def subscribe(email:, name:)
-    body = { email_address: email, first_name: name.split.first }
-    response = post("/subscribers", body)
+    post("/subscribers", { email_address: email, first_name: name.split.first })
+    response = post("/forms/#{form_id}/subscribers", { email_address: email })
     response["subscriber"]
   end
 
@@ -90,5 +90,10 @@ class KitClient
   def api_key
     Rails.application.credentials.kit&.fetch(:api_key) ||
       raise("Kit API key not configured")
+  end
+
+  def form_id
+    Rails.application.credentials.kit&.fetch(:form_id) ||
+      raise("Kit form_id not configured")
   end
 end
