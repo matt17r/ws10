@@ -180,6 +180,20 @@ class EventTest < ActiveSupport::TestCase
     end
   end
 
+  test "should not email volunteers from other events when finalising" do
+    event = events(:draft_event)
+    event.results.destroy_all
+    event.volunteers.destroy_all
+    other_event_volunteer = Volunteer.create!(event: events(:two), user: users(:one), role: "Marshal")
+    this_event_volunteer = event.volunteers.create!(user: users(:two), role: "Timer")
+
+    assert_enqueued_email_with EventMailer, :volunteer_notification, args: [ { volunteer: this_event_volunteer } ] do
+      assert_enqueued_jobs 2 do  # AwardBadgesJob + one volunteer email, not two
+        event.update!(status: "finalised")
+      end
+    end
+  end
+
   test "should not send volunteer emails when status stays finalised" do
     event = events(:draft_event)
     event.volunteers.create!(user: users(:three), role: "Timer")
