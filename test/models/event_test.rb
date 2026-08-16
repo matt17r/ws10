@@ -2,6 +2,7 @@ require "test_helper"
 
 class EventTest < ActiveSupport::TestCase
   include ActiveJob::TestHelper
+  include ActionMailer::TestHelper
   test "should create valid event" do
     event = Event.new(
       number: 10,
@@ -149,9 +150,43 @@ class EventTest < ActiveSupport::TestCase
   test "should handle events with no results when marking finalised" do
     event = events(:draft_event)
     event.results.destroy_all
+    event.volunteers.destroy_all
 
     assert_enqueued_jobs 1 do  # Only AwardBadgesJob, no email jobs
       event.update!(status: "finalised")
+    end
+  end
+
+  test "should send volunteer thank you emails when status changes to finalised" do
+    event = events(:draft_event)
+    event.results.destroy_all
+    event.volunteers.destroy_all
+    event.volunteers.create!(user: users(:three), role: "Timer")
+
+    assert_enqueued_email_with EventMailer, :volunteer_notification, args: [ { volunteer: event.volunteers.first } ] do
+      event.update!(status: "finalised")
+    end
+  end
+
+  test "should send one volunteer email per volunteer role" do
+    event = events(:draft_event)
+    event.results.destroy_all
+    event.volunteers.destroy_all
+    event.volunteers.create!(user: users(:one), role: "Timer")
+    event.volunteers.create!(user: users(:two), role: "Marshal")
+
+    assert_enqueued_jobs 3 do  # AwardBadgesJob + 2 volunteer emails
+      event.update!(status: "finalised")
+    end
+  end
+
+  test "should not send volunteer emails when status stays finalised" do
+    event = events(:draft_event)
+    event.volunteers.create!(user: users(:three), role: "Timer")
+    event.update!(status: "finalised")
+
+    assert_no_enqueued_jobs do
+      event.update!(description: "Updated description")
     end
   end
 

@@ -99,6 +99,10 @@ class Event < ApplicationRecord
       results.where(time: nil).includes(:user).find_each do |result|
         EventMailer.participation_notification(result: result).deliver_later
       end
+
+      volunteers.includes(:user).find_each do |volunteer|
+        EventMailer.volunteer_notification(volunteer: volunteer).deliver_later
+      end
     end
   end
 

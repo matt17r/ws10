@@ -40,4 +40,21 @@ class EventMailer < ApplicationMailer
       subject: "You participated in WS10 ##{@event.number} at #{@event.location}"
     )
   end
+
+  def volunteer_notification(volunteer:)
+    @event = volunteer.event
+    @volunteer = volunteer
+    @user = volunteer.user
+
+    @newly_earned_badges = @user.user_badges
+      .for_event(@event)
+      .includes(:badge)
+      .joins(:badge)
+      .order("badges.badge_family")
+
+    mail(
+      to: email_address_with_name(@user.email_address, @user.name),
+      subject: "Thank you for volunteering at WS10 ##{@event.number} at #{@event.location}"
+    )
+  end
 end
