@@ -1,0 +1,29 @@
+Thank you <%= @user.name %> for helping with <%= @volunteer.role %> at WS10 <%= @event.location %> #<%= @event.number %> on <%= @event.date.strftime("%A, %-d %B %Y") %>. This was your <%= @volunteer_count.ordinalize %> time volunteering<% if @volunteer_count > 1 %> and your <%= @location_count.ordinalize %> time at <%= @event.location %><% end %>. I really appreciate your support keeping this event going.
+<% if @is_first_timer %>
+Welcome! This was your first WS10 event. We're so glad you joined us!
+<% end %>
+
+YOUR WS10 JOURNEY
+Total events: <%= @total_events %>
+Runs completed: <%= @total_runs %>
+Volunteer roles: <%= @volunteer_count %>
+<% if @newly_earned_badges.any? %>
+
+NEW BADGES!
+You've earned <%= @newly_earned_badges.size %> new <%= "badge".pluralize(@newly_earned_badges.size) %>:
+<% @newly_earned_badges.each do |user_badge| %>
+ - <%= user_badge.badge.name %>: <%= user_badge.badge.description %>
+<% end %>
+
+View all badges at <%= badges_url %>.
+<% end %>
+
+You can view all of today's results at <%= event_url(@event) %>.
+<% if @event.description.present? %>
+
+<%= @event.description %>
+<% end %>
+
+Western Sydney 10 is a young event and we're still learning. If you've got any suggestions for how to improve the events, the website, or these emails, simply reply to this email to let me know!
+
+You received this transactional email because you registered at https://ws10.run and volunteered at an event. This is not a marketing email so there is no unsubscribe option.
