@@ -83,7 +83,7 @@
                                 <td style="padding: 20px; font-family: sans-serif; font-size: 18px; line-height: 24px; color: #555555;">
                                     <h1 style="margin: 0 0 10px 0; font-family: sans-serif; font-size: 40px; line-height: 45px; color: #54494B;">Thank you!</h1>
                                     <h2 style="margin: 0 0 10px 0; font-family: sans-serif; font-size: 30px; line-height: 35px; color: #54494B; font-weight: normal;">You volunteered at WS10 #<%= @event.number %></h2>
-                                    <p style="margin: 0;">Thank you <%= @user.name %> for volunteering at <%= @event.location %> this morning (<%= @event.date.strftime("%A, %-d %B %Y") %>). Your role, <strong><%= @volunteer.role %></strong>, was a big part of making it run smoothly. This was your <%= @volunteer_count.ordinalize %> time volunteering<% if @volunteer_count > 1 %> and your <%= @location_count.ordinalize %> time at <%= @event.location %><% end %>. Events like this only happen because of people like you — your help is genuinely appreciated.</p>
+                                    <p style="margin: 0;">Thank you <%= @user.name %> for helping with <strong><%= @volunteer.role %></strong> at <%= @event.location %> this morning (<%= @event.date.strftime("%A, %-d %B %Y") %>). This was your <%= @volunteer_count.ordinalize %> time volunteering<% if @volunteer_count > 1 %> and your <%= @location_count.ordinalize %> time at <%= @event.location %><% end %>. I really appreciate your support keeping this event going.</p>
                                 </td>
                             </tr>
                             <% if @newly_earned_badges.any? %>
