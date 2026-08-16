@@ -1,4 +1,4 @@
-Thank you <%= @user.name %> for volunteering as <%= @volunteer.role %> at WS10 <%= @event.location %> #<%= @event.number %> on <%= @event.date.strftime("%A, %-d %B %Y") %>. This was your <%= @volunteer_count.ordinalize %> time volunteering<% if @volunteer_count > 1 %> and your <%= @location_count.ordinalize %> time at <%= @event.location %><% end %>. Events like this only happen because of people like you — your help is genuinely appreciated.
+Thank you <%= @user.name %> for volunteering at WS10 <%= @event.location %> #<%= @event.number %> on <%= @event.date.strftime("%A, %-d %B %Y") %>. Your role, <%= @volunteer.role %>, was a big part of making it run smoothly. This was your <%= @volunteer_count.ordinalize %> time volunteering<% if @volunteer_count > 1 %> and your <%= @location_count.ordinalize %> time at <%= @event.location %><% end %>. Events like this only happen because of people like you — your help is genuinely appreciated.
 <% if @is_first_timer %>
 Welcome! This was your first WS10 event. We're so glad you joined us!
 <% end %>
