@@ -79,6 +79,12 @@
   </div>
 
   <div class="my-5">
+    <%= form.label :gpx_file, "GPX Route File" %>
+    <%= form.file_field :gpx_file, accept: ".gpx", class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": location.errors[:gpx_file].none?, "border-red-400 focus:outline-red-600": location.errors[:gpx_file].any?}] %>
+    <p class="text-sm text-gray-500 mt-1">Runners download this to load the unmarked course onto their watch or phone. Uploading a new file replaces the current one.<% if location.gpx_file.attached? %> Current file: <%= location.gpx_file.filename %><% end %></p>
+  </div>
+
+  <div class="my-5">
     <%= form.label :start_image_1, "Start Image 1 (optional)" %>
     <%= form.text_field :start_image_1, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": location.errors[:start_image_1].none?, "border-red-400 focus:outline-red-600": location.errors[:start_image_1].any?}], placeholder: "bungarribee-start.png" %>
   </div>

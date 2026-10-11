@@ -24,4 +24,11 @@ class CoursesController < ApplicationController
     @latest_event = @location.latest_event
     @current_year_events = @location.events.where("strftime('%Y', date) = ?", Date.today.year.to_s).order(:date)
   end
+
+  def gpx
+    location = Location.find_by!(slug: params[:slug])
+    return head :not_found unless location.gpx_file.attached?
+
+    redirect_to rails_blob_path(location.gpx_file, disposition: "attachment")
+  end
 end

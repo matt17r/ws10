@@ -49,4 +49,32 @@ class Admin::LocationsControllerTest < ActionDispatch::IntegrationTest
     end
     assert_redirected_to admin_locations_url
   end
+
+  test "should attach a gpx file on update" do
+    patch admin_location_url(@location), params: { location: { gpx_file: fixture_file_upload("course.gpx", "application/gpx+xml") } }
+
+    assert_redirected_to admin_location_url(@location)
+    assert @location.reload.gpx_file.attached?
+  end
+
+  test "should reject a non gpx file on update" do
+    patch admin_location_url(@location), params: { location: { gpx_file: fixture_file_upload("not_a_route.txt", "text/plain") } }
+
+    assert_response :unprocessable_entity
+    assert_not @location.reload.gpx_file.attached?
+  end
+
+  test "edit form includes a gpx file field" do
+    get edit_admin_location_url(@location)
+
+    assert_select "input[type=file][name=?]", "location[gpx_file]"
+  end
+
+  test "show displays the attached gpx file" do
+    @location.gpx_file.attach(io: file_fixture("course.gpx").open, filename: "course.gpx", content_type: "application/gpx+xml")
+
+    get admin_location_url(@location)
+
+    assert_select "a[href=?]", course_gpx_path(@location), text: /course\.gpx/
+  end
 end

@@ -31,6 +31,7 @@ Rails.application.routes.draw do
   post "confirm_email/resend", to: "confirmations#create", as: :resend_confirmation
 
   resources :courses, only: [ :index, :show ], param: :slug
+  get "courses/:slug/gpx", to: "courses#gpx", as: :course_gpx
   resources :events, param: :number, only: [ :index, :show ]
   resource :user, only: [ :show, :edit, :update ], path: "profile"
   get "profile/results", to: "users#my_results", as: :my_results

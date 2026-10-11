@@ -80,11 +80,13 @@
         </div>
       <% end %>
 
+      <%= render "courses/find_the_course", location: @location %>
+
       <section class="mt-8 lg:mt-16 grid grid-cols-1 lg:grid-cols-2 lg:gap-x-12">
         <div class="max-w-lg">
           <h2 class="text-2xl font-medium tracking-tight" id="course-start-<%= @location.slug %>">Course Start Point</h2>
-          <p class="mt-6 text/6 text-gray-600"><%= simple_format(@location.start_point_description) %></p>
-          <p class="mt-8 text-lg/6 text-gray-600">
+          <div class="mt-6 text-gray-900"><%= simple_format(@location.start_point_description) %></div>
+          <p class="mt-8 text-lg/6 text-gray-900">
             <a class="text-brand-brown underline underline-offset-3 hover:no-underline hover:text-brand-grey" href="<%= @location.google_maps_url %>">Google Maps Link</a> |
             <a class="text-brand-brown underline underline-offset-3 hover:no-underline hover:text-brand-grey" href="<%= @location.apple_maps_url %>">Apple Maps Link</a>
           </p>
@@ -99,16 +101,17 @@
         </div>
         <div class="max-w-lg mt-8 lg:col-span-1">
           <h2 class="text-2xl font-medium tracking-tight" id="facilities-<%= @location.slug %>">Facilities</h2>
-          <p class="mt-6 text/6 text-gray-600"><%= simple_format(@location.facilities) %></p>
+          <div class="mt-6 text-gray-900"><%= simple_format(@location.facilities) %></div>
         </div>
       </section>
 
       <section class="mt-8 lg:mt-16 grid grid-cols-1 lg:grid-cols-2 lg:gap-x-12">
         <div class="max-w-lg lg:order-2">
           <h2 class="text-2xl font-medium tracking-tight" id="course-description-<%= @location.slug %>">Course Description</h2>
-          <p class="mt-6 text/6 text-gray-600"><%= simple_format(@location.course_description) %></p>
-          <p class="mt-6 text-lg/6 text-gray-600">
-            <a class="text-brand-brown underline underline-offset-3 hover:no-underline hover:text-brand-grey" href="<%= @location.strava_route_url %>">Strava Route</a>
+          <div class="mt-6 text-gray-900"><%= simple_format(@location.course_description) %></div>
+          <p class="mt-6 text-gray-900">The course isn't signposted or marshalled. <%= link_to "Load the route", "#load-the-route-#{@location.slug}", class: "text-brand-brown underline underline-offset-3 hover:no-underline hover:text-brand-grey" %> onto your watch or phone before you come, or run with someone who knows the way.</p>
+          <p class="mt-6 text-lg/6 text-gray-900">
+            <%= link_to "Strava Route", @location.strava_route_url, class: "text-brand-brown underline underline-offset-3 hover:no-underline hover:text-brand-grey" %>
           </p>
         </div>
         <div class="lg:row-span-2 mt-8 lg:my-auto lg:order-1">
@@ -126,11 +129,11 @@
         </div>
         <div class="max-w-lg lg:order-3">
           <h2 class="mt-9 lg:mt-0 text-2xl font-medium tracking-tight" id="event-rego-<%= @location.slug %>">Event Registration</h2>
-          <p class="mt-6 text/6 text-gray-600">To participate, you just need to be registered on this site. If you've run or signed up before, you're all set. Use the <%= link_to "forgot password form", forgot_password_path, class: "text-brand-brown hover:text-brand-grey underline underline-offset-3 hover:no-underline" %> to reset your password or set it for the first time.</p>
-          <p class="mt-6 text/6 text-gray-600">To register as a new WS10 runner, fill in the <%= link_to "registration form", sign_up_path, class: "text-brand-brown hover:text-brand-grey underline underline-offset-3 hover:no-underline" %> and then click on the confirmation link in your email.</p>
+          <p class="mt-6 text-gray-900">To participate, you just need to be registered on this site. If you've run or signed up before, you're all set. Use the <%= link_to "forgot password form", forgot_password_path, class: "text-brand-brown hover:text-brand-grey underline underline-offset-3 hover:no-underline" %> to reset your password or set it for the first time.</p>
+          <p class="mt-6 text-gray-900">To register as a new WS10 runner, fill in the <%= link_to "registration form", sign_up_path, class: "text-brand-brown hover:text-brand-grey underline underline-offset-3 hover:no-underline" %> and then click on the confirmation link in your email.</p>
 
           <% if @next_event && @next_event.location == @location && @next_event.has_social_links? %>
-            <p class="mt-6 text/6 text-gray-600">
+            <p class="mt-6 text-gray-900">
               Tell us you're coming (and help spread the word!) by indicating you will come to the
               <% if @next_event.strava_url.present? %>
                 <a class="text-brand-brown underline underline-offset-3 hover:no-underline hover:text-brand-grey" href="<%= @next_event.strava_url %>">Strava Event</a>
@@ -145,6 +148,8 @@
           <% end %>
         </div>
       </section>
+
+      <%= render "courses/load_the_route", location: @location %>
     </div>
   </div>
 </div>

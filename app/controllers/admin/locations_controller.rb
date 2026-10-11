@@ -52,7 +52,7 @@ class Admin::LocationsController < ApplicationController
       :start_point_description, :google_maps_url, :apple_maps_url,
       :facilities, :course_description, :strava_route_url,
       :strava_embed_id, :strava_map_hash, :start_image_1,
-      :start_image_2, :og_title, :og_description
+      :start_image_2, :og_title, :og_description, :gpx_file
     ])
   end
 end

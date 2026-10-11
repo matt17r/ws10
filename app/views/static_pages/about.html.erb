@@ -14,12 +14,12 @@
       <dl class="space-y-16 sm:grid sm:grid-cols-2 sm:space-y-0 sm:gap-x-6 sm:gap-y-16 lg:gap-x-10" data-controller="faq">
         <div>
           <dt class="text-xl/7 font-medium text-gray-900" id="how-fast">How fast do I need to be?</dt>
-          <dd class="mt-2 text-xl/7 text-gray-600">The timing will stop at 1 hour 20 minutes. If you can finish a parkrun in less than 35 minutes, without almost dying, you can probably complete a WS10 in the available time.</dd>
+          <dd class="mt-2 text-xl/7 text-gray-600">There's no cut-off and no official timing. Run, jog or walk at whatever pace suits you.</dd>
         </div>
 
         <div>
-          <dt class="text-xl/7 font-medium text-gray-900" id="slower-than-that">What if I'm slower than that?</dt>
-          <dd class="mt-2 text-xl/7 text-gray-600">If you can't finish in 1 hour 20 minutes but you're still keen to participate, let me know. I'm open to having an earlier start time for slower runners.</dd>
+          <dt class="text-xl/7 font-medium text-gray-900" id="find-the-course">How do I find my way around the course?</dt>
+          <dd class="mt-2 text-xl/7 text-gray-600">The courses are not marked. Download the GPX file from the <%= link_to "course page", courses_path, class: "font-medium text-brand-brown hover:text-brand-grey underline underline-offset-3 hover:no-underline" %> and load it onto your watch or phone before you come, or run with someone who knows the route. Try it out before the day, because the start line is a poor place to find out your watch won't follow it.</dd>
         </div>
 
         <div>
@@ -44,7 +44,7 @@
             <ol class="list-decimal list-inside">
               <li>Come along and participate! Having a friendly group of people makes it worth organising.</li>
               <li>Invite others! Bring along some friendly, enthusiastic people to run with us.</li>
-              <li>Volunteer occasionally! Perhaps you can do the timing one month? Or bring an esky and some water bottles? Let me know if you're keen to help and we can figure something out!</li>
+              <li>Volunteer occasionally! Perhaps you can bring an esky and some water bottles? Let me know if you're keen to help and we can figure something out!</li>
               <% if repeat_runner? %>
                 <li><%= link_to "Support financially!", support_path, class: "font-medium text-brand-brown hover:text-brand-grey underline underline-offset-3 hover:no-underline" %> Your contribution helps improve the event for everyone.</li>
               <% end %>

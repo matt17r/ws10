@@ -14,4 +14,11 @@ class StaticPagesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select "a[href=?]", admin_events_path, text: "Manage events"
   end
+
+  test "about page has an faq entry for finding the course" do
+    get about_url
+
+    assert_response :success
+    assert_select "dt#find-the-course"
+  end
 end

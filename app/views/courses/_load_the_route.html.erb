@@ -1,0 +1,16 @@
+<section class="mt-8 lg:mt-16 max-w-3xl" aria-labelledby="load-the-route-<%= location.slug %>">
+  <h2 class="text-2xl font-medium tracking-tight" id="load-the-route-<%= location.slug %>">How to load the route</h2>
+  <% if location.gpx_file.attached? %>
+    <p class="mt-6">
+      <%= link_to "Download GPX", course_gpx_path(location), class: "inline-flex items-center justify-center px-4 py-2 rounded-full border border-transparent bg-primary shadow-md whitespace-nowrap text-base font-medium text-white hover:bg-primary-hover" %>
+    </p>
+  <% end %>
+  <ul class="mt-6 list-disc list-inside space-y-3 text-gray-900">
+    <li><span class="font-medium">Garmin:</span> <%= link_to "import the GPX file as a course", "https://support.garmin.com/en-US/?faq=JB2oAqEgCU17c7IqE3yHvA", class: "text-brand-brown underline underline-offset-3 hover:no-underline hover:text-brand-grey" %> in Garmin Connect and send it to your watch.</li>
+    <li><span class="font-medium">Strava:</span> save the <%= link_to "Strava route", location.strava_route_url, class: "text-brand-brown underline underline-offset-3 hover:no-underline hover:text-brand-grey" %> to your own routes and sync it to your device.</li>
+    <li><span class="font-medium">Coros, Suunto and Polar:</span> import the GPX file through your watch's companion app.</li>
+    <li><span class="font-medium">Apple Watch:</span> the Workout app can't import GPX files, so use a third-party app such as WorkOutDoors, or Strava.</li>
+    <li><span class="font-medium">Phone:</span> most route and running apps can import a GPX file.</li>
+  </ul>
+  <p class="mt-6 text-gray-900">Check that the course shows up on your phone or watch before the day. The start line is a poor place to find out it doesn't.</p>
+</section>
