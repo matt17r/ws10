@@ -71,6 +71,7 @@ Rails.application.routes.draw do
       resources :results, only: [ :new, :create, :edit, :update, :destroy ]
       resources :volunteers, only: [ :new, :create, :edit, :update, :destroy ]
       delete "check_ins/:id", to: "check_ins#destroy", as: :admin_check_in
+      post "check_ins/:id/approve", to: "check_ins#approve", as: :approve_admin_check_in
       post :finish_time_import, to: "finish_times#import"
       delete :finish_times_destroy_all, to: "finish_times#destroy_all"
       post :result_link, to: "results#link"
@@ -99,9 +100,11 @@ Rails.application.routes.draw do
     end
   end
 
-  get "checkin/:token", to: "check_ins#show", as: :check_in, constraints: { token: /[a-f0-9]{8}/ }
-  post "checkin/:token", to: "check_ins#create", constraints: { token: /[a-f0-9]{8}/ }
-  post "checkin/:token/friend", to: "check_ins#create_for_friend", as: :check_in_friend, constraints: { token: /[a-f0-9]{8}/ }
+  get "checkin", to: "check_ins#show", as: :check_in
+  post "checkin", to: "check_ins#create"
+  post "checkin/friend", to: "check_ins#create_for_friend", as: :check_in_friend
+  patch "checkin/time", to: "check_ins#update_time", as: :check_in_time
+  get "checkin/:token", to: redirect("/checkin"), constraints: { token: /[a-f0-9]{8}/ }
   delete "checkin/:id", to: "check_ins#destroy", as: :user_check_in, constraints: { id: /\d+/ }
 
   get ":token_prefix/:position", to: "finish_positions#show_claim", as: :claim_finish_token, constraints: { token_prefix: /[a-f0-9]{4}/, position: /\d{3}/ }

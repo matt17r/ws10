@@ -1,6 +1,8 @@
 class Event < ApplicationRecord
   include HomeStatistics
 
+  CHECK_IN_TIME_ZONE = ActiveSupport::TimeZone["Sydney"]
+
   enum :status, { draft: "draft", in_progress: "in_progress", finalised: "finalised", abandoned: "abandoned", cancelled: "cancelled" }
 
   after_update :send_results_emails_if_finalised
@@ -33,6 +35,24 @@ class Event < ApplicationRecord
     where("date >= ?", Date.today).order(:date).first
   end
 
+  def self.open_for_check_in(at = Time.current)
+    where(status: "in_progress").or(where(date: check_in_date(at))).order(:date).find { |event| event.open_for_check_in?(at) }
+  end
+
+  def self.accepting_late_check_ins(at = Time.current)
+    latest = where(date: ..check_in_date(at)).order(date: :desc).first
+    latest if latest&.accepting_late_check_ins?(at)
+  end
+
+  def self.next_for_check_in(at = Time.current)
+    where(date: check_in_date(at)..).where.not(status: [ "abandoned", "cancelled" ]).order(:date).find { |event| at < event.check_in_closes_at }
+  end
+
+  def self.check_in_date(at)
+    at.in_time_zone(CHECK_IN_TIME_ZONE).to_date
+  end
+  private_class_method :check_in_date
+
   def has_social_links?
     facebook_url.present? || strava_url.present?
   end
@@ -55,6 +75,24 @@ class Event < ApplicationRecord
 
   def active?
     in_progress?
+  end
+
+  def check_in_opens_at
+    CHECK_IN_TIME_ZONE.local(date.year, date.month, date.day, 6, 30)
+  end
+
+  def check_in_closes_at
+    CHECK_IN_TIME_ZONE.local(date.year, date.month, date.day, 22, 0)
+  end
+
+  def open_for_check_in?(at = Time.current)
+    return false if abandoned? || cancelled?
+    in_progress? || (check_in_opens_at...check_in_closes_at).cover?(at)
+  end
+
+  def accepting_late_check_ins?(at = Time.current)
+    return false if abandoned? || cancelled? || open_for_check_in?(at)
+    at >= check_in_closes_at
   end
 
   def not_finalised?

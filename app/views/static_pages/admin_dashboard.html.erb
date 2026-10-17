@@ -16,13 +16,13 @@
         <h2 class="text-pretty text-3xl font-medium tracking-tight text-gray-950 my-3"><%= link_to "#{@event.location} - #{@event.date}", event_path(@event.number), class: "text-gray-950 hover:text-primary" %></h2>
         <% if Current.user.admin? %>
           <%= link_to "Edit", edit_admin_event_path(@event.number), class: "justify-center rounded-md border border-transparent bg-primary px-4 py-2 my-4 text-sm font-medium text-white shadow-sm hover:bg-primary-hover cursor-pointer" %>
+          <div data-controller="clipboard" class="inline-block">
+            <span data-clipboard-target="source" class="hidden"><%= check_in_url %></span>
+            <button data-clipboard-target="button" data-action="click->clipboard#copy" class="justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 my-4 text-sm font-medium text-white shadow-sm hover:bg-blue-700 cursor-pointer">
+              Copy Check-In URL
+            </button>
+          </div>
           <% if @event.active? %>
-            <div data-controller="clipboard" class="inline-block">
-              <span data-clipboard-target="source" class="hidden"><%= check_in_url(CheckIn.token_for_event(@event.number)) %></span>
-              <button data-clipboard-target="button" data-action="click->clipboard#copy" class="justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 my-4 text-sm font-medium text-white shadow-sm hover:bg-blue-700 cursor-pointer">
-                Copy Check-In URL
-              </button>
-            </div>
             <%= button_to "Deactivate", deactivate_admin_event_path(@event.number), method: :post, form: { class: "inline-block" }, class: "justify-center rounded-md border border-transparent bg-red-600 px-4 py-2 my-4 text-sm font-medium text-white shadow-sm hover:bg-red-700 cursor-pointer" %>
           <% else %>
             <%= button_to "Activate", activate_admin_event_path(@event.number), method: :post, form: { class: "inline-block" }, class: "justify-center rounded-md border border-transparent bg-green-600 px-4 py-2 my-4 text-sm font-medium text-white shadow-sm hover:bg-green-700 cursor-pointer" %>

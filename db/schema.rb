@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_14_040423) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_17_174853) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -66,11 +66,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_14_040423) do
     t.datetime "checked_in_at", null: false
     t.datetime "created_at", null: false
     t.integer "event_id", null: false
+    t.string "status", default: "approved", null: false
+    t.integer "submitted_time"
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
     t.index ["event_id"], name: "index_check_ins_on_event_id"
     t.index ["user_id", "event_id"], name: "index_check_ins_on_user_and_event", unique: true
     t.index ["user_id"], name: "index_check_ins_on_user_id"
+    t.check_constraint "status IN ('approved', 'pending')", name: "check_in_status_valid"
   end
 
   create_table "events", force: :cascade do |t|

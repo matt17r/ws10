@@ -526,4 +526,172 @@ class EventTest < ActiveSupport::TestCase
       event.update!(status: "cancelled")
     end
   end
+
+  test "check-in window runs from 6:30am to 10pm Sydney time on the event date" do
+    event = events(:draft_event)
+    sydney = ActiveSupport::TimeZone["Sydney"]
+
+    assert_equal sydney.local(2025, 5, 29, 6, 30), event.check_in_opens_at
+    assert_equal sydney.local(2025, 5, 29, 22, 0), event.check_in_closes_at
+  end
+
+  test "check-in window follows daylight saving" do
+    event = Event.create!(number: 50, date: Date.new(2025, 12, 21), location: locations(:nepean))
+
+    assert_equal Time.utc(2025, 12, 20, 19, 30), event.check_in_opens_at
+    assert_equal Time.utc(2025, 12, 21, 11, 0), event.check_in_closes_at
+  end
+
+  test "open_for_check_in? is false before the window opens" do
+    event = events(:draft_event)
+
+    assert_not event.open_for_check_in?(event.check_in_opens_at - 1.second)
+  end
+
+  test "open_for_check_in? is true from the moment the window opens" do
+    event = events(:draft_event)
+
+    assert event.open_for_check_in?(event.check_in_opens_at)
+  end
+
+  test "open_for_check_in? is true just before the window closes" do
+    event = events(:draft_event)
+
+    assert event.open_for_check_in?(event.check_in_closes_at - 1.second)
+  end
+
+  test "open_for_check_in? is false once the window closes" do
+    event = events(:draft_event)
+
+    assert_not event.open_for_check_in?(event.check_in_closes_at)
+  end
+
+  test "open_for_check_in? is true outside the window when manually activated" do
+    event = events(:draft_event)
+    event.update!(status: "in_progress")
+
+    assert event.open_for_check_in?(event.check_in_opens_at - 1.day)
+  end
+
+  test "open_for_check_in? is false for abandoned events during the window" do
+    event = events(:draft_event)
+    event.update!(status: "abandoned")
+
+    assert_not event.open_for_check_in?(event.check_in_opens_at + 1.hour)
+  end
+
+  test "open_for_check_in? is false for cancelled events during the window" do
+    event = events(:draft_event)
+    event.update!(status: "cancelled")
+
+    assert_not event.open_for_check_in?(event.check_in_opens_at + 1.hour)
+  end
+
+  test "open_for_check_in finds the event whose window is open" do
+    event = events(:draft_event)
+
+    assert_equal event, Event.open_for_check_in(event.check_in_opens_at + 1.hour)
+  end
+
+  test "open_for_check_in uses the Sydney date rather than the UTC date" do
+    event = events(:draft_event)
+    early_morning_sydney_is_previous_day_in_utc = event.check_in_opens_at
+
+    assert_equal Date.new(2025, 5, 28), early_morning_sydney_is_previous_day_in_utc.utc.to_date
+    assert_equal event, Event.open_for_check_in(early_morning_sydney_is_previous_day_in_utc)
+  end
+
+  test "open_for_check_in returns nil when no window is open" do
+    event = events(:draft_event)
+
+    assert_nil Event.open_for_check_in(event.check_in_closes_at)
+  end
+
+  test "open_for_check_in finds a manually activated event on another day" do
+    event = events(:draft_event)
+    event.update!(status: "in_progress")
+
+    assert_equal event, Event.open_for_check_in(event.check_in_opens_at - 3.days)
+  end
+
+  test "accepting_late_check_ins returns the event once its window has closed" do
+    event = events(:draft_event)
+
+    assert_equal event, Event.accepting_late_check_ins(event.check_in_closes_at)
+  end
+
+  test "accepting_late_check_ins returns nil while the window is open" do
+    event = events(:draft_event)
+
+    assert_nil Event.accepting_late_check_ins(event.check_in_opens_at + 1.hour)
+  end
+
+  test "accepting_late_check_ins keeps returning the event in the days afterwards" do
+    event = events(:draft_event)
+
+    assert_equal event, Event.accepting_late_check_ins(event.check_in_closes_at + 20.days)
+  end
+
+  test "accepting_late_check_ins stops on the date of the next event, before its window opens" do
+    event = events(:draft_event)
+    next_event = Event.create!(number: 4, date: Date.new(2025, 6, 15), location: locations(:bungarribee))
+
+    assert_nil Event.accepting_late_check_ins(next_event.check_in_opens_at - 1.hour)
+  end
+
+  test "accepting_late_check_ins moves on to the next event once its window closes" do
+    events(:draft_event)
+    next_event = Event.create!(number: 4, date: Date.new(2025, 6, 15), location: locations(:bungarribee))
+
+    assert_equal next_event, Event.accepting_late_check_ins(next_event.check_in_closes_at)
+  end
+
+  test "accepting_late_check_ins returns nil after an abandoned event" do
+    event = events(:draft_event)
+    event.update!(status: "abandoned")
+
+    assert_nil Event.accepting_late_check_ins(event.check_in_closes_at + 1.hour)
+  end
+
+  test "accepting_late_check_ins returns nil after a cancelled event" do
+    event = events(:draft_event)
+    event.update!(status: "cancelled")
+
+    assert_nil Event.accepting_late_check_ins(event.check_in_closes_at + 1.hour)
+  end
+
+  test "accepting_late_check_ins does not fall back to an earlier event when the latest was cancelled" do
+    events(:draft_event)
+    cancelled = Event.create!(number: 4, date: Date.new(2025, 6, 15), location: locations(:bungarribee), status: "cancelled")
+
+    assert_nil Event.accepting_late_check_ins(cancelled.check_in_closes_at + 1.hour)
+  end
+
+  test "accepting_late_check_ins returns nil while a manually activated event is open" do
+    event = events(:draft_event)
+    event.update!(status: "in_progress")
+
+    assert_nil Event.accepting_late_check_ins(event.check_in_closes_at + 1.hour)
+  end
+
+  test "next_for_check_in returns today's event before its window opens" do
+    event = events(:draft_event)
+
+    assert_equal event, Event.next_for_check_in(event.check_in_opens_at - 1.hour)
+  end
+
+  test "next_for_check_in skips today's event once its window has closed" do
+    event = events(:draft_event)
+    next_event = Event.create!(number: 4, date: Date.new(2025, 6, 15), location: locations(:bungarribee))
+
+    assert_equal next_event, Event.next_for_check_in(event.check_in_closes_at)
+  end
+
+  test "next_for_check_in skips cancelled events" do
+    event = events(:draft_event)
+    event.update!(status: "cancelled")
+    next_event = Event.create!(number: 4, date: Date.new(2025, 6, 15), location: locations(:bungarribee))
+
+    assert_equal next_event, Event.next_for_check_in(event.check_in_opens_at - 1.hour)
+  end
 end

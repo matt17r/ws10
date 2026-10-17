@@ -22,6 +22,7 @@ class CoursesController < ApplicationController
     @next_event = Event.not_finalised.where("date >= ?", Date.today).order(:date).first
     @abandoned_event = Event.where(status: "abandoned", location: @location).where("date >= ?", Date.today).order(:date).first
     @latest_event = @location.latest_event
+    @open_event = Event.open_for_check_in
     @current_year_events = @location.events.where("strftime('%Y', date) = ?", Date.today.year.to_s).order(:date)
   end
 

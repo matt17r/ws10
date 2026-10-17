@@ -105,4 +105,24 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
     assert_select "#course-description-nepean ~ p a[href=?]", "#load-the-route-nepean"
     assert_select "section[aria-labelledby=load-the-route-nepean] h2#load-the-route-nepean"
   end
+
+  test "show has a check-in button while this course's event is open" do
+    event = events(:draft_event)
+
+    travel_to event.check_in_opens_at + 15.minutes do
+      get course_url(event.location)
+    end
+
+    assert_select "a[href=?]", check_in_path, text: "Check In Now!"
+  end
+
+  test "show has no check-in button on a different course while another event is open" do
+    event = events(:draft_event)
+
+    travel_to event.check_in_opens_at + 15.minutes do
+      get course_url(locations(:nepean))
+    end
+
+    assert_select "a[href=?]", check_in_path, count: 0
+  end
 end

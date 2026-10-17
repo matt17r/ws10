@@ -1,0 +1,13 @@
+<%= form_with url: check_in_time_path, method: :patch, class: "space-y-4" do |form| %>
+  <div class="max-w-48 mx-auto">
+    <%= form.label :time_string, label, class: "block text-lg font-medium text-gray-900" %>
+    <%= form.text_field :time_string,
+        value: recorded_time,
+        placeholder: "mm:ss",
+        class: "mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary text-2xl py-3 text-center tracking-wider",
+        autocomplete: "off",
+        aria: { describedby: "time-string-hint" } %>
+    <p id="time-string-hint" class="mt-2 text-sm text-gray-500">For example 52:25, or 1:02:25 if you took over an hour.</p>
+  </div>
+  <%= form.submit recorded_time ? "Update time" : "Save time", class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary" %>
+<% end %>
