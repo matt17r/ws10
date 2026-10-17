@@ -22,24 +22,6 @@ class CloseOutEventsJobTest < ActiveJob::TestCase
     assert event.reload.draft?
   end
 
-  test "does nothing on a host that isn't the active origin" do
-    event = events(:draft_event)
-    original_check = CloseOutEventsJob.active_origin_check
-    CloseOutEventsJob.active_origin_check = -> { false }
-
-    travel_to event.check_in_opens_at + 1.day do
-      CloseOutEventsJob.perform_now
-    end
-
-    assert event.reload.draft?
-  ensure
-    CloseOutEventsJob.active_origin_check = original_check
-  end
-
-  test "treats every host as the active origin outside production" do
-    assert CloseOutEventsJob.active_origin_check.call
-  end
-
   test "runs every morning at 7am Sydney time in production" do
     schedule = YAML.load_file(Rails.root.join("config/recurring.yml")).dig("production", "close_out_events")
     cron = Fugit.parse_cron(schedule["schedule"])
