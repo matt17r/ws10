@@ -10,6 +10,11 @@ class EventMailerPreview < ActionMailer::Preview
     EventMailer.participation_notification(result: result)
   end
 
+  def thanks_notification
+    result = Result.where.not(user_id: nil).sample
+    EventMailer.thanks_notification(result: result)
+  end
+
   def volunteer_notification
     volunteer = Volunteer.includes(:user, :event).sample
     EventMailer.volunteer_notification(volunteer: volunteer)

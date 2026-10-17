@@ -694,4 +694,62 @@ class EventTest < ActiveSupport::TestCase
 
     assert_equal next_event, Event.next_for_check_in(event.check_in_opens_at - 1.hour)
   end
+
+  test "finalising sends one thanks email per runner instead of result and participation emails" do
+    event = events(:draft_event)
+    timed = event.results.create!(user: users(:three), time: 3000)
+    untimed = event.results.create!(user: users(:two))
+
+    assert_enqueued_email_with EventMailer, :thanks_notification, args: [ { result: timed } ] do
+      assert_enqueued_email_with EventMailer, :thanks_notification, args: [ { result: untimed } ] do
+        event.update!(status: "finalised")
+      end
+    end
+
+    mailer_jobs = enqueued_jobs.select { |job| job["job_class"] == "ActionMailer::MailDeliveryJob" }
+    assert_equal [ "thanks_notification" ], mailer_jobs.map { |job| job["arguments"][1] }.uniq
+  end
+
+  test "finalising does not email results that have no runner" do
+    event = events(:draft_event)
+    event.results.create!(time: 3000)
+
+    assert_no_enqueued_emails do
+      event.update!(status: "finalised")
+    end
+  end
+
+  test "ready_to_close_out returns yesterday's event" do
+    event = events(:draft_event)
+
+    assert_equal [ event ], Event.ready_to_close_out(event.check_in_opens_at + 1.day).to_a
+  end
+
+  test "ready_to_close_out ignores today's event" do
+    event = events(:draft_event)
+
+    assert_empty Event.ready_to_close_out(event.check_in_closes_at - 1.minute)
+  end
+
+  test "ready_to_close_out ignores events from before yesterday" do
+    event = events(:draft_event)
+
+    assert_empty Event.ready_to_close_out(event.check_in_opens_at + 2.days)
+  end
+
+  test "ready_to_close_out includes a manually activated event" do
+    event = events(:draft_event)
+    event.update!(status: "in_progress")
+
+    assert_equal [ event ], Event.ready_to_close_out(event.check_in_opens_at + 1.day).to_a
+  end
+
+  test "ready_to_close_out ignores events already finalised, abandoned or cancelled" do
+    event = events(:draft_event)
+
+    %w[finalised abandoned cancelled].each do |status|
+      event.update_column(:status, status)
+      assert_empty Event.ready_to_close_out(event.check_in_opens_at + 1.day), status
+    end
+  end
 end

@@ -48,6 +48,10 @@ class Event < ApplicationRecord
     where(date: check_in_date(at)..).where.not(status: [ "abandoned", "cancelled" ]).order(:date).find { |event| at < event.check_in_closes_at }
   end
 
+  def self.ready_to_close_out(at = Time.current)
+    not_finalised.where(date: check_in_date(at) - 1)
+  end
+
   def self.check_in_date(at)
     at.in_time_zone(CHECK_IN_TIME_ZONE).to_date
   end
@@ -130,12 +134,8 @@ class Event < ApplicationRecord
       AwardBadgesJob.perform_later(id)
 
       # Then queue emails
-      results.where.not(time: nil).includes(:user).find_each do |result|
-        EventMailer.result_notification(result: result).deliver_later
-      end
-
-      results.where(time: nil).includes(:user).find_each do |result|
-        EventMailer.participation_notification(result: result).deliver_later
+      results.where.not(user_id: nil).includes(:user).find_each do |result|
+        EventMailer.thanks_notification(result: result).deliver_later
       end
 
       volunteers.includes(:user).find_each do |volunteer|

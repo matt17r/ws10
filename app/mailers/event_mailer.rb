@@ -41,6 +41,26 @@ class EventMailer < ApplicationMailer
     )
   end
 
+  def thanks_notification(result:)
+    @event = result.event
+    @result = result
+    @user = result.user
+    @result_count = @user.results.count
+    @location_count = @user.results.joins(:event).where(events: { location: @event.location }).count
+    @next_event = Event.where("date > ?", @event.date).where.not(status: [ "abandoned", "cancelled" ]).order(:date).first
+
+    @newly_earned_badges = @user.user_badges
+      .for_event(@event)
+      .includes(:badge)
+      .joins(:badge)
+      .order("badges.badge_family")
+
+    mail(
+      to: email_address_with_name(@user.email_address, @user.name),
+      subject: "Thanks for coming to WS10 ##{@event.number} at #{@event.location}"
+    )
+  end
+
   def volunteer_notification(volunteer:)
     @event = volunteer.event
     @volunteer = volunteer

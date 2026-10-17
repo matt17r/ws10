@@ -218,7 +218,7 @@ class ResultsControllerTest < ActionDispatch::IntegrationTest
     assert_response :not_found
   end
 
-  test "update with send_notification sends result_notification email when result has a time" do
+  test "update with send_notification sends the thanks email when result has a time" do
     sign_in_as users(:one)
     result = results(:first)
 
@@ -230,10 +230,10 @@ class ResultsControllerTest < ActionDispatch::IntegrationTest
 
     email = ActionMailer::Base.deliveries.last
     assert_equal [ result.user.email_address ], email.to
-    assert_match "Your result", email.subject
+    assert_match "Thanks for coming", email.subject
   end
 
-  test "update with send_notification sends participation_notification email when result has no time" do
+  test "update with send_notification sends the thanks email when result has no time" do
     sign_in_as users(:one)
     result = results(:first)
     result.update!(time: nil)
@@ -244,7 +244,7 @@ class ResultsControllerTest < ActionDispatch::IntegrationTest
 
     email = ActionMailer::Base.deliveries.last
     assert_equal [ result.user.email_address ], email.to
-    assert_match "participated", email.subject
+    assert_match "Thanks for coming", email.subject
   end
 
   test "update without send_notification does not send email" do
