@@ -731,10 +731,16 @@ class EventTest < ActiveSupport::TestCase
     assert_empty Event.ready_to_close_out(event.check_in_closes_at - 1.minute)
   end
 
-  test "ready_to_close_out ignores events from before yesterday" do
+  test "ready_to_close_out includes events from earlier days" do
     event = events(:draft_event)
 
-    assert_empty Event.ready_to_close_out(event.check_in_opens_at + 2.days)
+    assert_equal [ event ], Event.ready_to_close_out(event.check_in_opens_at + 5.days).to_a
+  end
+
+  test "ready_to_close_out includes yesterday's event just after midnight" do
+    event = events(:draft_event)
+
+    assert_equal [ event ], Event.ready_to_close_out(event.check_in_opens_at.end_of_day + 1.minute).to_a
   end
 
   test "ready_to_close_out includes a manually activated event" do

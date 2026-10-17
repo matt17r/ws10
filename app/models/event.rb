@@ -49,7 +49,7 @@ class Event < ApplicationRecord
   end
 
   def self.ready_to_close_out(at = Time.current)
-    not_finalised.where(date: check_in_date(at) - 1)
+    not_finalised.where(date: ...check_in_date(at))
   end
 
   def self.check_in_date(at)

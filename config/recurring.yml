@@ -4,4 +4,4 @@ production:
     schedule: "every Monday at 9:00 Australia/Sydney"
   close_out_events:
     class: CloseOutEventsJob
-    schedule: "0 7 * * * Australia/Sydney"
+    schedule: "0 7-23 * * * Australia/Sydney"
