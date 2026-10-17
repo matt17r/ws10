@@ -221,10 +221,44 @@
         <% end %>
       </div>
       <% if Current.user&.admin? %>
-        <% if @event.active? %>
+        <% pending_check_ins = @event.check_ins.pending.includes(:user).order(:checked_in_at) %>
+        <% if pending_check_ins.any? %>
           <div class="mt-8">
-            <h2 class="text-2xl font-semibold text-gray-900 mb-4">Checked-in Runners (<%= @event.check_ins.count %>)</h2>
-            <% if @event.check_ins.any? %>
+            <h2 class="text-2xl font-semibold text-gray-900 mb-4">Late check-ins awaiting approval (<%= pending_check_ins.size %>)</h2>
+            <div class="overflow-x-auto shadow ring-1 ring-black ring-opacity-5 rounded-lg">
+              <table class="min-w-full divide-y divide-gray-300">
+                <thead class="bg-gray-50">
+                  <tr>
+                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">Runner</th>
+                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Time</th>
+                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Actions</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200 bg-white">
+                  <% pending_check_ins.each do |check_in| %>
+                    <tr>
+                      <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900">
+                        <%= check_in.user.name %>
+                        <br>
+                        <span class="text-xs">Submitted <%= check_in.checked_in_at.in_time_zone(Event::CHECK_IN_TIME_ZONE).to_fs(:long) %></span>
+                      </td>
+                      <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-900"><%= check_in.submitted_time_string %></td>
+                      <td class="whitespace-nowrap px-3 py-4 text-sm flex gap-4">
+                        <%= button_to "Approve", approve_admin_check_in_path(check_in), method: :post, class: "text-green-700 hover:text-green-900 font-medium" %>
+                        <%= button_to "Reject", admin_check_in_path(check_in), method: :delete, form: { data: { turbo_confirm: "Reject late check-in for #{check_in.user.name}?" } }, class: "text-red-600 hover:text-red-900 font-medium" %>
+                      </td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        <% end %>
+
+        <% if @event.open_for_check_in? %>
+          <div class="mt-8">
+            <h2 class="text-2xl font-semibold text-gray-900 mb-4">Checked-in Runners (<%= @event.check_ins.approved.count %>)</h2>
+            <% if @event.check_ins.approved.any? %>
               <div class="overflow-x-auto shadow ring-1 ring-black ring-opacity-5 rounded-lg">
                 <table class="min-w-full divide-y divide-gray-300">
                   <thead class="bg-gray-50">
@@ -234,7 +268,7 @@
                     </tr>
                   </thead>
                   <tbody class="divide-y divide-gray-200 bg-white">
-                    <% @event.check_ins.includes(:user).order(checked_in_at: :desc).each do |check_in| %>
+                    <% @event.check_ins.approved.includes(:user).order(checked_in_at: :desc).each do |check_in| %>
                       <tr>
                         <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900">
                           <%= check_in.user.name %>

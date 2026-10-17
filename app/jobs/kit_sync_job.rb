@@ -1,4 +1,6 @@
 class KitSyncJob < ApplicationJob
+  include ActiveOriginOnly
+
   queue_as :default
   retry_on KitClient::RateLimitError, wait: 60.seconds, attempts: 3
 

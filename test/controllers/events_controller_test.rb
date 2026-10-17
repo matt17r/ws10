@@ -233,4 +233,52 @@ class EventsControllerTest < ActionDispatch::IntegrationTest
     event.reload
     assert event.cancelled?
   end
+
+  test "admin sees checked-in runners while the event is open" do
+    event = events(:draft_event)
+    CheckIn.check_in!(event: event, user: users(:three))
+    sign_in_as users(:one)
+
+    travel_to event.check_in_opens_at + 15.minutes do
+      get event_url(event)
+    end
+
+    assert_select "h2", text: "Checked-in Runners (1)"
+  end
+
+  test "admin sees pending late check-ins with their submitted time and an approve button" do
+    event = events(:draft_event)
+    check_in = CheckIn.check_in!(event: event, user: users(:three), status: "pending")
+    check_in.record_time!("52:25")
+    sign_in_as users(:one)
+
+    travel_to event.check_in_closes_at + 1.hour do
+      get event_url(event)
+    end
+
+    assert_select "h2", text: "Late check-ins awaiting approval (1)"
+    assert_select "td", text: /52:25/
+    assert_select "form[action=?] button", approve_admin_check_in_path(check_in), text: "Approve"
+  end
+
+  test "non-admins do not see pending late check-ins" do
+    event = events(:one)
+    CheckIn.check_in!(event: event, user: users(:three), status: "pending")
+
+    get event_url(event)
+
+    assert_select "h2", text: /Late check-ins/, count: 0
+  end
+
+  test "checked-in runners list leaves out pending late check-ins" do
+    event = events(:draft_event)
+    event.update!(status: "in_progress")
+    CheckIn.check_in!(event: event, user: users(:three))
+    CheckIn.check_in!(event: event, user: users(:two), status: "pending")
+    sign_in_as users(:one)
+
+    get event_url(event)
+
+    assert_select "h2", text: "Checked-in Runners (1)"
+  end
 end

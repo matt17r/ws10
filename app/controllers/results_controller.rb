@@ -120,10 +120,6 @@ class ResultsController < ApplicationController
   end
 
   def send_result_notification
-    if @result.time.present?
-      EventMailer.result_notification(result: @result).deliver_later
-    else
-      EventMailer.participation_notification(result: @result).deliver_later
-    end
+    EventMailer.thanks_notification(result: @result).deliver_later
   end
 end

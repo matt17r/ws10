@@ -136,4 +136,40 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     # Should NOT show PB icon in the results table (legend is ok)
     assert_select "tbody svg path[d*='M14.857 17.082']", count: 0, message: "Should not show PB bell icon for first-timer"
   end
+
+  test "profile offers check-in while an event is open" do
+    event = events(:draft_event)
+    sign_in_as users(:three)
+
+    travel_to event.check_in_opens_at + 15.minutes do
+      get user_url
+    end
+
+    assert_select "a[href=?]", check_in_path, text: "Check In Now"
+  end
+
+  test "profile confirms check-in and offers to check others in" do
+    event = events(:draft_event)
+    user = users(:three)
+    CheckIn.check_in!(event: event, user: user)
+    sign_in_as user
+
+    travel_to event.check_in_opens_at + 15.minutes do
+      get user_url
+    end
+
+    assert_select "p", text: /Checked in to/
+    assert_select "a[href=?]", check_in_path, text: "Check others in"
+  end
+
+  test "profile has no check-in banner when no event is open" do
+    event = events(:draft_event)
+    sign_in_as users(:three)
+
+    travel_to event.check_in_opens_at - 1.day do
+      get user_url
+    end
+
+    assert_select "a[href=?]", check_in_path, count: 0
+  end
 end
