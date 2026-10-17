@@ -20,6 +20,14 @@ module ApplicationHelper
     parts.join(" ")
   end
 
+  def add_time_reminder_event
+    return unless authenticated?
+    return if current_page?(check_in_path)
+
+    event = Event.open_for_check_in || Event.accepting_late_check_ins
+    event if event && Current.user.missing_time_for?(event)
+  end
+
   def repeat_runner?
     authenticated? && Current.user.results.count >= 3
   end

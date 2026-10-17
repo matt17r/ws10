@@ -86,6 +86,11 @@ class User < ApplicationRecord
     roles.any? { |r| r.name == "Organiser" }
   end
 
+  def missing_time_for?(event)
+    check_in = check_ins.find_by(event: event)
+    check_in.present? && check_in.recorded_time_string.nil?
+  end
+
   def personal_best
     results.where.not(time: nil).order(:time).first
   end

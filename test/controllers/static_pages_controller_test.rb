@@ -62,4 +62,66 @@ class StaticPagesControllerTest < ActionDispatch::IntegrationTest
 
     assert_select "[data-clipboard-target=source]", text: check_in_url
   end
+
+  test "pages remind a checked-in runner to add their time" do
+    event = events(:draft_event)
+    user = users(:three)
+    CheckIn.check_in!(event: event, user: user)
+    sign_in_as user
+
+    travel_to event.check_in_opens_at + 2.hours do
+      get about_url
+    end
+
+    assert_select "a[href=?]", check_in_path, text: "Finished? Add your time for ##{event.number}"
+  end
+
+  test "pages keep reminding a runner to add their time after check-in closes" do
+    event = events(:draft_event)
+    user = users(:three)
+    CheckIn.check_in!(event: event, user: user)
+    sign_in_as user
+
+    travel_to event.check_in_closes_at + 1.day do
+      get about_url
+    end
+
+    assert_select "a[href=?]", check_in_path, text: "Finished? Add your time for ##{event.number}"
+  end
+
+  test "pages stop reminding a runner once their time is recorded" do
+    event = events(:draft_event)
+    user = users(:three)
+    CheckIn.check_in!(event: event, user: user).record_time!("52:25")
+    sign_in_as user
+
+    travel_to event.check_in_opens_at + 2.hours do
+      get about_url
+    end
+
+    assert_select "a", text: /Add your time/, count: 0
+  end
+
+  test "pages do not remind signed-out visitors to add a time" do
+    event = events(:draft_event)
+
+    travel_to event.check_in_opens_at + 2.hours do
+      get about_url
+    end
+
+    assert_select "a", text: /Add your time/, count: 0
+  end
+
+  test "the check-in page does not repeat the reminder to add a time" do
+    event = events(:draft_event)
+    user = users(:three)
+    CheckIn.check_in!(event: event, user: user)
+    sign_in_as user
+
+    travel_to event.check_in_opens_at + 2.hours do
+      get check_in_url
+    end
+
+    assert_select "a", text: /Add your time/, count: 0
+  end
 end

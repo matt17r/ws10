@@ -260,4 +260,40 @@ class UserTest < ActiveSupport::TestCase
       User.find_by_barcode!("A999999")
     end
   end
+
+  test "missing_time_for? is true when checked in without a time" do
+    event = events(:draft_event)
+    user = users(:three)
+    CheckIn.check_in!(event: event, user: user)
+
+    assert user.missing_time_for?(event)
+  end
+
+  test "missing_time_for? is false once a time is recorded" do
+    event = events(:draft_event)
+    user = users(:three)
+    CheckIn.check_in!(event: event, user: user).record_time!("52:25")
+
+    assert_not user.missing_time_for?(event)
+  end
+
+  test "missing_time_for? is false when not checked in" do
+    assert_not users(:three).missing_time_for?(events(:draft_event))
+  end
+
+  test "missing_time_for? is true for a pending check-in without a time" do
+    event = events(:draft_event)
+    user = users(:three)
+    CheckIn.check_in!(event: event, user: user, status: "pending")
+
+    assert user.missing_time_for?(event)
+  end
+
+  test "missing_time_for? is false for a pending check-in with a time" do
+    event = events(:draft_event)
+    user = users(:three)
+    CheckIn.check_in!(event: event, user: user, status: "pending").record_time!("52:25")
+
+    assert_not user.missing_time_for?(event)
+  end
 end

@@ -98,6 +98,11 @@
           <% end %>
         </div>
       <% end %>
+      <% if (reminder_event = add_time_reminder_event) %>
+        <div class="mx-auto w-full max-w-4xl px-8 mt-6">
+          <%= link_to "Finished? Add your time for ##{reminder_event.number}", check_in_path, class: "block bg-blue-50 border-l-4 border-primary p-4 font-medium text-primary hover:bg-blue-100" %>
+        </div>
+      <% end %>
       <main class="mb-auto">
         <%= yield %>
       </main>
