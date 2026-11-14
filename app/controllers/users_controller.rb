@@ -20,7 +20,7 @@ class UsersController < ApplicationController
       .where(events: { status: "in_progress" })
       .first
 
-    @event = Event.open_for_check_in
+    @event = Event.find_by(status: "in_progress")
     @check_in = @user.check_ins.find_by(event: @event) if @event
   end
 
