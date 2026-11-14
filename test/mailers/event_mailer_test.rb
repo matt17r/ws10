@@ -115,4 +115,60 @@ class EventMailerTest < ActionMailer::TestCase
       assert_no_match(/supporting WS10/i, email.text_part.body.to_s)
     end
   end
+
+  %i[result_notification participation_notification].each do |mail_type|
+    test "#{mail_type} includes the event description in both parts" do
+      result = results(:first)
+      result.event.update!(description: "Muggy conditions and a new course record")
+
+      email = EventMailer.public_send(mail_type, result: result)
+
+      assert_includes email.html_part.body.to_s, "Muggy conditions and a new course record"
+      assert_includes email.text_part.body.to_s, "Muggy conditions and a new course record"
+    end
+
+    test "#{mail_type} omits the description block when the event has none" do
+      result = results(:first)
+      result.event.update!(description: "")
+
+      email = EventMailer.public_send(mail_type, result: result)
+
+      assert_no_match(/border-left: 4px solid #DB2955/, email.html_part.body.to_s)
+      assert email.text_part.body.to_s.present?
+    end
+  end
+
+  test "volunteer_notification includes the event description in both parts" do
+    volunteer = volunteers(:one)
+    volunteer.event.update!(description: "Muggy conditions and a new course record")
+
+    email = EventMailer.volunteer_notification(volunteer: volunteer)
+
+    assert_includes email.html_part.body.to_s, "Muggy conditions and a new course record"
+    assert_includes email.text_part.body.to_s, "Muggy conditions and a new course record"
+  end
+
+  %i[result_notification participation_notification].each do |mail_type|
+    test "#{mail_type} does not invite the runner to a future event" do
+      result = results(:first)
+
+      email = EventMailer.public_send(mail_type, result: result)
+
+      [ email.html_part.body.to_s, email.text_part.body.to_s ].each do |body|
+        assert_no_match(/next event/i, body)
+        assert_no_match(%r{/courses}, body)
+        assert_no_match(/young event/i, body)
+        assert_no_match(/still learning/i, body)
+      end
+    end
+
+    test "#{mail_type} thanks the runner for being part of WS10" do
+      result = results(:first)
+
+      email = EventMailer.public_send(mail_type, result: result)
+
+      assert_includes email.html_part.body.to_s, "Thank you for being part of Western Sydney 10"
+      assert_includes email.text_part.body.to_s, "Thank you for being part of Western Sydney 10"
+    end
+  end
 end

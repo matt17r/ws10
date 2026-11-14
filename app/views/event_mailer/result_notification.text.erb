@@ -11,12 +11,15 @@ View all badges at <%= badges_url %>.
 <% end %>
 
 You can view all of this week's results at <%= event_url(@event) %>.
+<% if @event.description.present? %>
+
+<%= @event.description %>
+<% end %>
 
 If you enjoyed this event, please:
- - Come along to the next event (<%= courses_url %>)
  - Tell a friend (or running foe) about it
  - Share your result on Strava or social media
 
-Western Sydney 10 is a young event and we're still learning. If you've got any suggestions for how to improve the events, the website or these results emails, simply reply to this email to let me know!
+Thank you for being part of Western Sydney 10. If you'd like to share any feedback or memories, simply reply to this email to let me know!
 
 You received this transactional email because you registered as a runner at https://ws10.run and completed an event. This is not a marketing email so there is no unsubscribe option.
