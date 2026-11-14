@@ -4,9 +4,6 @@ class StaticPagesController < ApplicationController
   def about
   end
 
-  def support
-  end
-
   def admin_dashboard
     @event = Event.not_finalised.order(date: :asc).includes(:finish_positions, :finish_times, :results, :volunteers, :location).first
   end
@@ -15,8 +12,10 @@ class StaticPagesController < ApplicationController
     @upcoming_events = Event.upcoming_for_home.includes(:location).where("date >= ?", Date.today).order(:date).limit(3)
     @statistics = Event.home_statistics
 
-    @open_event = @upcoming_events.find(&:open_for_check_in?)
-    @current_user_checked_in = authenticated? && @open_event&.check_ins&.exists?(user: Current.user)
+    if authenticated? && (active_event = @upcoming_events.find(&:active?))
+      @current_user_checked_in = active_event.check_ins.exists?(user: Current.session.user)
+      @active_event_token = CheckIn.token_for_event(active_event.number)
+    end
   end
 
   def invalidate_statistics_cache

@@ -4,7 +4,7 @@ class RegistrationsController < ApplicationController
   rescue_from RailsCloudflareTurnstile::Forbidden, with: :forbidden_turnstile
 
   def new
-    @user = User.new(display_name: nil, newsletter_opt_in: true)
+    @user = User.new(display_name: nil)
   end
 
   def create
@@ -21,7 +21,7 @@ class RegistrationsController < ApplicationController
   private
 
   def user_params
-    params.require(:user).permit(:name, :display_name, :email_address, :password, :password_confirmation, :newsletter_opt_in)
+    params.require(:user).permit(:name, :display_name, :email_address, :password, :password_confirmation)
   end
 
   def forbidden_turnstile

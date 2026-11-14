@@ -101,69 +101,18 @@ class EventMailerTest < ActionMailer::TestCase
     assert_not_nil email.text_part
   end
 
-  test "thanks_notification is addressed to the runner" do
-    result = Result.create!(event: events(:draft_event), user: users(:three))
+  %i[result_notification participation_notification].each do |mail_type|
+    test "#{mail_type} does not ask for financial support from regular runners" do
+      result = results(:first)
+      Result.create!(event: events(:two), user: result.user, time: 2_600)
+      Result.create!(event: events(:draft_event), user: result.user, time: 2_700)
 
-    email = EventMailer.thanks_notification(result: result)
+      email = EventMailer.public_send(mail_type, result: result)
 
-    assert_equal [ users(:three).email_address ], email.to
-  end
-
-  test "thanks_notification subject thanks the runner for coming" do
-    event = events(:draft_event)
-    result = Result.create!(event: event, user: users(:three))
-
-    email = EventMailer.thanks_notification(result: result)
-
-    assert_equal "Thanks for coming to WS10 ##{event.number} at #{event.location}", email.subject
-  end
-
-  test "thanks_notification shows the runner's time when they recorded one" do
-    result = Result.create!(event: events(:draft_event), user: users(:three), time: 52 * 60 + 25)
-
-    email = EventMailer.thanks_notification(result: result)
-
-    assert_includes email.html_part.body.to_s, "52:25"
-    assert_includes email.text_part.body.to_s, "52:25"
-    assert_not_includes email.text_part.body.to_s, "Add your time"
-  end
-
-  test "thanks_notification invites runners without a time to add one" do
-    result = Result.create!(event: events(:draft_event), user: users(:three))
-
-    email = EventMailer.thanks_notification(result: result)
-
-    assert_includes email.html_part.body.to_s, "/checkin"
-    assert_includes email.text_part.body.to_s, "Add your time"
-    assert_includes email.text_part.body.to_s, "/checkin"
-  end
-
-  test "thanks_notification does not mention finishing places" do
-    result = Result.create!(event: events(:draft_event), user: users(:three), time: 52 * 60 + 25)
-
-    email = EventMailer.thanks_notification(result: result)
-
-    assert_not_includes email.text_part.body.to_s, "place"
-    assert_not_includes email.html_part.body.to_s, "place out of"
-  end
-
-  test "thanks_notification names the next event" do
-    result = Result.create!(event: events(:draft_event), user: users(:three))
-    next_event = Event.create!(number: 4, date: Date.new(2025, 6, 15), location: locations(:bungarribee))
-
-    email = travel_to(events(:draft_event).check_in_closes_at + 9.hours) do
-      EventMailer.thanks_notification(result: result).tap(&:deliver_now)
+      assert_no_match(%r{/support}, email.html_part.body.to_s)
+      assert_no_match(%r{/support}, email.text_part.body.to_s)
+      assert_no_match(/supporting WS10/i, email.html_part.body.to_s)
+      assert_no_match(/supporting WS10/i, email.text_part.body.to_s)
     end
-
-    assert_includes email.text_part.body.to_s, "##{next_event.number} at #{next_event.location} on Sunday 15 June"
-    assert_includes email.html_part.body.to_s, "Sunday 15 June"
-  end
-
-  test "thanks_notification sends both html and text parts" do
-    result = Result.create!(event: events(:draft_event), user: users(:three))
-
-    email = EventMailer.thanks_notification(result: result)
-
-    assert_equal 2, email.parts.size
   end
 end
